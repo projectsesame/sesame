@@ -1,0 +1,68 @@
+baseURL: "https://projectsesame.io/"
+languageCode: "en-us"
+title: "Contour"
+theme: "sesame"
+outputs:
+  home: ["HTML", "REDIRECTS"]
+  posts: ["HTML", "RSS"]
+pygmentsCodefences: true
+pygmentsStyle: "pygments"
+markup:
+  highlight:
+    anchorLineNos: false
+    codeFences: true
+    guessSyntax: false
+    hl_Lines: ""
+    lineAnchors: ""
+    lineNoStart: 1
+    lineNos: false
+    lineNumbersInTable: true
+    noClasses: true
+    style: native
+    tabWidth: 4
+  goldmark:
+    renderer:
+      unsafe: true
+params:
+  base_url: "https://projectsesame.io"
+  twitter_url: "https://twitter.com/projectsesame"
+  github_url: "https://github.com/projectsesame/sesame"
+  slack_url: "https://kubernetes.slack.com/messages/sesame"
+  latest_version: v1.19.1
+  use_advanced_docs: true
+  docs_right_sidebar: true
+  docs_search: true
+  docs_search_index_name: projectsesame
+  docs_search_api_key: 5e2fa46757e313755936b88feae652d1
+  docs_versioning: true
+  docs_versions:
+    - main
+    - v1.19.1
+    - v1.19.0
+    - v1.18.3
+    - v1.18.2
+    - v1.18.1
+    - v1.18.0
+    - v1.17.2
+    - v1.17.1
+    - v1.17.0
+    - v1.16.1
+    - v1.16.0
+    - v1.15.2
+    - v1.15.1
+    - v1.15.0
+mediaTypes:
+  "text/netlify":
+    delimiter: ""
+outputFormats:
+  REDIRECTS:
+    mediaType: "text/netlify"
+    baseName: "_redirects"
+  RSS:
+    mediatype: "application/rss"
+    baseName: "feed"
+collections:
+  guides:
+    output: true
+permalinks:
+  posts: /:slug

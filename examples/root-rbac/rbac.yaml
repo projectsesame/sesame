@@ -1,0 +1,116 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: sesame
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: sesame
+subjects:
+  - kind: ServiceAccount
+    name: sesame
+    namespace: projectsesame
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: root-httpproxy
+  name: sesame-secrets-root
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - secrets
+    verbs:
+      - watch
+      - list
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: projectsesame
+  name: sesame-secrets
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - secrets
+    verbs:
+      - watch
+      - list
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: sesame-secrets-root
+  namespace: root-httpproxy
+subjects:
+  - kind: ServiceAccount
+    name: sesame
+    namespace: projectsesame
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: sesame-secrets-root
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: sesame-secrets
+  namespace: projectsesame
+subjects:
+  - kind: ServiceAccount
+    name: sesame
+    namespace: projectsesame
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: sesame-secrets
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: sesame
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - configmaps
+      - endpoints
+      - nodes
+      - pods
+    verbs:
+      - list
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - nodes
+    verbs:
+      - get
+  - apiGroups:
+      - ""
+    resources:
+      - services
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - extensions
+    resources:
+      - ingresses
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups: ["projectsesame.io"]
+    resources: ["httpproxies", "tlscertificatedelegations"]
+    verbs:
+      - get
+      - list
+      - watch
+      - put
+      - post
+      - patch
+---

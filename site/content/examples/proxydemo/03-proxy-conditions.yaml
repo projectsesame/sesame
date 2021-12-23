@@ -1,0 +1,27 @@
+apiVersion: projectsesame.io/v1
+kind: HTTPProxy
+metadata:
+  name: root
+  namespace: projectsesame-roots
+spec:
+  virtualhost:
+    fqdn: local.projectsesame.io
+  routes:
+    - services:
+        - name: rootapp
+          port: 80
+      conditions:
+        - prefix: /
+    - services:
+        - name: secureapp-default
+          port: 80
+      conditions:
+        - prefix: /secure
+    - services:
+        - name: secureapp
+          port: 80
+      conditions:
+        - prefix: /secure
+        - header:
+            name: User-Agent
+            contains: Chrome

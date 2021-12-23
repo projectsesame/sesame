@@ -1,0 +1,65 @@
+run:
+  timeout: 10m
+  skip-files:
+    - apis/projectsesame/v1/kubeconditions.go # copy-pasted from k8s.io/apimachinery, has invalid header
+
+linters:
+  enable:
+  - bodyclose
+  - gofmt
+  - goimports
+  - revive
+  - gosec
+  - misspell
+  - unconvert
+  - unparam
+  - goheader
+  - gocritic
+
+# TODO(jpeach): enable these later:
+#  - gocyclo
+#  - gocognit
+
+linters-settings:
+  misspell:
+    ignore-words:
+    - clas
+    - cancelled
+    locale: US
+  gofmt:
+    simplify: true
+  unparam:
+    check-exported: false
+  goheader:
+    template-path: ./hack/license-template.txt
+
+issues:
+  exclude:
+  # TODO(jpeach): exclude unparam warnings about functions that always receive
+  # the same arguments. We should clean those up some time.
+  - always receives
+  exclude-rules:
+  - path: zz_generated
+    linters:
+    - goimports
+  # TODO(youngnick): Disable the deprecation warnings, because of the "github.com/golang/protobuf/proto"
+  # libraries. We can't stop using them yet, because they move from Proto v1 to V2
+  # And we can't nolint them by line, because https://github.com/golangci/golangci-lint/issues/741
+  - linters:
+    - staticcheck
+    text: "SA1019: package github.com/golang/protobuf"
+  - linters:
+    - golint
+    text: "var `ingress_https` should be `ingressHTTPS`"
+  - linters:
+    - golint
+    text: "var `ingress_http` should be `ingressHTTP`"
+  - linters:
+    - golint
+    text: "returns unexported type"
+  - linters:
+    - golint
+    text: "don't use ALL_CAPS in Go names; use CamelCase"
+  - path: test/e2e
+    linters:
+      - bodyclose

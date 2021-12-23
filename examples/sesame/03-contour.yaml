@@ -1,0 +1,104 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: sesame
+  name: sesame
+  namespace: projectsesame
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      # This value of maxSurge means that during a rolling update
+      # the new ReplicaSet will be created first.
+      maxSurge: 50%
+  selector:
+    matchLabels:
+      app: sesame
+  template:
+    metadata:
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8000"
+      labels:
+        app: sesame
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  app: sesame
+              topologyKey: kubernetes.io/hostname
+            weight: 100
+      containers:
+      - args:
+        - serve
+        - --incluster
+        - --xds-address=0.0.0.0
+        - --xds-port=8001
+        - --sesame-cafile=/certs/ca.crt
+        - --sesame-cert-file=/certs/tls.crt
+        - --sesame-key-file=/certs/tls.key
+        - --config-path=/config/sesame.yaml
+        command: ["sesame"]
+        image: ghcr.io/projectsesame/sesame:main
+        imagePullPolicy: Always
+        name: sesame
+        ports:
+        - containerPort: 8001
+          name: xds
+          protocol: TCP
+        - containerPort: 8000
+          name: metrics
+          protocol: TCP
+        - containerPort: 6060
+          name: debug
+          protocol: TCP
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8000
+        readinessProbe:
+          tcpSocket:
+            port: 8001
+          initialDelaySeconds: 15
+          periodSeconds: 10
+        volumeMounts:
+          - name: contourcert
+            mountPath: /certs
+            readOnly: true
+          - name: sesame-config
+            mountPath: /config
+            readOnly: true
+        env:
+        - name: CONTOUR_NAMESPACE
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.name
+      dnsPolicy: ClusterFirst
+      serviceAccountName: sesame
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        runAsGroup: 65534
+      volumes:
+        - name: contourcert
+          secret:
+            secretName: contourcert
+        - name: sesame-config
+          configMap:
+            name: sesame
+            defaultMode: 0644
+            items:
+            - key: sesame.yaml
+              path: sesame.yaml
