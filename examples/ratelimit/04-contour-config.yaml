@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sesame
+  namespace: projectsesame
+data:
+  contour.yaml: |
+    rateLimitService:
+      extensionService: projectcontour/ratelimit
+      domain: contour
+      failOpen: false

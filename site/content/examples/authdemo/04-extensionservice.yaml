@@ -1,0 +1,11 @@
+---
+apiVersion: projectsesame.io/v1alpha1
+kind: ExtensionService
+metadata:
+  name: htpasswd
+  namespace: projectsesame-auth
+spec:
+  protocol: h2
+  services:
+    - name: htpasswd
+      port: 9443

@@ -1,0 +1,13 @@
+# httpproxy-non-empty instantiates an HTTPProxyNonEmpty
+# ConstraintTemplate.
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: HTTPProxyNonEmpty
+metadata:
+  name: httpproxy-non-empty
+  labels:
+    app: sesame
+spec:
+  match:
+    kinds:
+      - apiGroups: ["projectsesame.io"]
+        kinds: ["HTTPProxy"]

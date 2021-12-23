@@ -1,0 +1,12 @@
+apiVersion: projectsesame.io/v1alpha1
+kind: ExtensionService
+metadata:
+  namespace: projectsesame
+  name: ratelimit
+spec:
+  protocol: h2c
+  services:
+    - name: ratelimit
+      port: 8081
+  timeoutPolicy:
+    response: 100ms
