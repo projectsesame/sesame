@@ -29,4 +29,4 @@
      ==== 🆕 Remove this line WHEN AND ONLY WHEN you're adding a new feature, follow the checklist 👆 ==== -->
 
 - [ ] If this pull request closes/resolves/fixes an existing issue, replace the issue number. Closes #<issue number>.
-- [ ] Update the [`CHANGES` log](https://github.com/projectsesame/sesame/CHANGES.md).
+- [ ] Update the [`CHANGELOG`](https://github.com/projectsesame/sesame/CHANGELOG.md).
