@@ -1,1 +1,1 @@
-Fix panic in Contour startup when using `--root-namespaces` flag
+Fix panic in Sesame startup when using `--root-namespaces` flag

@@ -40,7 +40,7 @@ Implementing similar behavior using an HTTPProxy looks like this:
 
 {% highlight yaml linenos %}
 # httpproxy.yaml
-apiVersion: projectcontour.io/v1
+apiVersion: projectsesame.io/v1
 kind: HTTPProxy
 metadata:
   name: basic
@@ -200,11 +200,11 @@ HTTPProxy follows a similar pattern to Ingress for configuring TLS credentials.
 You can secure a HTTPProxy by specifying a Secret that contains TLS private key and certificate information.
 If multiple HTTPProxies utilize the same Secret, the certificate must include the necessary Subject Authority Name (SAN) for each fqdn.
 
-Contour (via Envoy) requires that clients send the Server Name Indication (SNI) TLS extension so that requests can be routed to the correct virtual host.
+Sesame (via Envoy) requires that clients send the Server Name Indication (SNI) TLS extension so that requests can be routed to the correct virtual host.
 Virtual hosts are strongly bound to SNI names.
 This means that the Host header in HTTP requests must match the SNI name that was sent at the start of the TLS session.
 
-Contour also follows a "secure first" approach.
+Sesame also follows a "secure first" approach.
 When TLS is enabled for a virtual host, any request to the insecure port is redirected to the secure interface with a 301 redirect.
 Specific routes can be configured to override this behavior and handle insecure requests by enabling the `spec.routes.permitInsecure` parameter on a Route.
 
@@ -254,17 +254,17 @@ The TLS **Minimum Protocol Version** a vhost should negotiate can be specified b
 
 ##### Fallback Certificate
 
-Contour provides virtual host based routing, so that any TLS request is routed to the appropriate service based on both the server name requested by the TLS client and the HOST header in the HTTP request. 
+Sesame provides virtual host based routing, so that any TLS request is routed to the appropriate service based on both the server name requested by the TLS client and the HOST header in the HTTP request. 
 
 As the HOST Header is encrypted during TLS handshake, it can’t be used for virtual host based routing unless the client sends HTTPS requests specifying hostname using the TLS server name, or the request is first decrypted using a default TLS certificate.
 
 Some legacy TLS clients do not send the server name, so Envoy does not know how to select the right certificate. A fallback certificate is needed for these clients.
 
-_Note: The minimum TLS protocol version for any fallback request is defined by the `minimum TLS protocol version` set in the Contour configuration file. Enabling the fallback certificate is not compatible with TLS client authentication._
+_Note: The minimum TLS protocol version for any fallback request is defined by the `minimum TLS protocol version` set in the Sesame configuration file. Enabling the fallback certificate is not compatible with TLS client authentication._
 
 ###### Configuration
 
-First define the `namespace/name` in the [Contour configuration file][11] of a Kubernetes secret which will be used as the fallback certificate.
+First define the `namespace/name` in the [Sesame configuration file][11] of a Kubernetes secret which will be used as the fallback certificate.
 Any HTTPProxy which enables fallback certificate delegation must have the fallback certificate delegated to the namespace in which the HTTPProxy object resides.
 
 To do that, configure `TLSCertificateDelegation` to delegate the fallback certificate to specific or all namespaces (e.g. `*`) which should be allowed to enable the fallback certificate.
@@ -304,13 +304,13 @@ spec:
 #### Upstream TLS
 
 A HTTPProxy can proxy to an upstream TLS connection by annotating the upstream Kubernetes Service or by specifying the upstream protocol in the HTTPProxy [`services`][10] field.
-Applying the `projectcontour.io/upstream-protocol.tls` annotation to a Service object tells Contour that TLS should be enabled and which port should be used for the TLS connection.
+Applying the `projectsesame.io/upstream-protocol.tls` annotation to a Service object tells Sesame that TLS should be enabled and which port should be used for the TLS connection.
 The same configuration can be specified by setting the protocol name in the `spec.routes.services[].protocol` field on the HTTPProxy object.
 If both the annotation and the protocol field are specified, the protocol field takes precedence.
 By default, the upstream TLS server certificate will not be validated, but validation can be requested by setting the `spec.routes.services[].validation` field.
 This field has mandatory `caSecret` and `subjectName` fields, which specify the trusted root certificates with which to validate the server certificate and the expected server name.
 
-_Note: If `spec.routes.services[].validation` is present, `spec.routes.services[].{name,port}` must point to a Service with a matching `projectcontour.io/upstream-protocol.tls` Service annotation._
+_Note: If `spec.routes.services[].validation` is present, `spec.routes.services[].{name,port}` must point to a Service with a matching `projectsesame.io/upstream-protocol.tls` Service annotation._
 
 In the example below, the upstream service is named `secure-backend` and uses port `8443`:
 
@@ -339,7 +339,7 @@ kind: Service
 metadata:
   name: secure-backend
   annotations:
-    projectcontour.io/upstream-protocol.tls: "8443"
+    projectsesame.io/upstream-protocol.tls: "8443"
 spec:
   ports:
   - name: https
@@ -351,7 +351,7 @@ spec:
 
 ##### Error conditions
 
-If the `validation` spec is defined on a service, but the secret which it references does not exist, Contour will reject the update and set the status of the HTTPProxy object accordingly.
+If the `validation` spec is defined on a service, but the secret which it references does not exist, Sesame will reject the update and set the status of the HTTPProxy object accordingly.
 This helps prevent the case of proxying to an upstream where validation is requested, but not yet available.
 
 ```yaml
@@ -362,8 +362,8 @@ Status:
 
 #### TLS Certificate Delegation
 
-In order to support wildcard certificates, TLS certificates for a `*.somedomain.com`, which are stored in a namespace controlled by the cluster administrator, Contour supports a facility known as TLS Certificate Delegation.
-This facility allows the owner of a TLS certificate to delegate, for the purposes of referencing the TLS certificate, permission to Contour to read the Secret object from another namespace.
+In order to support wildcard certificates, TLS certificates for a `*.somedomain.com`, which are stored in a namespace controlled by the cluster administrator, Sesame supports a facility known as TLS Certificate Delegation.
+This facility allows the owner of a TLS certificate to delegate, for the purposes of referencing the TLS certificate, permission to Sesame to read the Secret object from another namespace.
 
 The `TLSCertificateDelegation` resource defines a set of `delegations` in the `spec`.
 Each delegation references a `secretName` from the namespace where the `TLSCertificateDelegation` is created as well as describing a set of `targetNamespaces` in which the certificate can be referenced.
@@ -400,8 +400,8 @@ spec:
           port: 80
 ```
 
-In this example, the permission for Contour to reference the Secret `example-com-wildcard` in the `admin` namespace has been delegated to HTTPProxy objects in the `example-com` namespace.
-Also, the permission for Contour to reference the Secret `another-com-wildcard` from all namespaces has been delegated to all HTTPProxy objects in the cluster.
+In this example, the permission for Sesame to reference the Secret `example-com-wildcard` in the `admin` namespace has been delegated to HTTPProxy objects in the `example-com` namespace.
+Also, the permission for Sesame to reference the Secret `another-com-wildcard` from all namespaces has been delegated to all HTTPProxy objects in the cluster.
 
 ### Conditions
 
@@ -730,7 +730,7 @@ spec:
 #### Session Affinity
 
 Session affinity, also known as _sticky sessions_, is a load balancing strategy whereby a sequence of requests from a single client are consistently routed to the same application backend.
-Contour supports session affinity on a per route basis with `loadBalancerPolicy` `strategy: Cookie`.
+Sesame supports session affinity on a per route basis with `loadBalancerPolicy` `strategy: Cookie`.
 
 ```yaml
 # httpproxy-sticky-sessions.yaml
@@ -760,7 +760,7 @@ Any perturbation in the set of pods backing a service risks redistributing backe
 #### Per route health checking
 
 Active health checking can be configured on a per route basis.
-Contour supports HTTP health checking and can be configured with various settings to tune the behavior.
+Sesame supports HTTP health checking and can be configured with various settings to tune the behavior.
 
 During HTTP health checking Envoy will send an HTTP request to the upstream Endpoints.
 It expects a 200 response if the host is healthy.
@@ -796,7 +796,7 @@ spec:
 Health check configuration parameters:
 
 - `path`: HTTP endpoint used to perform health checks on upstream service (e.g. `/healthz`). It expects a 200 response if the host is healthy. The upstream host can return 503 if it wants to immediately notify downstream hosts to no longer forward traffic to it.
-- `host`: The value of the host header in the HTTP health check request. If left empty (default value), the name "contour-envoy-healthcheck" will be used.
+- `host`: The value of the host header in the HTTP health check request. If left empty (default value), the name "Sesame-envoy-healthcheck" will be used.
 - `intervalSeconds`: The interval (seconds) between health checks. Defaults to 5 seconds if not set.
 - `timeoutSeconds`: The time to wait (seconds) for a health check response. If the timeout is reached the health check attempt will be considered a failure. Defaults to 2 seconds if not set.
 - `unhealthyThresholdCount`: The number of unhealthy health checks required before a host is marked unhealthy. Note that for http health checking if a host responds with 503 this threshold is ignored and the host is considered unhealthy immediately. Defaults to 3 if not defined.
@@ -947,7 +947,7 @@ spec:
 ### ExternalName
 
 HTTPProxy supports routing traffic to `ExternalName` service types.
-Contour looks at the `spec.externalName` field of the service and configures the route to use that DNS name instead of utilizing EDS.
+Sesame looks at the `spec.externalName` field of the service and configures the route to use that DNS name instead of utilizing EDS.
 
 There's nothing specific in the HTTPProxy object that needs to be configured other than referencing a service of type `ExternalName`.
 HTTPProxy supports the `requestHeadersPolicy` field to rewrite the `Host` header after first handling a request and before proxying to an upstream service.
@@ -978,14 +978,14 @@ spec:
 
 To proxy to another resource outside the cluster (e.g. A hosted object store bucket for example), configure that external resource in a service type `externalName`.
 Then define a `requestHeadersPolicy` which replaces the `Host` header with the value of the external name service defined previously.
-Finally, if the upstream service is served over TLS, set the `protocol` field on the service to `tls` or annotate the external name service with: `projectcontour.io/upstream-protocol.tls: 443,https` assuming your service had a port 443 and name `https`.
+Finally, if the upstream service is served over TLS, set the `protocol` field on the service to `tls` or annotate the external name service with: `projectsesame.io/upstream-protocol.tls: 443,https` assuming your service had a port 443 and name `https`.
 
 ## HTTPProxy inclusion
 
 HTTPProxy permits the splitting of a system's configuration into separate HTTPProxy instances using **inclusion**.
 
 Inclusion, as the name implies, allows for one HTTPProxy object to be included in another, optionally with some conditions inherited from the parent.
-Contour reads the inclusion tree and merges the included routes into one big object internally before rendering Envoy config.
+Sesame reads the inclusion tree and merges the included routes into one big object internally before rendering Envoy config.
 Importantly, the included HTTPProxy objects do not have to be in the same namespace, so this is functionally the same as the delegation feature of the now-deprecated IngressRoute.
 
 Each tree of HTTPProxy starts with a root, the top level object of the configuration for a particular virtual host.
@@ -1003,9 +1003,9 @@ These conditions are added to any conditions on the routes included.
 This process is recursive.
 
 Conditions are sets of individual condition statements, for example `prefix: /blog` is the condition that the matching request's path must start with `/blog`.
-When conditions are combined through inclusion Contour merges the conditions inherited via inclusion with any conditions specified on the route.
+When conditions are combined through inclusion Sesame merges the conditions inherited via inclusion with any conditions specified on the route.
 This may result in duplicates, for example two `prefix:` conditions, or two header match conditions with the same name and value.
-To resolve this Contour applies the following logic.
+To resolve this Sesame applies the following logic.
 
 - `prefix:` conditions are concatenated together in the order they were applied from the root object. For example the conditions, `prefix: /api`, `prefix: /v1` becomes a single `prefix: /api/v1` conditions. Note: Multiple prefixes cannot be supplied on a single set of Route conditions.
 - Proxies with repeated identical `header:` conditions of type "exact match" (the same header keys exactly) are marked as "Invalid" since they create an un-routable configuration.
@@ -1156,20 +1156,20 @@ spec:
 ### Orphaned HTTPProxy children
 
 It is possible for HTTPProxy objects to exist that have not been delegated to by another HTTPProxy.
-These objects are considered "orphaned" and will be ignored by Contour in determining ingress configuration.
+These objects are considered "orphaned" and will be ignored by Sesame in determining ingress configuration.
 
 ### Restricted root namespaces
 
 HTTPProxy inclusion allows for Administrators to limit which users/namespaces may configure routes for a given domain, but it does not restrict where root HTTPProxy may be created.
-Contour has an enforcing mode which accepts a list of namespaces where root HTTPProxy are valid.
+Sesame has an enforcing mode which accepts a list of namespaces where root HTTPProxy are valid.
 Only users permitted to operate in those namespaces can therefore create HTTPProxy with the `virtualhost` field.
 
-This restricted mode is enabled in Contour by specifying a command line flag, `--root-namespaces`, which will restrict Contour to only searching the defined namespaces for root HTTPProxy. This CLI flag accepts a comma separated list of namespaces where HTTPProxy are valid (e.g. `--root-namespaces=default,kube-system,my-admin-namespace`).
+This restricted mode is enabled in Sesame by specifying a command line flag, `--root-namespaces`, which will restrict Sesame to only searching the defined namespaces for root HTTPProxy. This CLI flag accepts a comma separated list of namespaces where HTTPProxy are valid (e.g. `--root-namespaces=default,kube-system,my-admin-namespace`).
 
-HTTPProxy with a defined `virtualhost` field that are not in one of the allowed root namespaces will be flagged as `invalid` and will be ignored by Contour.
+HTTPProxy with a defined `virtualhost` field that are not in one of the allowed root namespaces will be flagged as `invalid` and will be ignored by Sesame.
 
-Additionally, when defined, Contour will only watch for Kubernetes secrets in these namespaces ignoring changes in all other namespaces.
-Proper RBAC rules should also be created to restrict what namespaces Contour has access matching the namespaces passed to the command line flag.
+Additionally, when defined, Sesame will only watch for Kubernetes secrets in these namespaces ignoring changes in all other namespaces.
+Proper RBAC rules should also be created to restrict what namespaces Sesame has access matching the namespaces passed to the command line flag.
 An example of this is included in the [examples directory][1] and shows how you might create a namespace called `root-httproxies`.
 
 > **NOTE: The restricted root namespace feature is only supported for HTTPProxy CRDs.
@@ -1277,7 +1277,7 @@ In this example `default/parent` delegates the configuration of the TCPProxy ser
 #### TCP Proxy health checking
 
 Active health checking can be configured on a per route basis.
-Contour supports TCP health checking and can be configured with various settings to tune the behavior.
+Sesame supports TCP health checking and can be configured with various settings to tune the behavior.
 
 During TCP health checking Envoy will send a connect-only health check to the upstream Endpoints.
 It is important to note that these are health checks which Envoy implements and are separate from any
@@ -1321,7 +1321,7 @@ The CA certificate bundle for the backend service should be supplied in a Kubern
 The referenced Secret must be of type "Opaque" and have a data key named `ca.crt`.
 This data value must be a PEM-encoded certificate bundle.
 
-In addition to the CA certificate and the subject name, the Kubernetes service must also be annotated with a Contour specific annotation: `projectcontour.io/upstream-protocol.tls: <port>` ([see annotations section][9])
+In addition to the CA certificate and the subject name, the Kubernetes service must also be annotated with a Sesame specific annotation: `projectsesame.io/upstream-protocol.tls: <port>` ([see annotations section][9])
 
 _Note: This annotation is applied to the Service not the Ingress or HTTPProxy object._
 
@@ -1372,8 +1372,8 @@ The data value of the key `ca.crt` must be a PEM-encoded certificate bundle and 
 ## Status Reporting
 
 There are many misconfigurations that could cause an HTTPProxy or delegation to be invalid.
-To aid users in resolving these issues, Contour updates a `status` field in all HTTPProxy objects.
-In the current specification, invalid HTTPProxy are ignored by Contour and will not be used in the ingress routing configuration.
+To aid users in resolving these issues, Sesame updates a `status` field in all HTTPProxy objects.
+In the current specification, invalid HTTPProxy are ignored by Sesame and will not be used in the ingress routing configuration.
 
 If an HTTPProxy object is valid, it will have a status property that looks like this:
 
@@ -1393,7 +1393,7 @@ status:
   description: "route '/foo': service 'home': weight must be greater than or equal to zero"
 ```
 
-Some examples of invalid configurations that Contour provides statuses for:
+Some examples of invalid configurations that Sesame provides statuses for:
 
 - Negative weight provided in the route definition.
 - Invalid port number provided for service.
@@ -1415,5 +1415,5 @@ Some examples of invalid configurations that Contour provides statuses for:
  [7]: https://www.envoyproxy.io/docs/envoy/v1.11.2/intro/arch_overview/upstream/load_balancing/overview
  [8]: #conditions
  [9]: {% link docs/{{page.version}}/annotations.md %}
- [10]: /docs/{{page.version}}/api/#projectcontour.io/v1.Service
+ [10]: /docs/{{page.version}}/api/#projectsesame.io/v1.Service
  [11]: configuration.md#fallback-certificate

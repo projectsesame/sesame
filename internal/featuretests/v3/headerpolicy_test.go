@@ -20,8 +20,8 @@ import (
 	envoy_route_v3 "github.com/envoyproxy/go-control-plane/envoy/config/route/v3"
 	envoy_discovery_v3 "github.com/envoyproxy/go-control-plane/envoy/service/discovery/v3"
 	"github.com/golang/protobuf/ptypes/wrappers"
-	contour_api_v1 "github.com/projectcontour/sesame/apis/projectsesame/v1"
-	envoy_v3 "github.com/projectcontour/sesame/internal/envoy/v3"
+	Sesame_api_v1 "github.com/projectsesame/sesame/apis/projectsesame/v1"
+	envoy_v3 "github.com/projectsesame/sesame/internal/envoy/v3"
 	"github.com/projectsesame/sesame/internal/featuretests"
 	"github.com/projectsesame/sesame/internal/fixture"
 	v1 "k8s.io/api/core/v1"
@@ -41,15 +41,15 @@ func TestHeaderPolicy_ReplaceHeader_HTTProxy(t *testing.T) {
 	)
 
 	rh.OnAdd(fixture.NewProxy("simple").WithSpec(
-		contour_api_v1.HTTPProxySpec{
-			VirtualHost: &contour_api_v1.VirtualHost{Fqdn: "hello.world"},
-			Routes: []contour_api_v1.Route{{
-				Services: []contour_api_v1.Service{{
+		Sesame_api_v1.HTTPProxySpec{
+			VirtualHost: &Sesame_api_v1.VirtualHost{Fqdn: "hello.world"},
+			Routes: []Sesame_api_v1.Route{{
+				Services: []Sesame_api_v1.Service{{
 					Name: "svc1",
 					Port: 80,
 				}},
-				RequestHeadersPolicy: &contour_api_v1.HeadersPolicy{
-					Set: []contour_api_v1.HeaderValue{{
+				RequestHeadersPolicy: &Sesame_api_v1.HeadersPolicy{
+					Set: []Sesame_api_v1.HeaderValue{{
 						Name:  "Host",
 						Value: "goodbye.planet",
 					}},
@@ -74,15 +74,15 @@ func TestHeaderPolicy_ReplaceHeader_HTTProxy(t *testing.T) {
 
 	// Non-Host header
 	rh.OnAdd(fixture.NewProxy("simple").WithSpec(
-		contour_api_v1.HTTPProxySpec{
-			VirtualHost: &contour_api_v1.VirtualHost{Fqdn: "hello.world"},
-			Routes: []contour_api_v1.Route{{
-				Services: []contour_api_v1.Service{{
+		Sesame_api_v1.HTTPProxySpec{
+			VirtualHost: &Sesame_api_v1.VirtualHost{Fqdn: "hello.world"},
+			Routes: []Sesame_api_v1.Route{{
+				Services: []Sesame_api_v1.Service{{
 					Name: "svc1",
 					Port: 80,
 				}},
-				RequestHeadersPolicy: &contour_api_v1.HeadersPolicy{
-					Set: []contour_api_v1.HeaderValue{{
+				RequestHeadersPolicy: &Sesame_api_v1.HeadersPolicy{
+					Set: []Sesame_api_v1.HeaderValue{{
 						Name:  "x-header",
 						Value: "goodbye.planet",
 					}},
@@ -116,15 +116,15 @@ func TestHeaderPolicy_ReplaceHeader_HTTProxy(t *testing.T) {
 
 	// Empty value for replaceHeader in HeadersPolicy
 	rh.OnAdd(fixture.NewProxy("simple").WithSpec(
-		contour_api_v1.HTTPProxySpec{
-			VirtualHost: &contour_api_v1.VirtualHost{Fqdn: "hello.world"},
-			Routes: []contour_api_v1.Route{{
-				Services: []contour_api_v1.Service{{
+		Sesame_api_v1.HTTPProxySpec{
+			VirtualHost: &Sesame_api_v1.VirtualHost{Fqdn: "hello.world"},
+			Routes: []Sesame_api_v1.Route{{
+				Services: []Sesame_api_v1.Service{{
 					Name: "svc1",
 					Port: 80,
 				}},
-				RequestHeadersPolicy: &contour_api_v1.HeadersPolicy{
-					Set: []contour_api_v1.HeaderValue{{
+				RequestHeadersPolicy: &Sesame_api_v1.HeadersPolicy{
+					Set: []Sesame_api_v1.HeaderValue{{
 						Name: "Host",
 					}},
 				},
@@ -169,18 +169,18 @@ func TestHeaderPolicy_ReplaceHeader_HTTProxy(t *testing.T) {
 
 	// Proxy with SNI
 	rh.OnAdd(fixture.NewProxy("simple").WithSpec(
-		contour_api_v1.HTTPProxySpec{
-			VirtualHost: &contour_api_v1.VirtualHost{
+		Sesame_api_v1.HTTPProxySpec{
+			VirtualHost: &Sesame_api_v1.VirtualHost{
 				Fqdn: "hello.world",
-				TLS:  &contour_api_v1.TLS{SecretName: "foo"},
+				TLS:  &Sesame_api_v1.TLS{SecretName: "foo"},
 			},
-			Routes: []contour_api_v1.Route{{
-				Services: []contour_api_v1.Service{{
+			Routes: []Sesame_api_v1.Route{{
+				Services: []Sesame_api_v1.Service{{
 					Name: "externalname",
 					Port: 443,
 				}},
-				RequestHeadersPolicy: &contour_api_v1.HeadersPolicy{
-					Set: []contour_api_v1.HeaderValue{{
+				RequestHeadersPolicy: &Sesame_api_v1.HeadersPolicy{
+					Set: []Sesame_api_v1.HeaderValue{{
 						Name:  "Host",
 						Value: "goodbye.planet",
 					}},

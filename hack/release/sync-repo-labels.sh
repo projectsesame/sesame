@@ -51,7 +51,7 @@ token=${token##$(dirname "${REPO}")}
 labelsync \
     --debug \
     --confirm \
-    --orgs projectcontour \
-    --skip projectcontour/toc \
+    --orgs projectsesame \
+    --skip projectsesame/toc \
     --config "${yaml}" \
     --token "${token}"

@@ -1,9 +1,9 @@
 ---
-title: Contour / Envoy Resource Limits
+title: Sesame / Envoy Resource Limits
 layout: page
 ---
 
-## Performance Testing Contour / Envoy
+## Performance Testing Sesame / Envoy
 
 - Cluster Specs
   - Kubernetes
@@ -13,7 +13,7 @@ layout: page
         - 2 CPUs Per Node
         - 8 GB RAM Per Node
       - 10 GB Network
-  - Contour
+  - Sesame
     - Single Instance
       - 4 Instances of Envoy running in a Daemonset
       - Each instance of Envoy is running with HostNetwork
@@ -36,7 +36,7 @@ Verify the Memory & CPU usage with varying numbers of services, IngressRoute res
 <table>
   <tr>
     <td colspan="4">Test Criteria</td>
-    <td colspan="2">Contour</td>
+    <td colspan="2">Sesame</td>
     <td colspan="2">Envoy</td>
   </tr>
   <tr>

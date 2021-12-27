@@ -1,6 +1,6 @@
 # Redeploying Envoy
 
-The Envoy process, the data path component of Contour, at times needs to be re-deployed.
+The Envoy process, the data path component of Sesame, at times needs to be re-deployed.
 This could be due to an upgrade, a change in configuration, or a node-failure forcing a redeployment.
 
 When implementing this roll out, the following steps should be taken: 
@@ -11,7 +11,7 @@ When implementing this roll out, the following steps should be taken:
 
 ## Overview
 
-Contour implements a new `envoy` sub-command which has a `shutdown-manager` whose job is to manage a single Envoy instances lifecycle for Kubernetes.
+Sesame implements a new `envoy` sub-command which has a `shutdown-manager` whose job is to manage a single Envoy instances lifecycle for Kubernetes.
 The `shutdown-manager` runs as a new container alongside the Envoy container in the same pod.
 It exposes two HTTP endpoints which are used for `livenessProbe` as well as to handle the Kubernetes `preStop` event hook.
 

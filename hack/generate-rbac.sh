@@ -11,7 +11,7 @@ readonly GO111MODULE=on
 
 export GO111MODULE
 
-exec >"${REPO}/examples/contour/02-role-contour.yaml"
+exec >"${REPO}/examples/sesame/02-role-sesame.yaml"
 
 cat <<EOF
 # The following ClusterRole is generated from kubebuilder RBAC tags by

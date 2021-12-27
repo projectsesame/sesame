@@ -2,7 +2,7 @@ This document outlines how we use GitHub.
 
 ## Milestones
 
-Contour attempts to ship on a quarterly basis.
+Sesame attempts to ship on a quarterly basis.
 These releases are tracked with a milestone.
 The _current_ release is the milestone with the closest delivery date.
 
@@ -53,7 +53,7 @@ From that point onward you are responsible for the issue and you are expected to
 If you cease work on an issue, even if incomplete, you should leave a comment to that effect on the issue and remove yourself as the assignee.
 From that point onward you are no longer responsible for the issue, however you may be approached as a subject matter expert--as the last person to touch the issue--by future assignees.
 
-For infrequent contributors who are not members of the Contour project, assign yourself by leaving a comment to that effect on the issue.
+For infrequent contributors who are not members of the Sesame project, assign yourself by leaving a comment to that effect on the issue.
 
 *Do not hoard issues, you won't enjoy it*
 

@@ -1,6 +1,6 @@
 #! /usr/bin/env bash
 
-# Copyright Project Contour Authors
+# Copyright Project Sesame Authors
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you may
 # not use this file except in compliance with the License.  You may obtain
@@ -14,7 +14,7 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-# install-sesame-release.sh: Install a specific release of Contour.
+# install-sesame-release.sh: Install a specific release of Sesame.
 
 set -o pipefail
 set -o errexit
@@ -31,8 +31,8 @@ if [ -z "$VERS" ] ; then
         exit 1
 fi
 
-# Install the Contour version.
-${KUBECTL} apply -f "https://projectcontour.io/quickstart/$VERS/contour.yaml"
+# Install the Sesame version.
+${KUBECTL} apply -f "https://projectsesame.io/quickstart/$VERS/Sesame.yaml"
 
 ${KUBECTL} wait --timeout="${WAITTIME}" -n projectsesame -l app=sesame deployments --for=condition=Available
 ${KUBECTL} wait --timeout="${WAITTIME}" -n projectsesame -l app=envoy pods --for=condition=Ready

@@ -72,7 +72,7 @@ func (s *SnapshotHandler) OnChange(root *dag.DAG) {
 }
 
 // generateNewSnapshot creates a new snapshot against
-// the Contour XDS caches.
+// the Sesame XDS caches.
 func (s *SnapshotHandler) generateNewSnapshot() {
 	// Generate new snapshot version.
 	version := s.newSnapshotVersion()

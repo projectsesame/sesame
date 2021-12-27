@@ -20,7 +20,7 @@ import (
 	"context"
 
 	. "github.com/onsi/ginkgo"
-	contourv1 "github.com/projectcontour/sesame/apis/projectsesame/v1"
+	Sesamev1 "github.com/projectsesame/sesame/apis/projectsesame/v1"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -121,18 +121,18 @@ func testRequiredFieldValidation(namespace string) {
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "spec.includes.name: Required value")
 
-		servicePortRange := &contourv1.HTTPProxy{
+		servicePortRange := &Sesamev1.HTTPProxy{
 			ObjectMeta: metav1.ObjectMeta{
 				Namespace: namespace,
 				Name:      "service-port-range",
 			},
-			Spec: contourv1.HTTPProxySpec{
-				VirtualHost: &contourv1.VirtualHost{
+			Spec: Sesamev1.HTTPProxySpec{
+				VirtualHost: &Sesamev1.VirtualHost{
 					Fqdn: "ports.projectsesame.io",
 				},
-				Routes: []contourv1.Route{
+				Routes: []Sesamev1.Route{
 					{
-						Services: []contourv1.Service{
+						Services: []Sesamev1.Service{
 							{
 								Name: "any-service-name",
 								Port: 80000,

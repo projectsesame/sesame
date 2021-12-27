@@ -33,35 +33,35 @@ func TestIncluster(t *testing.T) {
 }
 
 var _ = BeforeSuite(func() {
-	require.NoError(f.T(), f.Deployment.EnsureResourcesForInclusterContour(false))
+	require.NoError(f.T(), f.Deployment.EnsureResourcesForInclusterSesame(false))
 })
 
 var _ = AfterSuite(func() {
 	// Delete resources individually instead of deleting the entire sesame
 	// namespace as a performance optimization, because deleting non-empty
 	// namespaces can take up to a couple minutes to complete.
-	require.NoError(f.T(), f.Deployment.DeleteResourcesForInclusterContour())
+	require.NoError(f.T(), f.Deployment.DeleteResourcesForInclusterSesame())
 })
 
 var _ = Describe("Incluster", func() {
 	JustBeforeEach(func() {
 		// Create sesame deployment here so we can modify or do other
 		// actions in BeforeEach.
-		require.NoError(f.T(), f.Deployment.EnsureContourDeployment())
-		require.NoError(f.T(), f.Deployment.WaitForContourDeploymentUpdated())
+		require.NoError(f.T(), f.Deployment.EnsureSesameDeployment())
+		require.NoError(f.T(), f.Deployment.WaitForSesameDeploymentUpdated())
 		require.NoError(f.T(), f.Deployment.WaitForEnvoyDaemonSetUpdated())
 	})
 
 	AfterEach(func() {
 		// Clean out sesame after each test.
-		require.NoError(f.T(), f.Deployment.EnsureDeleted(f.Deployment.ContourDeployment))
+		require.NoError(f.T(), f.Deployment.EnsureDeleted(f.Deployment.SesameDeployment))
 	})
 
 	f.NamespacedTest("smoke-test", testSimpleSmoke)
 
 	f.NamespacedTest("leader-election", testLeaderElection)
 
-	f.NamespacedTest("projectsesame-resource-rbac", testProjectcontourResourcesRBAC)
+	f.NamespacedTest("projectsesame-resource-rbac", testprojectsesameResourcesRBAC)
 
 	f.NamespacedTest("ingress-resource-rbac", testIngressResourceRBAC)
 })

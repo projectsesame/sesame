@@ -13,7 +13,7 @@ This will allow the following configuration to be valid.
 
 ## ExternalName Support
 
-Contour looks at the `spec.externalName` field of the service and configures the route to use that DNS name instead of utilizing EDS.
+Sesame looks at the `spec.externalName` field of the service and configures the route to use that DNS name instead of utilizing EDS.
 
 Note that hostnames of `localhost` or some other synonyms will be rejected (because of the aforementioned security issues).
 
@@ -44,4 +44,4 @@ spec:
 
 To proxy to another resource outside the cluster (e.g. A hosted object store bucket for example), configure that external resource in a service type `externalName`.
 Then define a `requestHeadersPolicy` which replaces the `Host` header with the value of the external name service defined previously.
-Finally, if the upstream service is served over TLS, set the `protocol` field on the service to `tls` or annotate the external name service with: `projectcontour.io/upstream-protocol.tls: 443,https`, assuming your service had a port 443 and name `https`.
+Finally, if the upstream service is served over TLS, set the `protocol` field on the service to `tls` or annotate the external name service with: `projectsesame.io/upstream-protocol.tls: 443,https`, assuming your service had a port 443 and name `https`.

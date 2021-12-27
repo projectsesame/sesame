@@ -1,9 +1,9 @@
 toc:
   - title: Introduction
     subfolderitems:
-      - page: Contour Architecture
+      - page: Sesame Architecture
         url: /architecture
-      - page: Contour Philosophy
+      - page: Sesame Philosophy
         link: /resources/philosophy
   - title: Configuration
     subfolderitems:
@@ -23,7 +23,7 @@ toc:
         url: /deploy-options
       - page: Upgrade
         link: /resources/upgrading
-      - page: Enabling TLS between Envoy and Contour
+      - page: Enabling TLS between Envoy and Sesame
         url: /grpc-tls-howto
   - title: Guides
     subfolderitems:

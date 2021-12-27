@@ -1,6 +1,6 @@
 # Website Contributions
 
-The projectcontour.io site is a static HTML site built using the Jekyll platform. Site content is written in markdown with liquid templating to populate content sections such as links.
+The projectsesame.io site is a static HTML site built using the Jekyll platform. Site content is written in markdown with liquid templating to populate content sections such as links.
 
 Contribution [guidelines][8] and [workflows][7] still apply to site contributions.
 
@@ -29,7 +29,7 @@ site
 ├── img
 │   ├── case-study-icons
 │   ├── cert-manager
-│   ├── contour-1.0
+│   ├── Sesame-1.0
 │   ├── contributors
 │   ├── heroes
 │   └── posts
@@ -38,7 +38,7 @@ site
 ├── _layouts # Layout templates to wrap posts and pages
 ├── _metrics # Content is auto generated. Do not modify contents
 ├── _plugins # Ruby files for custom Jekyll plugins
-├── _posts # Contour blog posts
+├── _posts # Sesame blog posts
 ├── _resources # General information pages
 └── _scss # Site style sheets
     ├── bootstrap-4.1.3
@@ -62,13 +62,13 @@ There are several conditions which will determine to correct type of link templa
 
 **Linking to a blog post:**
 
-Use this formation when linking to a projectcontour.io blog post. `{% post_url 2010-07-21-name-of-post %}`
+Use this formation when linking to a projectsesame.io blog post. `{% post_url 2010-07-21-name-of-post %}`
 
 This method will follow any site / page changes to permalinks and Jekyll will validate the link during build.
 
-**Linking to a projectcontour.io page:**
+**Linking to a projectsesame.io page:**
 
-This template is used when linking to another projectcontour.io page. Path to the .md is relative from /site/.
+This template is used when linking to another projectsesame.io page. Path to the .md is relative from /site/.
 `{% link getting-started.md %}` `{% link docs/v1.0.0/deploy-options.md %}`
 
 Jekyll will perform validation against links inserted with this method.
@@ -87,15 +87,15 @@ A key difference between using `{% link %}` and the above method is that `{% lin
 
 Additionally, the above method will not follow any permalink changes or page-specific permalink.
 
-**Linking to the project contour GitHub repo:**
+**Linking to the project Sesame GitHub repo:**
 
-The GitHub metadata plugin populates Jekyll variables with data from GitHub during build. When inserting a link to the Project Contour repository, use the prefix `{{< param github_url >}}`.
+The GitHub metadata plugin populates Jekyll variables with data from GitHub during build. When inserting a link to the Project Sesame repository, use the prefix `{{< param github_url >}}`.
 
 A full list of variables can be found in the [jekyll-github-metadata documentation][4].
 
 **Linking to an external page:**
 
-Links to external pages are done using the full URL, `[1]: https://projectcontour.io` for example.
+Links to external pages are done using the full URL, `[1]: https://projectsesame.io` for example.
 
 ## Proofread and spell check
 

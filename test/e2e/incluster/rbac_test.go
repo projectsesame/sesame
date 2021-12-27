@@ -21,8 +21,8 @@ import (
 	"time"
 
 	. "github.com/onsi/ginkgo"
-	contourv1 "github.com/projectcontour/sesame/apis/projectsesame/v1"
-	contourv1alpha1 "github.com/projectcontour/sesame/apis/projectsesame/v1alpha1"
+	Sesamev1 "github.com/projectsesame/sesame/apis/projectsesame/v1"
+	Sesamev1alpha1 "github.com/projectsesame/sesame/apis/projectsesame/v1alpha1"
 	"github.com/projectsesame/sesame/test/e2e"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -32,8 +32,8 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
-func testProjectcontourResourcesRBAC(namespace string) {
-	Specify("Contour ClusterRole is set up to allow access to projectsesame.io API group resources and resource status", func() {
+func testprojectsesameResourcesRBAC(namespace string) {
+	Specify("Sesame ClusterRole is set up to allow access to projectsesame.io API group resources and resource status", func() {
 		f.Fixtures.Echo.Deploy(namespace, "echo")
 
 		otherNS := "another-" + namespace
@@ -42,13 +42,13 @@ func testProjectcontourResourcesRBAC(namespace string) {
 		f.Certs.CreateSelfSignedCert(otherNS, "delegated-cert", "delegated-cert", "rbac-test.projectsesame.io")
 
 		// HTTPProxy and TLSCertificateDelegation
-		t := &contourv1.TLSCertificateDelegation{
+		t := &Sesamev1.TLSCertificateDelegation{
 			ObjectMeta: metav1.ObjectMeta{
 				Namespace: otherNS,
 				Name:      "rbac",
 			},
-			Spec: contourv1.TLSCertificateDelegationSpec{
-				Delegations: []contourv1.CertificateDelegation{
+			Spec: Sesamev1.TLSCertificateDelegationSpec{
+				Delegations: []Sesamev1.CertificateDelegation{
 					{
 						SecretName:       "delegated-cert",
 						TargetNamespaces: []string{namespace},
@@ -58,21 +58,21 @@ func testProjectcontourResourcesRBAC(namespace string) {
 		}
 		require.NoError(f.T(), f.Client.Create(context.TODO(), t))
 
-		p := &contourv1.HTTPProxy{
+		p := &Sesamev1.HTTPProxy{
 			ObjectMeta: metav1.ObjectMeta{
 				Namespace: namespace,
 				Name:      "rbac",
 			},
-			Spec: contourv1.HTTPProxySpec{
-				VirtualHost: &contourv1.VirtualHost{
+			Spec: Sesamev1.HTTPProxySpec{
+				VirtualHost: &Sesamev1.VirtualHost{
 					Fqdn: "rbac-test.projectsesame.io",
-					TLS: &contourv1.TLS{
+					TLS: &Sesamev1.TLS{
 						SecretName: otherNS + "/delegated-cert",
 					},
 				},
-				Routes: []contourv1.Route{
+				Routes: []Sesamev1.Route{
 					{
-						Services: []contourv1.Service{
+						Services: []Sesamev1.Service{
 							{Name: "invalid-service", Port: 80},
 						},
 					},
@@ -107,13 +107,13 @@ func testProjectcontourResourcesRBAC(namespace string) {
 		assert.Truef(f.T(), ok, "expected %d response code, got %d", 200, res.StatusCode)
 
 		// ExtensionService
-		e := &contourv1alpha1.ExtensionService{
+		e := &Sesamev1alpha1.ExtensionService{
 			ObjectMeta: metav1.ObjectMeta{
 				Namespace: namespace,
 				Name:      "rbac",
 			},
-			Spec: contourv1alpha1.ExtensionServiceSpec{
-				Services: []contourv1alpha1.ExtensionServiceTarget{
+			Spec: Sesamev1alpha1.ExtensionServiceSpec{
+				Services: []Sesamev1alpha1.ExtensionServiceTarget{
 					{Name: "invalid-service", Port: 80},
 				},
 			},
@@ -129,7 +129,7 @@ func testProjectcontourResourcesRBAC(namespace string) {
 }
 
 func testIngressResourceRBAC(namespace string) {
-	Specify("Contour ClusterRole is set up to allow access to Ingress v1 resources and resource status", func() {
+	Specify("Sesame ClusterRole is set up to allow access to Ingress v1 resources and resource status", func() {
 		f.Fixtures.Echo.Deploy(namespace, "echo")
 
 		i := &networkingv1.Ingress{
@@ -168,7 +168,7 @@ func testIngressResourceRBAC(namespace string) {
 		// deployment does not yet utilize the
 		// --ingress-status-address flag.
 		//
-		// Make sure Contour has updated load balancer status
+		// Make sure Sesame has updated load balancer status
 		// assert.Eventually(f.T(), func() bool {
 		// 	if err := f.Client.Get(context.TODO(), client.ObjectKeyFromObject(i), i); err != nil {
 		// 		return false
@@ -176,7 +176,7 @@ func testIngressResourceRBAC(namespace string) {
 		// 	return len(i.Status.LoadBalancer.Ingress) > 0
 		// }, time.Second*5, time.Millisecond*20)
 
-		// Check Contour has read Ingress resource and
+		// Check Sesame has read Ingress resource and
 		// programmed a route.
 		res, ok := f.HTTP.RequestUntil(&e2e.HTTPRequestOpts{
 			Host:      "rbac-test-ingress.projectsesame.io",

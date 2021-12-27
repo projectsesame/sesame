@@ -23,7 +23,7 @@ spec:
 
         violation[{"msg": msg, "other": other_name}] {
           got := input.review.object.spec.virtualhost.fqdn
-          other := data.inventory.namespace[_]["projectcontour.io/v1"]["HTTPProxy"][_]
+          other := data.inventory.namespace[_]["projectsesame.io/v1"]["HTTPProxy"][_]
           other.spec.virtualhost.fqdn = got
 
           not same(other, input.review.object)

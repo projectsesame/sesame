@@ -5,23 +5,23 @@ metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.6.2
   creationTimestamp: null
-  name: contourconfigurations.projectsesame.io
+  name: sesameconfigurations.projectsesame.io
 spec:
   preserveUnknownFields: false
   group: projectsesame.io
   names:
-    kind: ContourConfiguration
-    listKind: ContourConfigurationList
-    plural: contourconfigurations
+    kind: SesameConfiguration
+    listKind: SesameConfigurationList
+    plural: sesameconfigurations
     shortNames:
     - sesameconfig
-    singular: contourconfiguration
+    singular: sesameconfiguration
   scope: Namespaced
   versions:
   - name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: ContourConfiguration is the schema for a Contour instance.
+        description: SesameConfiguration is the schema for a Sesame instance.
         properties:
           apiVersion:
             description: 'APIVersion defines the versioned schema of this representation
@@ -36,8 +36,8 @@ spec:
           metadata:
             type: object
           spec:
-            description: ContourConfigurationSpec represents a configuration of a
-              Contour controller. It contains most of all the options that can be
+            description: SesameConfigurationSpec represents a configuration of a
+              Sesame controller. It contains most of all the options that can be
               customized, the other remaining options being command line flags.
             properties:
               debug:
@@ -45,28 +45,28 @@ spec:
                   kubernetesLogLevel: 0
                   logLevel: info
                 description: Debug contains parameters to enable debug logging and
-                  debug interfaces inside Contour.
+                  debug interfaces inside Sesame.
                 properties:
                   address:
-                    description: Defines the Contour debug address interface.
+                    description: Defines the Sesame debug address interface.
                     type: string
                   kubernetesLogLevel:
                     default: 0
                     description: "KubernetesDebugLogLevel defines the log level which
-                      Contour will use when outputting Kubernetes specific log information.
+                      Sesame will use when outputting Kubernetes specific log information.
                       \n Details: https://github.com/kubernetes/community/blob/master/contributors/devel/sig-instrumentation/logging.md"
                     maximum: 9
                     minimum: 0
                     type: integer
                   logLevel:
-                    description: DebugLogLevel defines the log level which Contour
+                    description: DebugLogLevel defines the log level which Sesame
                       will use when outputting log information.
                     enum:
                     - info
                     - debug
                     type: string
                   port:
-                    description: Defines the Contour debug address port.
+                    description: Defines the Sesame debug address port.
                     type: integer
                 required:
                 - logLevel
@@ -440,7 +440,7 @@ spec:
                         type: string
                       requestTimeout:
                         description: "RequestTimeout sets the client request timeout
-                          globally for Contour. Note that this is a timeout for the
+                          globally for Sesame. Note that this is a timeout for the
                           entire request, not an idle timeout. Omit or set to \"infinity\"
                           to disable the timeout entirely. \n See https://www.envoyproxy.io/docs/envoy/latest/api-v3/extensions/filters/network/http_connection_manager/v3/http_connection_manager.proto#envoy-v3-api-field-extensions-filters-network-http-connection-manager-v3-httpconnectionmanager-request-timeout
                           for more information."
@@ -461,17 +461,17 @@ spec:
                 - https
                 - listener
                 - logging
-                - metrics
+                - metrics3
                 - network
                 - service
                 type: object
               gateway:
                 description: Gateway contains parameters for the gateway-api Gateway
-                  that Contour is configured to serve traffic.
+                  that Sesame is configured to serve traffic.
                 properties:
                   controllerName:
                     default: projectsesame.io/projectsesame/sesame
-                    description: ControllerName is used to determine whether Contour
+                    description: ControllerName is used to determine whether Sesame
                       should reconcile a GatewayClass. The string takes the form of
                       "projectsesame.io/<namespace>/sesame". If unset, the gatewayclass
                       controller will not be started.
@@ -483,7 +483,7 @@ spec:
                 default:
                   address: 0.0.0.0
                   port: 8000
-                description: Health defines the endpoints Contour uses to serve health
+                description: Health defines the endpoints Sesame uses to serve health
                   checks.
                 properties:
                   address:
@@ -520,7 +520,7 @@ spec:
                     - namespace
                     type: object
                   rootNamespaces:
-                    description: Restrict Contour to searching these namespaces for
+                    description: Restrict Sesame to searching these namespaces for
                       root ingress routes.
                     items:
                       type: string
@@ -532,7 +532,7 @@ spec:
                 description: Ingress contains parameters for ingress options.
                 properties:
                   className:
-                    description: Ingress Class Name Contour should use.
+                    description: Ingress Class Name Sesame should use.
                     type: string
                   statusAddress:
                     description: Address to set in Ingress object status.
@@ -542,7 +542,7 @@ spec:
                 default:
                   address: 0.0.0.0
                   port: 8000
-                description: Metrics defines the endpoint Contour uses to serve metrics.
+                description: Metrics defines the endpoint Sesame uses to serve metrics.
                 properties:
                   address:
                     description: Defines the metrics address interface.
@@ -655,12 +655,12 @@ spec:
                 description: XDSServer contains parameters for the xDS server.
                 properties:
                   address:
-                    description: Defines the xDS gRPC API address which Contour will
+                    description: Defines the xDS gRPC API address which Sesame will
                       serve.
                     minLength: 1
                     type: string
                   port:
-                    description: Defines the xDS gRPC API port which Contour will
+                    description: Defines the xDS gRPC API port which Sesame will
                       serve.
                     type: integer
                   tls:
@@ -694,13 +694,13 @@ spec:
                 type: object
             type: object
           status:
-            description: ContourConfigurationStatus defines the observed state of
-              a ContourConfiguration resource.
+            description: SesameConfigurationStatus defines the observed state of
+              a SesameConfiguration resource.
             properties:
               conditions:
-                description: "Conditions contains the current status of the Contour
-                  resource. \n Contour will update a single condition, `Valid`, that
-                  is in normal-true polarity. \n Contour will not modify any other
+                description: "Conditions contains the current status of the Sesame
+                  resource. \n Sesame will update a single condition, `Valid`, that
+                  is in normal-true polarity. \n Sesame will not modify any other
                   Conditions set in this block, in case some other controller wants
                   to add a Condition."
                 items:
@@ -716,11 +716,11 @@ spec:
                     in this CRD set is `Valid`. `Valid` is a positive-polarity condition:
                     when it is `status: true` there are no problems. \n In more detail,
                     `status: true` means that the object is has been ingested into
-                    Contour with no errors. `warnings` may still be present, and will
+                    Sesame with no errors. `warnings` may still be present, and will
                     be indicated in the Reason field. There must be zero entries in
                     the `errors` slice in this case. \n `Valid`, `status: false` means
                     that the object has had one or more fatal errors during processing
-                    into Contour.  The details of the errors will be present under
+                    into Sesame.  The details of the errors will be present under
                     the `errors` field. There must be at least one error in the `errors`
                     slice if `status` is `false`. \n For DetailedConditions of types
                     other than `Valid`, the Condition must be in the negative polarity.
@@ -926,23 +926,23 @@ metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.6.2
   creationTimestamp: null
-  name: contourdeployments.projectsesame.io
+  name: sesamedeployments.projectsesame.io
 spec:
   preserveUnknownFields: false
   group: projectsesame.io
   names:
-    kind: ContourDeployment
-    listKind: ContourDeploymentList
-    plural: contourdeployments
+    kind: SesameDeployment
+    listKind: SesameDeploymentList
+    plural: sesamedeployments
     shortNames:
-    - contourdeploy
-    singular: contourdeployment
+    - sesamedeploy
+    singular: Sesamedeployment
   scope: Namespaced
   versions:
   - name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: ContourDeployment is the schema for a Contour Deployment.
+        description: SesameDeployment is the schema for a Sesame Deployment.
         properties:
           apiVersion:
             description: 'APIVersion defines the versioned schema of this representation
@@ -957,11 +957,11 @@ spec:
           metadata:
             type: object
           spec:
-            description: ContourDeploymentSpec defines the parameters of how a Contour
+            description: SesameDeploymentSpec defines the parameters of how a Sesame
               instance should be configured.
             properties:
               config:
-                description: Config is the config that the instances of Contour are
+                description: Config is the config that the instances of Sesame are
                   to utilize.
                 properties:
                   debug:
@@ -969,28 +969,28 @@ spec:
                       kubernetesLogLevel: 0
                       logLevel: info
                     description: Debug contains parameters to enable debug logging
-                      and debug interfaces inside Contour.
+                      and debug interfaces inside Sesame.
                     properties:
                       address:
-                        description: Defines the Contour debug address interface.
+                        description: Defines the Sesame debug address interface.
                         type: string
                       kubernetesLogLevel:
                         default: 0
                         description: "KubernetesDebugLogLevel defines the log level
-                          which Contour will use when outputting Kubernetes specific
+                          which Sesame will use when outputting Kubernetes specific
                           log information. \n Details: https://github.com/kubernetes/community/blob/master/contributors/devel/sig-instrumentation/logging.md"
                         maximum: 9
                         minimum: 0
                         type: integer
                       logLevel:
-                        description: DebugLogLevel defines the log level which Contour
+                        description: DebugLogLevel defines the log level which Sesame
                           will use when outputting log information.
                         enum:
                         - info
                         - debug
                         type: string
                       port:
-                        description: Defines the Contour debug address port.
+                        description: Defines the Sesame debug address port.
                         type: integer
                     required:
                     - logLevel
@@ -1369,7 +1369,7 @@ spec:
                             type: string
                           requestTimeout:
                             description: "RequestTimeout sets the client request timeout
-                              globally for Contour. Note that this is a timeout for
+                              globally for Sesame. Note that this is a timeout for
                               the entire request, not an idle timeout. Omit or set
                               to \"infinity\" to disable the timeout entirely. \n
                               See https://www.envoyproxy.io/docs/envoy/latest/api-v3/extensions/filters/network/http_connection_manager/v3/http_connection_manager.proto#envoy-v3-api-field-extensions-filters-network-http-connection-manager-v3-httpconnectionmanager-request-timeout
@@ -1397,11 +1397,11 @@ spec:
                     type: object
                   gateway:
                     description: Gateway contains parameters for the gateway-api Gateway
-                      that Contour is configured to serve traffic.
+                      that Sesame is configured to serve traffic.
                     properties:
                       controllerName:
                         default: projectsesame.io/projectsesame/sesame
-                        description: ControllerName is used to determine whether Contour
+                        description: ControllerName is used to determine whether Sesame
                           should reconcile a GatewayClass. The string takes the form
                           of "projectsesame.io/<namespace>/sesame". If unset, the
                           gatewayclass controller will not be started.
@@ -1413,7 +1413,7 @@ spec:
                     default:
                       address: 0.0.0.0
                       port: 8000
-                    description: Health defines the endpoints Contour uses to serve
+                    description: Health defines the endpoints Sesame uses to serve
                       health checks.
                     properties:
                       address:
@@ -1450,7 +1450,7 @@ spec:
                         - namespace
                         type: object
                       rootNamespaces:
-                        description: Restrict Contour to searching these namespaces
+                        description: Restrict Sesame to searching these namespaces
                           for root ingress routes.
                         items:
                           type: string
@@ -1462,7 +1462,7 @@ spec:
                     description: Ingress contains parameters for ingress options.
                     properties:
                       className:
-                        description: Ingress Class Name Contour should use.
+                        description: Ingress Class Name Sesame should use.
                         type: string
                       statusAddress:
                         description: Address to set in Ingress object status.
@@ -1472,7 +1472,7 @@ spec:
                     default:
                       address: 0.0.0.0
                       port: 8000
-                    description: Metrics defines the endpoint Contour uses to serve
+                    description: Metrics defines the endpoint Sesame uses to serve
                       metrics.
                     properties:
                       address:
@@ -1587,12 +1587,12 @@ spec:
                     description: XDSServer contains parameters for the xDS server.
                     properties:
                       address:
-                        description: Defines the xDS gRPC API address which Contour
+                        description: Defines the xDS gRPC API address which Sesame
                           will serve.
                         minLength: 1
                         type: string
                       port:
-                        description: Defines the xDS gRPC API port which Contour will
+                        description: Defines the xDS gRPC API port which Sesame will
                           serve.
                         type: integer
                       tls:
@@ -1627,7 +1627,7 @@ spec:
                 type: object
               replicas:
                 default: 2
-                description: Replicas is the desired number of Contour replicas. If
+                description: Replicas is the desired number of Sesame replicas. If
                   unset, defaults to 2.
                 format: int32
                 minimum: 0
@@ -1636,13 +1636,13 @@ spec:
             - config
             type: object
           status:
-            description: ContourDeploymentStatus defines the observed state of a ContourDeployment
+            description: SesameDeploymentStatus defines the observed state of a SesameDeployment
               resource.
             properties:
               conditions:
-                description: "Conditions contains the current status of the Contour
-                  resource. \n Contour will update a single condition, `Valid`, that
-                  is in normal-true polarity. \n Contour will not modify any other
+                description: "Conditions contains the current status of the Sesame
+                  resource. \n Sesame will update a single condition, `Valid`, that
+                  is in normal-true polarity. \n Sesame will not modify any other
                   Conditions set in this block, in case some other controller wants
                   to add a Condition."
                 items:
@@ -1658,11 +1658,11 @@ spec:
                     in this CRD set is `Valid`. `Valid` is a positive-polarity condition:
                     when it is `status: true` there are no problems. \n In more detail,
                     `status: true` means that the object is has been ingested into
-                    Contour with no errors. `warnings` may still be present, and will
+                    Sesame with no errors. `warnings` may still be present, and will
                     be indicated in the Reason field. There must be zero entries in
                     the `errors` slice in this case. \n `Valid`, `status: false` means
                     that the object has had one or more fatal errors during processing
-                    into Contour.  The details of the errors will be present under
+                    into Sesame.  The details of the errors will be present under
                     the `errors` field. There must be at least one error in the `errors`
                     slice if `status` is `false`. \n For DetailedConditions of types
                     other than `Valid`, the Condition must be in the negative polarity.
@@ -1883,9 +1883,9 @@ spec:
   - name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: ExtensionService is the schema for the Contour extension services
-          API. An ExtensionService resource binds a network service to the Contour
-          API so that Contour API features can be implemented by collaborating components.
+        description: ExtensionService is the schema for the Sesame extension services
+          API. An ExtensionService resource binds a network service to the Sesame
+          API so that Sesame API features can be implemented by collaborating components.
         properties:
           apiVersion:
             description: 'APIVersion defines the versioned schema of this representation
@@ -1966,7 +1966,7 @@ spec:
                 type: string
               protocolVersion:
                 description: This field sets the version of the GRPC protocol that
-                  Envoy uses to send requests to the extension service. Since Contour
+                  Envoy uses to send requests to the extension service. Since Sesame
                   always uses the v3 Envoy API, this is currently fixed at "v3". However,
                   other protocol options will be available in future.
                 enum:
@@ -2048,8 +2048,8 @@ spec:
             properties:
               conditions:
                 description: "Conditions contains the current status of the ExtensionService
-                  resource. \n Contour will update a single condition, `Valid`, that
-                  is in normal-true polarity. \n Contour will not modify any other
+                  resource. \n Sesame will update a single condition, `Valid`, that
+                  is in normal-true polarity. \n Sesame will not modify any other
                   Conditions set in this block, in case some other controller wants
                   to add a Condition."
                 items:
@@ -2065,11 +2065,11 @@ spec:
                     in this CRD set is `Valid`. `Valid` is a positive-polarity condition:
                     when it is `status: true` there are no problems. \n In more detail,
                     `status: true` means that the object is has been ingested into
-                    Contour with no errors. `warnings` may still be present, and will
+                    Sesame with no errors. `warnings` may still be present, and will
                     be indicated in the Reason field. There must be zero entries in
                     the `errors` slice in this case. \n `Valid`, `status: false` means
                     that the object has had one or more fatal errors during processing
-                    into Contour.  The details of the errors will be present under
+                    into Sesame.  The details of the errors will be present under
                     the `errors` field. There must be at least one error in the `errors`
                     slice if `status` is `false`. \n For DetailedConditions of types
                     other than `Valid`, the Condition must be in the negative polarity.
@@ -3626,7 +3626,7 @@ spec:
                           to the upstream service even if the authorization server
                           fails to respond. This field should not be set in most cases.
                           It is intended for use only while migrating applications
-                          from internal authorization to Contour external authorization.
+                          from internal authorization to Sesame external authorization.
                         type: boolean
                       responseTimeout:
                         description: ResponseTimeout configures maximum time to wait
@@ -3950,7 +3950,7 @@ spec:
                           be validated (i.e.    validation required or skipped). \n
                           Note: Setting client certificate validation to be skipped
                           should be only used in conjunction with an external authorization
-                          server that performs client validation as Contour will ensure
+                          server that performs client validation as Sesame will ensure
                           client certificates are passed along."
                         properties:
                           caSecret:
@@ -4011,10 +4011,10 @@ spec:
             properties:
               conditions:
                 description: "Conditions contains information about the current status
-                  of the HTTPProxy, in an upstream-friendly container. \n Contour
+                  of the HTTPProxy, in an upstream-friendly container. \n Sesame
                   will update a single condition, `Valid`, that is in normal-true
                   polarity. That is, when `currentStatus` is `valid`, the `Valid`
-                  condition will be `status: true`, and vice versa. \n Contour will
+                  condition will be `status: true`, and vice versa. \n Sesame will
                   leave untouched any other Conditions set in this block, in case
                   some other controller wants to add a Condition. \n If you are another
                   controller owner and wish to add a condition, you *should* namespace
@@ -4032,11 +4032,11 @@ spec:
                     in this CRD set is `Valid`. `Valid` is a positive-polarity condition:
                     when it is `status: true` there are no problems. \n In more detail,
                     `status: true` means that the object is has been ingested into
-                    Contour with no errors. `warnings` may still be present, and will
+                    Sesame with no errors. `warnings` may still be present, and will
                     be indicated in the Reason field. There must be zero entries in
                     the `errors` slice in this case. \n `Valid`, `status: false` means
                     that the object has had one or more fatal errors during processing
-                    into Contour.  The details of the errors will be present under
+                    into Sesame.  The details of the errors will be present under
                     the `errors` field. There must be at least one error in the `errors`
                     slice if `status` is `false`. \n For DetailedConditions of types
                     other than `Valid`, the Condition must be in the negative polarity.
@@ -4371,10 +4371,10 @@ spec:
             properties:
               conditions:
                 description: "Conditions contains information about the current status
-                  of the HTTPProxy, in an upstream-friendly container. \n Contour
+                  of the HTTPProxy, in an upstream-friendly container. \n Sesame
                   will update a single condition, `Valid`, that is in normal-true
                   polarity. That is, when `currentStatus` is `valid`, the `Valid`
-                  condition will be `status: true`, and vice versa. \n Contour will
+                  condition will be `status: true`, and vice versa. \n Sesame will
                   leave untouched any other Conditions set in this block, in case
                   some other controller wants to add a Condition. \n If you are another
                   controller owner and wish to add a condition, you *should* namespace
@@ -4392,11 +4392,11 @@ spec:
                     in this CRD set is `Valid`. `Valid` is a positive-polarity condition:
                     when it is `status: true` there are no problems. \n In more detail,
                     `status: true` means that the object is has been ingested into
-                    Contour with no errors. `warnings` may still be present, and will
+                    Sesame with no errors. `warnings` may still be present, and will
                     be indicated in the Reason field. There must be zero entries in
                     the `errors` slice in this case. \n `Valid`, `status: false` means
                     that the object has had one or more fatal errors during processing
-                    into Contour.  The details of the errors will be present under
+                    into Sesame.  The details of the errors will be present under
                     the `errors` field. There must be at least one error in the `errors`
                     slice if `status` is `false`. \n For DetailedConditions of types
                     other than `Valid`, the Condition must be in the negative polarity.

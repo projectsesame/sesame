@@ -6,7 +6,7 @@ This document outlines how to add support for authentication of external clients
 
 ## Goals
 
-- Allow Contour to be used to protect the backend services from access of unauthorized external clients.
+- Allow Sesame to be used to protect the backend services from access of unauthorized external clients.
 - Allow authentication of external clients by having Envoy validate that client certificates are signed by trusted CA (Certificate Authority).
 - Allow configuration of trusted CA certificate(s) for validating the client certificates.
 
@@ -40,7 +40,7 @@ At a high level following CRD change is proposed:
 Sample YAML
 
 ```
-apiVersion: projectcontour.io/v1
+apiVersion: projectsesame.io/v1
 kind: HTTPProxy
 metadata:
   name: client-validation-example

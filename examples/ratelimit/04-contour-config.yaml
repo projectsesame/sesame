@@ -4,8 +4,8 @@ metadata:
   name: sesame
   namespace: projectsesame
 data:
-  contour.yaml: |
+  Sesame.yaml: |
     rateLimitService:
-      extensionService: projectcontour/ratelimit
-      domain: contour
+      extensionService: projectsesame/ratelimit
+      domain: Sesame
       failOpen: false

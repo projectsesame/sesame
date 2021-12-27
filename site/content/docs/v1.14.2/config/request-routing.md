@@ -287,7 +287,7 @@ In this example, if a client request contains the `X-Some-Header` header, the va
 ## Session Affinity
 
 Session affinity, also known as _sticky sessions_, is a load balancing strategy whereby a sequence of requests from a single client are consistently routed to the same application backend.
-Contour supports session affinity on a per route basis with `loadBalancerPolicy` `strategy: Cookie`.
+Sesame supports session affinity on a per route basis with `loadBalancerPolicy` `strategy: Cookie`.
 
 ```yaml
 # httpproxy-sticky-sessions.yaml

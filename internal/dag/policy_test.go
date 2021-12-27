@@ -413,7 +413,7 @@ func TestHeadersPolicy(t *testing.T) {
 			hp: &sesame_api_v1.HeadersPolicy{
 				Set: []sesame_api_v1.HeaderValue{{
 					Name:  "l5d-dst-override",
-					Value: "%CONTOUR_SERVICE_NAME%.%CONTOUR_NAMESPACE%.svc.cluster.local:%CONTOUR_SERVICE_PORT%",
+					Value: "%Sesame_SERVICE_NAME%.%Sesame_NAMESPACE%.svc.cluster.local:%Sesame_SERVICE_PORT%",
 				}},
 			},
 			want: HeadersPolicy{
@@ -484,9 +484,9 @@ func TestHeadersPolicy(t *testing.T) {
 	}
 
 	dynamicHeaders := map[string]string{
-		"CONTOUR_NAMESPACE":    "myns",
-		"CONTOUR_SERVICE_NAME": "myservice",
-		"CONTOUR_SERVICE_PORT": "80",
+		"Sesame_NAMESPACE":    "myns",
+		"Sesame_SERVICE_NAME": "myservice",
+		"Sesame_SERVICE_PORT": "80",
 	}
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
@@ -875,7 +875,7 @@ func TestValidateHeaderAlteration(t *testing.T) {
 			Remove: []string{"K-Nada"},
 		},
 		dyn: map[string]string{
-			"CONTOUR_NAMESPACE": "myns",
+			"Sesame_NAMESPACE": "myns",
 		},
 		dhp: nil,
 		want: &HeadersPolicy{
@@ -897,7 +897,7 @@ func TestValidateHeaderAlteration(t *testing.T) {
 			}},
 		},
 		dyn: map[string]string{
-			"CONTOUR_NAMESPACE": "myns",
+			"Sesame_NAMESPACE": "myns",
 		},
 		dhp:     nil,
 		wantErr: errors.New(`duplicate header addition: "K-Foo"`),
@@ -907,7 +907,7 @@ func TestValidateHeaderAlteration(t *testing.T) {
 			Remove: []string{"K-Foo", "k-foo"},
 		},
 		dyn: map[string]string{
-			"CONTOUR_NAMESPACE": "myns",
+			"Sesame_NAMESPACE": "myns",
 		},
 		dhp:     nil,
 		wantErr: errors.New(`duplicate header removal: "K-Foo"`),
@@ -920,7 +920,7 @@ func TestValidateHeaderAlteration(t *testing.T) {
 			}},
 		},
 		dyn: map[string]string{
-			"CONTOUR_NAMESPACE": "myns",
+			"Sesame_NAMESPACE": "myns",
 		},
 		dhp:     nil,
 		wantErr: errors.New(`invalid set header "  K-Foo": [a valid HTTP header must consist of alphanumeric characters or '-' (e.g. 'X-Header-Name', regex used for validation is '[-A-Za-z0-9]+')]`),
@@ -930,7 +930,7 @@ func TestValidateHeaderAlteration(t *testing.T) {
 			Set: []sesame_api_v1.HeaderValue{},
 		},
 		dyn: map[string]string{
-			"CONTOUR_NAMESPACE": "myns",
+			"Sesame_NAMESPACE": "myns",
 		},
 		dhp: &HeadersPolicy{
 			Set: map[string]string{
@@ -944,7 +944,7 @@ func TestValidateHeaderAlteration(t *testing.T) {
 			Remove: []string{"  K-Foo"},
 		},
 		dyn: map[string]string{
-			"CONTOUR_NAMESPACE": "myns",
+			"Sesame_NAMESPACE": "myns",
 		},
 		dhp:     nil,
 		wantErr: errors.New(`invalid remove header "  K-Foo": [a valid HTTP header must consist of alphanumeric characters or '-' (e.g. 'X-Header-Name', regex used for validation is '[-A-Za-z0-9]+')]`),
@@ -954,7 +954,7 @@ func TestValidateHeaderAlteration(t *testing.T) {
 			Remove: []string{"  K-Foo"},
 		},
 		dyn: map[string]string{
-			"CONTOUR_NAMESPACE": "myns",
+			"Sesame_NAMESPACE": "myns",
 		},
 		dhp: &HeadersPolicy{
 			Remove: []string{"  K-Foo"},
@@ -969,7 +969,7 @@ func TestValidateHeaderAlteration(t *testing.T) {
 			}},
 		},
 		dyn: map[string]string{
-			"CONTOUR_NAMESPACE": "myns",
+			"Sesame_NAMESPACE": "myns",
 		},
 		dhp:     nil,
 		wantErr: errors.New(`rewriting "Host" header is not supported`),
@@ -982,7 +982,7 @@ func TestValidateHeaderAlteration(t *testing.T) {
 			}},
 		},
 		dyn: map[string]string{
-			"CONTOUR_NAMESPACE": "myns",
+			"Sesame_NAMESPACE": "myns",
 		},
 		dhp: &HeadersPolicy{
 			Set: map[string]string{
@@ -1005,7 +1005,7 @@ func TestValidateHeaderAlteration(t *testing.T) {
 			}},
 		},
 		dyn: map[string]string{
-			"CONTOUR_NAMESPACE": "myns",
+			"Sesame_NAMESPACE": "myns",
 		},
 		dhp: nil,
 		want: &HeadersPolicy{
@@ -1020,13 +1020,13 @@ func TestValidateHeaderAlteration(t *testing.T) {
 		in: &sesame_api_v1.HeadersPolicy{
 			Set: []sesame_api_v1.HeaderValue{{
 				Name:  "l5d-dst-override",
-				Value: "%CONTOUR_SERVICE_NAME%.%CONTOUR_NAMESPACE%.svc.cluster.local:%CONTOUR_SERVICE_PORT%",
+				Value: "%Sesame_SERVICE_NAME%.%Sesame_NAMESPACE%.svc.cluster.local:%Sesame_SERVICE_PORT%",
 			}},
 		},
 		dyn: map[string]string{
-			"CONTOUR_NAMESPACE":    "myns",
-			"CONTOUR_SERVICE_NAME": "myservice",
-			"CONTOUR_SERVICE_PORT": "80",
+			"Sesame_NAMESPACE":    "myns",
+			"Sesame_SERVICE_NAME": "myservice",
+			"Sesame_SERVICE_PORT": "80",
 		},
 		dhp: nil,
 		want: &HeadersPolicy{
@@ -1039,16 +1039,16 @@ func TestValidateHeaderAlteration(t *testing.T) {
 		in: &sesame_api_v1.HeadersPolicy{
 			Set: []sesame_api_v1.HeaderValue{{
 				Name:  "l5d-dst-override",
-				Value: "%CONTOUR_SERVICE_NAME%.%CONTOUR_NAMESPACE%.svc.cluster.local:%CONTOUR_SERVICE_PORT%",
+				Value: "%Sesame_SERVICE_NAME%.%Sesame_NAMESPACE%.svc.cluster.local:%Sesame_SERVICE_PORT%",
 			}},
 		},
 		dyn: map[string]string{
-			"CONTOUR_NAMESPACE": "myns",
+			"Sesame_NAMESPACE": "myns",
 		},
 		dhp: nil,
 		want: &HeadersPolicy{
 			Set: map[string]string{
-				"L5d-Dst-Override": "%%CONTOUR_SERVICE_NAME%%.myns.svc.cluster.local:%%CONTOUR_SERVICE_PORT%%",
+				"L5d-Dst-Override": "%%Sesame_SERVICE_NAME%%.myns.svc.cluster.local:%%Sesame_SERVICE_PORT%%",
 			},
 		},
 	}, {
@@ -1060,7 +1060,7 @@ func TestValidateHeaderAlteration(t *testing.T) {
 			}},
 		},
 		dyn: map[string]string{
-			"CONTOUR_NAMESPACE": "myns",
+			"Sesame_NAMESPACE": "myns",
 		},
 		dhp: &HeadersPolicy{
 			Set: map[string]string{
@@ -1084,7 +1084,7 @@ func TestValidateHeaderAlteration(t *testing.T) {
 			}},
 		},
 		dyn: map[string]string{
-			"CONTOUR_NAMESPACE": "myns",
+			"Sesame_NAMESPACE": "myns",
 		},
 		dhp: &HeadersPolicy{
 			Set: map[string]string{

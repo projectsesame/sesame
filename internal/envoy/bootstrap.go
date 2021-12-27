@@ -11,7 +11,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Package envoy contains APIs for translating between Contour
+// Package envoy contains APIs for translating between Sesame
 // objects and Envoy configuration APIs and types.
 package envoy
 
@@ -62,7 +62,7 @@ type BootstrapConfig struct {
 	// Defaults to "v3"
 	XDSResourceVersion config.ResourceVersion
 
-	// Namespace is the namespace where Contour is running
+	// Namespace is the namespace where Sesame is running
 	Namespace string
 
 	// GrpcCABundle is the filename that contains a CA certificate chain that can
@@ -87,7 +87,7 @@ type BootstrapConfig struct {
 	// testing only.
 	SkipFilePathCheck bool
 
-	// DNSLookupFamily specifies DNS Resolution Policy to use for Envoy -> Contour cluster name lookup.
+	// DNSLookupFamily specifies DNS Resolution Policy to use for Envoy -> Sesame cluster name lookup.
 	// Either v4, v6 or auto.
 	DNSLookupFamily string
 }

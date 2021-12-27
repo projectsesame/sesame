@@ -21,9 +21,9 @@ import (
 
 	envoy_route_v3 "github.com/envoyproxy/go-control-plane/envoy/config/route/v3"
 	envoy_discovery_v3 "github.com/envoyproxy/go-control-plane/envoy/service/discovery/v3"
-	contour_api_v1 "github.com/projectcontour/sesame/apis/projectsesame/v1"
-	envoy_v3 "github.com/projectcontour/sesame/internal/envoy/v3"
+	Sesame_api_v1 "github.com/projectsesame/sesame/apis/projectsesame/v1"
 	"github.com/projectsesame/sesame/internal/dag"
+	envoy_v3 "github.com/projectsesame/sesame/internal/envoy/v3"
 	"github.com/projectsesame/sesame/internal/featuretests"
 	"github.com/projectsesame/sesame/internal/fixture"
 	v1 "k8s.io/api/core/v1"
@@ -1055,18 +1055,18 @@ func TestRDSAssertNoDataRaceDuringInsertAndStream(t *testing.T) {
 
 	go func() {
 		for i := 0; i < 100; i++ {
-			rh.OnAdd(&contour_api_v1.HTTPProxy{
+			rh.OnAdd(&Sesame_api_v1.HTTPProxy{
 				ObjectMeta: metav1.ObjectMeta{
 					Name:      fmt.Sprintf("simple-%d", i),
 					Namespace: "default",
 				},
-				Spec: contour_api_v1.HTTPProxySpec{
-					VirtualHost: &contour_api_v1.VirtualHost{Fqdn: fmt.Sprintf("example-%d.com", i)},
-					Routes: []contour_api_v1.Route{{
-						Conditions: []contour_api_v1.MatchCondition{{
+				Spec: Sesame_api_v1.HTTPProxySpec{
+					VirtualHost: &Sesame_api_v1.VirtualHost{Fqdn: fmt.Sprintf("example-%d.com", i)},
+					Routes: []Sesame_api_v1.Route{{
+						Conditions: []Sesame_api_v1.MatchCondition{{
 							Prefix: "/",
 						}},
-						Services: []contour_api_v1.Service{{
+						Services: []Sesame_api_v1.Service{{
 							Name: "kuard",
 							Port: 80,
 						}},
@@ -1165,23 +1165,23 @@ func TestRouteWithTLS(t *testing.T) {
 		Data: featuretests.Secretdata(featuretests.CERTIFICATE, featuretests.RSA_PRIVATE_KEY),
 	})
 
-	p1 := &contour_api_v1.HTTPProxy{
+	p1 := &Sesame_api_v1.HTTPProxy{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "simple",
 			Namespace: "default",
 		},
-		Spec: contour_api_v1.HTTPProxySpec{
-			VirtualHost: &contour_api_v1.VirtualHost{
+		Spec: Sesame_api_v1.HTTPProxySpec{
+			VirtualHost: &Sesame_api_v1.VirtualHost{
 				Fqdn: "test2.test.com",
-				TLS: &contour_api_v1.TLS{
+				TLS: &Sesame_api_v1.TLS{
 					SecretName: "example-tls",
 				},
 			},
-			Routes: []contour_api_v1.Route{{
-				Conditions: []contour_api_v1.MatchCondition{{
+			Routes: []Sesame_api_v1.Route{{
+				Conditions: []Sesame_api_v1.MatchCondition{{
 					Prefix: "/a",
 				}},
-				Services: []contour_api_v1.Service{{
+				Services: []Sesame_api_v1.Service{{
 					Name: "kuard",
 					Port: 80,
 				}},
@@ -1236,31 +1236,31 @@ func TestRouteWithTLS_InsecurePaths(t *testing.T) {
 		Data: featuretests.Secretdata(featuretests.CERTIFICATE, featuretests.RSA_PRIVATE_KEY),
 	})
 
-	p1 := &contour_api_v1.HTTPProxy{
+	p1 := &Sesame_api_v1.HTTPProxy{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "simple",
 			Namespace: "default",
 		},
-		Spec: contour_api_v1.HTTPProxySpec{
-			VirtualHost: &contour_api_v1.VirtualHost{
+		Spec: Sesame_api_v1.HTTPProxySpec{
+			VirtualHost: &Sesame_api_v1.VirtualHost{
 				Fqdn: "test2.test.com",
-				TLS: &contour_api_v1.TLS{
+				TLS: &Sesame_api_v1.TLS{
 					SecretName: "example-tls",
 				},
 			},
-			Routes: []contour_api_v1.Route{{
-				Conditions: []contour_api_v1.MatchCondition{{
+			Routes: []Sesame_api_v1.Route{{
+				Conditions: []Sesame_api_v1.MatchCondition{{
 					Prefix: "/insecure",
 				}},
 				PermitInsecure: true,
-				Services: []contour_api_v1.Service{{Name: "kuard",
+				Services: []Sesame_api_v1.Service{{Name: "kuard",
 					Port: 80,
 				}},
 			}, {
-				Conditions: []contour_api_v1.MatchCondition{{
+				Conditions: []Sesame_api_v1.MatchCondition{{
 					Prefix: "/secure",
 				}},
-				Services: []contour_api_v1.Service{{
+				Services: []Sesame_api_v1.Service{{
 					Name: "svc2",
 					Port: 80,
 				}},
@@ -1332,32 +1332,32 @@ func TestRouteWithTLS_InsecurePaths_DisablePermitInsecureTrue(t *testing.T) {
 		Data: featuretests.Secretdata(featuretests.CERTIFICATE, featuretests.RSA_PRIVATE_KEY),
 	})
 
-	p1 := &contour_api_v1.HTTPProxy{
+	p1 := &Sesame_api_v1.HTTPProxy{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "simple",
 			Namespace: "default",
 		},
-		Spec: contour_api_v1.HTTPProxySpec{
-			VirtualHost: &contour_api_v1.VirtualHost{
+		Spec: Sesame_api_v1.HTTPProxySpec{
+			VirtualHost: &Sesame_api_v1.VirtualHost{
 				Fqdn: "test2.test.com",
-				TLS: &contour_api_v1.TLS{
+				TLS: &Sesame_api_v1.TLS{
 					SecretName: "example-tls",
 				},
 			},
-			Routes: []contour_api_v1.Route{{
-				Conditions: []contour_api_v1.MatchCondition{{
+			Routes: []Sesame_api_v1.Route{{
+				Conditions: []Sesame_api_v1.MatchCondition{{
 					Prefix: "/insecure",
 				}},
 				PermitInsecure: true,
-				Services: []contour_api_v1.Service{{
+				Services: []Sesame_api_v1.Service{{
 					Name: "kuard",
 					Port: 80,
 				}},
 			}, {
-				Conditions: []contour_api_v1.MatchCondition{{
+				Conditions: []Sesame_api_v1.MatchCondition{{
 					Prefix: "/secure",
 				}},
-				Services: []contour_api_v1.Service{{
+				Services: []Sesame_api_v1.Service{{
 					Name: "svc2",
 					Port: 80,
 				}},
@@ -1488,7 +1488,7 @@ func TestRoutePrefixRouteRegex(t *testing.T) {
 	})
 }
 
-func assertRDS(t *testing.T, c *Contour, versioninfo string, ingressHTTP, ingressHTTPS []*envoy_route_v3.VirtualHost) {
+func assertRDS(t *testing.T, c *Sesame, versioninfo string, ingressHTTP, ingressHTTPS []*envoy_route_v3.VirtualHost) {
 	t.Helper()
 
 	routes := []*envoy_route_v3.RouteConfiguration{
@@ -1543,21 +1543,21 @@ func TestHTTPProxyRouteWithTLS(t *testing.T) {
 		Data: featuretests.Secretdata(featuretests.CERTIFICATE, featuretests.RSA_PRIVATE_KEY),
 	})
 
-	proxy1 := &contour_api_v1.HTTPProxy{
+	proxy1 := &Sesame_api_v1.HTTPProxy{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "simple",
 			Namespace: "default",
 		},
-		Spec: contour_api_v1.HTTPProxySpec{
-			VirtualHost: &contour_api_v1.VirtualHost{
+		Spec: Sesame_api_v1.HTTPProxySpec{
+			VirtualHost: &Sesame_api_v1.VirtualHost{
 				Fqdn: "test2.test.com",
-				TLS: &contour_api_v1.TLS{
+				TLS: &Sesame_api_v1.TLS{
 					SecretName: "example-tls",
 				},
 			},
-			Routes: []contour_api_v1.Route{{
+			Routes: []Sesame_api_v1.Route{{
 				Conditions: conditions(prefixCondition("/a")),
-				Services: []contour_api_v1.Service{{
+				Services: []Sesame_api_v1.Service{{
 					Name: "kuard",
 					Port: 80,
 				}},
@@ -1612,27 +1612,27 @@ func TestHTTPProxyRouteWithTLS_InsecurePaths(t *testing.T) {
 		Data: featuretests.Secretdata(featuretests.CERTIFICATE, featuretests.RSA_PRIVATE_KEY),
 	})
 
-	proxy1 := &contour_api_v1.HTTPProxy{
+	proxy1 := &Sesame_api_v1.HTTPProxy{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "simple",
 			Namespace: "default",
 		},
-		Spec: contour_api_v1.HTTPProxySpec{
-			VirtualHost: &contour_api_v1.VirtualHost{
+		Spec: Sesame_api_v1.HTTPProxySpec{
+			VirtualHost: &Sesame_api_v1.VirtualHost{
 				Fqdn: "test2.test.com",
-				TLS: &contour_api_v1.TLS{
+				TLS: &Sesame_api_v1.TLS{
 					SecretName: "example-tls",
 				},
 			},
-			Routes: []contour_api_v1.Route{{
+			Routes: []Sesame_api_v1.Route{{
 				Conditions:     conditions(prefixCondition("/insecure")),
 				PermitInsecure: true,
-				Services: []contour_api_v1.Service{{Name: "kuard",
+				Services: []Sesame_api_v1.Service{{Name: "kuard",
 					Port: 80,
 				}},
 			}, {
 				Conditions: conditions(prefixCondition("/secure")),
-				Services: []contour_api_v1.Service{{
+				Services: []Sesame_api_v1.Service{{
 					Name: "svc2",
 					Port: 80,
 				}},
@@ -1704,28 +1704,28 @@ func TestHTTPProxyRouteWithTLS_InsecurePaths_DisablePermitInsecureTrue(t *testin
 		Data: featuretests.Secretdata(featuretests.CERTIFICATE, featuretests.RSA_PRIVATE_KEY),
 	})
 
-	proxy1 := &contour_api_v1.HTTPProxy{
+	proxy1 := &Sesame_api_v1.HTTPProxy{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "simple",
 			Namespace: "default",
 		},
-		Spec: contour_api_v1.HTTPProxySpec{
-			VirtualHost: &contour_api_v1.VirtualHost{
+		Spec: Sesame_api_v1.HTTPProxySpec{
+			VirtualHost: &Sesame_api_v1.VirtualHost{
 				Fqdn: "test2.test.com",
-				TLS: &contour_api_v1.TLS{
+				TLS: &Sesame_api_v1.TLS{
 					SecretName: "example-tls",
 				},
 			},
-			Routes: []contour_api_v1.Route{{
+			Routes: []Sesame_api_v1.Route{{
 				Conditions:     conditions(prefixCondition("/insecure")),
 				PermitInsecure: true,
-				Services: []contour_api_v1.Service{{
+				Services: []Sesame_api_v1.Service{{
 					Name: "kuard",
 					Port: 80,
 				}},
 			}, {
 				Conditions: conditions(prefixCondition("/secure")),
-				Services: []contour_api_v1.Service{{
+				Services: []Sesame_api_v1.Service{{
 					Name: "svc2",
 					Port: 80,
 				}},
@@ -1777,17 +1777,17 @@ func TestRDSHTTPProxyRootCannotDelegateToAnotherRoot(t *testing.T) {
 		WithPorts(v1.ServicePort{Name: "http", Port: 80})
 	rh.OnAdd(svc1)
 
-	child := &contour_api_v1.HTTPProxy{
+	child := &Sesame_api_v1.HTTPProxy{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "blog",
 			Namespace: svc1.Namespace,
 		},
-		Spec: contour_api_v1.HTTPProxySpec{
-			VirtualHost: &contour_api_v1.VirtualHost{
+		Spec: Sesame_api_v1.HTTPProxySpec{
+			VirtualHost: &Sesame_api_v1.VirtualHost{
 				Fqdn: "www.containersteve.com",
 			},
-			Routes: []contour_api_v1.Route{{
-				Services: []contour_api_v1.Service{{
+			Routes: []Sesame_api_v1.Route{{
+				Services: []Sesame_api_v1.Service{{
 					Name: svc1.Name,
 					Port: 80,
 				}},
@@ -1796,16 +1796,16 @@ func TestRDSHTTPProxyRootCannotDelegateToAnotherRoot(t *testing.T) {
 	}
 	rh.OnAdd(child)
 
-	root := &contour_api_v1.HTTPProxy{
+	root := &Sesame_api_v1.HTTPProxy{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "root-blog",
 			Namespace: "default",
 		},
-		Spec: contour_api_v1.HTTPProxySpec{
-			VirtualHost: &contour_api_v1.VirtualHost{
+		Spec: Sesame_api_v1.HTTPProxySpec{
+			VirtualHost: &Sesame_api_v1.VirtualHost{
 				Fqdn: "blog.containersteve.com",
 			},
-			Includes: []contour_api_v1.Include{{
+			Includes: []Sesame_api_v1.Include{{
 				Name:      child.Name,
 				Namespace: child.Namespace,
 			}},
@@ -1848,21 +1848,21 @@ func TestRDSHTTPProxyDuplicateIncludeConditions(t *testing.T) {
 		WithPorts(v1.ServicePort{Name: "http", Port: 8080, TargetPort: intstr.FromInt(8080)})
 	rh.OnAdd(svc3)
 
-	proxyRoot := &contour_api_v1.HTTPProxy{
+	proxyRoot := &Sesame_api_v1.HTTPProxy{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "root",
 			Namespace: svc1.Namespace,
 		},
-		Spec: contour_api_v1.HTTPProxySpec{
-			VirtualHost: &contour_api_v1.VirtualHost{
+		Spec: Sesame_api_v1.HTTPProxySpec{
+			VirtualHost: &Sesame_api_v1.VirtualHost{
 				Fqdn: "example.com",
 			},
-			Includes: []contour_api_v1.Include{{
+			Includes: []Sesame_api_v1.Include{{
 				Name:      "blogteama",
 				Namespace: "teama",
-				Conditions: []contour_api_v1.MatchCondition{{
+				Conditions: []Sesame_api_v1.MatchCondition{{
 					Prefix: "/blog",
-					Header: &contour_api_v1.HeaderMatchCondition{
+					Header: &Sesame_api_v1.HeaderMatchCondition{
 						Name:     "x-header",
 						Contains: "abc",
 					},
@@ -1870,19 +1870,19 @@ func TestRDSHTTPProxyDuplicateIncludeConditions(t *testing.T) {
 			}, {
 				Name:      "blogteama",
 				Namespace: "teamb",
-				Conditions: []contour_api_v1.MatchCondition{{
+				Conditions: []Sesame_api_v1.MatchCondition{{
 					Prefix: "/blog",
-					Header: &contour_api_v1.HeaderMatchCondition{
+					Header: &Sesame_api_v1.HeaderMatchCondition{
 						Name:     "x-header",
 						Contains: "abc",
 					},
 				}},
 			}},
-			Routes: []contour_api_v1.Route{{
-				Conditions: []contour_api_v1.MatchCondition{{
+			Routes: []Sesame_api_v1.Route{{
+				Conditions: []Sesame_api_v1.MatchCondition{{
 					Prefix: "/",
 				}},
-				Services: []contour_api_v1.Service{{
+				Services: []Sesame_api_v1.Service{{
 					Name: svc1.Name,
 					Port: 8080,
 				}},
@@ -1890,14 +1890,14 @@ func TestRDSHTTPProxyDuplicateIncludeConditions(t *testing.T) {
 		},
 	}
 
-	proxyChildA := &contour_api_v1.HTTPProxy{
+	proxyChildA := &Sesame_api_v1.HTTPProxy{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "blogteama",
 			Namespace: "teama",
 		},
-		Spec: contour_api_v1.HTTPProxySpec{
-			Routes: []contour_api_v1.Route{{
-				Services: []contour_api_v1.Service{{
+		Spec: Sesame_api_v1.HTTPProxySpec{
+			Routes: []Sesame_api_v1.Route{{
+				Services: []Sesame_api_v1.Service{{
 					Name: svc2.Name,
 					Port: 8080,
 				}},
@@ -1905,14 +1905,14 @@ func TestRDSHTTPProxyDuplicateIncludeConditions(t *testing.T) {
 		},
 	}
 
-	proxyChildB := &contour_api_v1.HTTPProxy{
+	proxyChildB := &Sesame_api_v1.HTTPProxy{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "blogteamb",
 			Namespace: "teamb",
 		},
-		Spec: contour_api_v1.HTTPProxySpec{
-			Routes: []contour_api_v1.Route{{
-				Services: []contour_api_v1.Service{{
+		Spec: Sesame_api_v1.HTTPProxySpec{
+			Routes: []Sesame_api_v1.Route{{
+				Services: []Sesame_api_v1.Service{{
 					Name: svc3.Name,
 					Port: 8080,
 				}},
@@ -1935,10 +1935,10 @@ func TestRDSHTTPProxyDuplicateIncludeConditions(t *testing.T) {
 
 func virtualhosts(v ...*envoy_route_v3.VirtualHost) []*envoy_route_v3.VirtualHost { return v }
 
-func conditions(c ...contour_api_v1.MatchCondition) []contour_api_v1.MatchCondition { return c }
+func conditions(c ...Sesame_api_v1.MatchCondition) []Sesame_api_v1.MatchCondition { return c }
 
-func prefixCondition(prefix string) contour_api_v1.MatchCondition {
-	return contour_api_v1.MatchCondition{
+func prefixCondition(prefix string) Sesame_api_v1.MatchCondition {
+	return Sesame_api_v1.MatchCondition{
 		Prefix: prefix,
 	}
 }

@@ -25,8 +25,8 @@ import (
 	envoy_extensions_upstream_http_v3 "github.com/envoyproxy/go-control-plane/envoy/extensions/upstreams/http/v3"
 	envoy_discovery_v3 "github.com/envoyproxy/go-control-plane/envoy/service/discovery/v3"
 	"github.com/golang/protobuf/ptypes/any"
-	contour_api_v1 "github.com/projectcontour/sesame/apis/projectsesame/v1"
-	envoy_v3 "github.com/projectcontour/sesame/internal/envoy/v3"
+	Sesame_api_v1 "github.com/projectsesame/sesame/apis/projectsesame/v1"
+	envoy_v3 "github.com/projectsesame/sesame/internal/envoy/v3"
 	"github.com/projectsesame/sesame/internal/fixture"
 	"github.com/projectsesame/sesame/internal/protobuf"
 	v1 "k8s.io/api/core/v1"
@@ -89,9 +89,9 @@ func TestExternalNameService(t *testing.T) {
 
 	rh.OnAdd(fixture.NewProxy("kuard").
 		WithFQDN("kuard.projectsesame.io").
-		WithSpec(contour_api_v1.HTTPProxySpec{
-			Routes: []contour_api_v1.Route{{
-				Services: []contour_api_v1.Service{{
+		WithSpec(Sesame_api_v1.HTTPProxySpec{
+			Routes: []Sesame_api_v1.Route{{
+				Services: []Sesame_api_v1.Service{{
 					Name: s1.Name,
 					Port: 80,
 				}},
@@ -122,17 +122,17 @@ func TestExternalNameService(t *testing.T) {
 
 	// After we set the Host header, the cluster should remain
 	// the same, but the Route should do update the Host header.
-	rh.OnDelete(fixture.NewProxy("kuard").WithSpec(contour_api_v1.HTTPProxySpec{}))
+	rh.OnDelete(fixture.NewProxy("kuard").WithSpec(Sesame_api_v1.HTTPProxySpec{}))
 	rh.OnAdd(fixture.NewProxy("kuard").
 		WithFQDN("kuard.projectsesame.io").
-		WithSpec(contour_api_v1.HTTPProxySpec{
-			Routes: []contour_api_v1.Route{{
-				Services: []contour_api_v1.Service{{
+		WithSpec(Sesame_api_v1.HTTPProxySpec{
+			Routes: []Sesame_api_v1.Route{{
+				Services: []Sesame_api_v1.Service{{
 					Name: s1.Name,
 					Port: 80,
 				}},
-				RequestHeadersPolicy: &contour_api_v1.HeadersPolicy{
-					Set: []contour_api_v1.HeaderValue{{
+				RequestHeadersPolicy: &Sesame_api_v1.HeadersPolicy{
+					Set: []Sesame_api_v1.HeaderValue{{
 						Name:  "Host",
 						Value: "external.address",
 					}},
@@ -166,18 +166,18 @@ func TestExternalNameService(t *testing.T) {
 	// should still find that the same configuration applies, but
 	// TLS is enabled and the SNI server name is overwritten from
 	// the Host header.
-	rh.OnDelete(fixture.NewProxy("kuard").WithSpec(contour_api_v1.HTTPProxySpec{}))
+	rh.OnDelete(fixture.NewProxy("kuard").WithSpec(Sesame_api_v1.HTTPProxySpec{}))
 	rh.OnAdd(fixture.NewProxy("kuard").
 		WithFQDN("kuard.projectsesame.io").
-		WithSpec(contour_api_v1.HTTPProxySpec{
-			Routes: []contour_api_v1.Route{{
-				Services: []contour_api_v1.Service{{
+		WithSpec(Sesame_api_v1.HTTPProxySpec{
+			Routes: []Sesame_api_v1.Route{{
+				Services: []Sesame_api_v1.Service{{
 					Protocol: pointer.StringPtr("h2"),
 					Name:     s1.Name,
 					Port:     80,
 				}},
-				RequestHeadersPolicy: &contour_api_v1.HeadersPolicy{
-					Set: []contour_api_v1.HeaderValue{{
+				RequestHeadersPolicy: &Sesame_api_v1.HeadersPolicy{
+					Set: []Sesame_api_v1.HeaderValue{{
 						Name:  "Host",
 						Value: "external.address",
 					}},
@@ -230,18 +230,18 @@ func TestExternalNameService(t *testing.T) {
 	// means HTTP/1.1 over TLS) rather than HTTP/2. We should get
 	// TLS enabled with the overridden SNI name. but no HTTP/2
 	// protocol config.
-	rh.OnDelete(fixture.NewProxy("kuard").WithSpec(contour_api_v1.HTTPProxySpec{}))
+	rh.OnDelete(fixture.NewProxy("kuard").WithSpec(Sesame_api_v1.HTTPProxySpec{}))
 	rh.OnAdd(fixture.NewProxy("kuard").
 		WithFQDN("kuard.projectsesame.io").
-		WithSpec(contour_api_v1.HTTPProxySpec{
-			Routes: []contour_api_v1.Route{{
-				Services: []contour_api_v1.Service{{
+		WithSpec(Sesame_api_v1.HTTPProxySpec{
+			Routes: []Sesame_api_v1.Route{{
+				Services: []Sesame_api_v1.Service{{
 					Protocol: pointer.StringPtr("tls"),
 					Name:     s1.Name,
 					Port:     80,
 				}},
-				RequestHeadersPolicy: &contour_api_v1.HeadersPolicy{
-					Set: []contour_api_v1.HeaderValue{{
+				RequestHeadersPolicy: &Sesame_api_v1.HeadersPolicy{
+					Set: []Sesame_api_v1.HeaderValue{{
 						Name:  "Host",
 						Value: "external.address",
 					}},
@@ -289,14 +289,14 @@ func TestExternalNameService(t *testing.T) {
 
 	// Create TCPProxy with upstream protocol 'tls' to an externalName type service
 	// and verify that the SNI on the upstream request matches the externalName value.
-	rh.OnDelete(fixture.NewProxy("kuard").WithSpec(contour_api_v1.HTTPProxySpec{}))
+	rh.OnDelete(fixture.NewProxy("kuard").WithSpec(Sesame_api_v1.HTTPProxySpec{}))
 	rh.OnAdd(sec1)
 	rh.OnAdd(fixture.NewProxy("kuard").
 		WithFQDN("kuard.projectsesame.io").
 		WithCertificate(sec1.Name).
-		WithSpec(contour_api_v1.HTTPProxySpec{
-			TCPProxy: &contour_api_v1.TCPProxy{
-				Services: []contour_api_v1.Service{{
+		WithSpec(Sesame_api_v1.HTTPProxySpec{
+			TCPProxy: &Sesame_api_v1.TCPProxy{
+				Services: []Sesame_api_v1.Service{{
 					Protocol: pointer.StringPtr("tls"),
 					Name:     s1.Name,
 					Port:     80,

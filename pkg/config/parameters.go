@@ -787,7 +787,7 @@ func (p *Parameters) Validate() error {
 
 // Defaults returns the default set of parameters.
 func Defaults() Parameters {
-	contourNamespace := GetenvOr("CONTOUR_NAMESPACE", "projectsesame")
+	SesameNamespace := GetenvOr("Sesame_NAMESPACE", "projectsesame")
 
 	return Parameters{
 		Debug:      false,
@@ -807,7 +807,7 @@ func Defaults() Parameters {
 			RenewDeadline: time.Second * 10,
 			RetryPeriod:   time.Second * 2,
 			Name:          "leader-elect",
-			Namespace:     contourNamespace,
+			Namespace:     SesameNamespace,
 		},
 		Timeouts: TimeoutParameters{
 			// This is chosen as a rough default to stop idle connections wasting resources,
@@ -820,7 +820,7 @@ func Defaults() Parameters {
 			ApplyToIngress:        false,
 		},
 		EnvoyServiceName:      "envoy",
-		EnvoyServiceNamespace: contourNamespace,
+		EnvoyServiceNamespace: SesameNamespace,
 		DefaultHTTPVersions:   []HTTPVersionType{},
 		Cluster: ClusterParameters{
 			DNSLookupFamily: AutoClusterDNSFamily,

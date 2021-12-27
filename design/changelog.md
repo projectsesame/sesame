@@ -1,4 +1,4 @@
-# Add change tracking to Contour workflow
+# Add change tracking to Sesame workflow
 
 Status: Accepted
 
@@ -7,9 +7,9 @@ This design proposes adding a series of standards around recording change notes 
 The intent is to make the process of building the release changelog faster and easier.
 
 ## Background
-At the time of writing, creating Contour's release notes takes at least a day, sometimes two.
+At the time of writing, creating Sesame's release notes takes at least a day, sometimes two.
 Whoever is in charge of a given release must carefully check through all the PRs merged since the last release, write up a change summary for each, and get all of that into Markdown, ready to be put into the Github Release.
-The Contour team has got feedback on a few occasions that our current release notes are excellent, and we want to keep that up, but it should not take so long.
+The Sesame team has got feedback on a few occasions that our current release notes are excellent, and we want to keep that up, but it should not take so long.
 
 ## Goals
 - Make the process of generating release notes easier and more automatable, and ensure it's followed.
@@ -21,7 +21,7 @@ The Contour team has got feedback on a few occasions that our current release no
 
 ## Background research
 
-As part of pulling this together, I looked into a few other projects that are either similar to Contour or are dependencies.
+As part of pulling this together, I looked into a few other projects that are either similar to Sesame or are dependencies.
 
 ### Envoy
 
@@ -55,11 +55,11 @@ Release notes look to be based on the `git shortlog` command.
 The final notes use the short commit hash rather than the PR number.
 
 ## High-Level Design
-Contour should implement a system taking parts from Envoy and Velero, that stores completed changelogs in a `/changelogs` directory,
+Sesame should implement a system taking parts from Envoy and Velero, that stores completed changelogs in a `/changelogs` directory,
 and the current unreleased set in a `/changelogs/unreleased` directory, in Markdown format.
 
 Like Velero, the filename will indicate the PR number and author name associated, but also will include a category (similar to the Envoy changelog).
-Contour already separates our changelogs into sections, so I think that this is a good fit.
+Sesame already separates our changelogs into sections, so I think that this is a good fit.
 
 The implementation will include a CI check that verifies that a file is present with the correct details and is not empty.
 This will remind us all to include the file and the change notes.

@@ -290,7 +290,7 @@ func routeRoute(r *dag.Route) *envoy_route_v3.Route_Route {
 	}
 }
 
-// hashPolicy returns a slice of Envoy hash policies from the passed in Contour
+// hashPolicy returns a slice of Envoy hash policies from the passed in Sesame
 // request hash policy configuration. Only one of header or cookie hash policies
 // should be set on any RequestHashPolicy element.
 func hashPolicy(requestHashPolicies []dag.RequestHashPolicy) []*envoy_route_v3.RouteAction_HashPolicy {

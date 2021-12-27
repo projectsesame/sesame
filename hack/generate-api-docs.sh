@@ -22,7 +22,7 @@ gendoc::build() {
 }
 
 # Exec the doc generator. Note that we use custom templates to inject
-# the CSS styles that make the output look better on the Contour site.
+# the CSS styles that make the output look better on the Sesame site.
 gendoc::exec() {
     local -r confdir="${REPO}/hack/api-docs-config/refdocs"
 
@@ -37,7 +37,7 @@ gendoc::build
 # Fake up a GOPATH so that the current working directory can be
 # imported by the documentation generator.
 GOPATH=$(mktemp -d)
-mkdir -p "${GOPATH}/src/github.com/projectcontour"
+mkdir -p "${GOPATH}/src/github.com/projectsesame"
 ln -s "${REPO}" "${GOPATH}/src/github.com/projectsesame/sesame"
 
 gendoc::exec \

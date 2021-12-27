@@ -37,7 +37,7 @@ The TLSCertificateDelegation object records the permission to reference a Secret
 This permission is managed by the Ingress controller which has the RBAC permissions to read all the relevant Secrets but currently only allows an Ingress or IngressRoute object to reference secrets from its own namespace.
 
 ```
-apiVersion: contour.vmware.com/v1
+apiVersion: Sesame.vmware.com/v1
 kind: TLSCertificateDelegation
 metadata:
   name: wildcards
@@ -58,24 +58,24 @@ In this example permission to reference `kube-system/example-com-wildcard` is de
 
 ### Ingress extensions
 
-To support this feature an extension to the `spec.tls.secretName` key will be recognized by Contour.
+To support this feature an extension to the `spec.tls.secretName` key will be recognized by Sesame.
 If the `spec.tls.secretName` field contains a value with a forward slash, ie `namespace1/wildcard` the Secret object referenced will be `wildcard` in the namespace `namespace1`.
 
-If the appropriate secret delegation is in place Contour will use the fully qualified secret name as if it were in the same namespace as the Ingress object.
+If the appropriate secret delegation is in place Sesame will use the fully qualified secret name as if it were in the same namespace as the Ingress object.
 
-_Note_: `kubectl` currently permits `spec.tls.secretName` to contain a forward slash (`/`) but it is currently interpreted by Contour as part of the Secret object's name, not a separator.
+_Note_: `kubectl` currently permits `spec.tls.secretName` to contain a forward slash (`/`) but it is currently interpreted by Sesame as part of the Secret object's name, not a separator.
 
 ### IngressRoute extensions
 
-To support this feature an extension to the `spec.virtualhost.tls.secretName` key will be recognized by Contour.
+To support this feature an extension to the `spec.virtualhost.tls.secretName` key will be recognized by Sesame.
 If the `spec.virtualhost.tls.secretName` field contains a value with a forward slash, ie `namespace1/wildcard` the Secret object referenced will be `wildcard` in the namespace `namespace1`.
 
-If the appropriate secret delegation is in place Contour will use the fully qualified secret name as if it were in the same namespace as the IngressRoute root object.
+If the appropriate secret delegation is in place Sesame will use the fully qualified secret name as if it were in the same namespace as the IngressRoute root object.
 
 ## Alternatives Considered
 
 Alternative designs that extended the IngressRoute specification to allow referencing Secrets by name _and_ namespace were rejected because there was no way to effectively prevent anyone with the permission to construct an IngressRoute object in their own namespace from utilizing the TLS certificate from another namespace.
-While it would not be possible for the author to read the contents of the other namespace's secret--only Contour would have that permission--this would allow an attacker to present a certificate from a namespace they do not have permission to read as their own.
+While it would not be possible for the author to read the contents of the other namespace's secret--only Sesame would have that permission--this would allow an attacker to present a certificate from a namespace they do not have permission to read as their own.
 In the case of a wildcard certificate this is benficial--it's actually what we want--but also opens up the possibility, when combined with DNS spoofing, of presenting an alternate site using the _real_ SSL certificate, leading to cookie hijacking and MITM attacks.
 	
 ## Security Considerations

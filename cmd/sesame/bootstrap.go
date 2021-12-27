@@ -33,7 +33,7 @@ func registerBootstrap(app *kingpin.Application) (*kingpin.CmdClause, *envoy.Boo
 	bootstrap.Flag("envoy-cafile", "CA Filename for Envoy secure xDS gRPC communication.").Envar("ENVOY_CAFILE").StringVar(&config.GrpcCABundle)
 	bootstrap.Flag("envoy-cert-file", "Client certificate filename for Envoy secure xDS gRPC communication.").Envar("ENVOY_CERT_FILE").StringVar(&config.GrpcClientCert)
 	bootstrap.Flag("envoy-key-file", "Client key filename for Envoy secure xDS gRPC communication.").Envar("ENVOY_KEY_FILE").StringVar(&config.GrpcClientKey)
-	bootstrap.Flag("namespace", "The namespace the Envoy container will run in.").Envar("CONTOUR_NAMESPACE").Default("projectsesame").StringVar(&config.Namespace)
+	bootstrap.Flag("namespace", "The namespace the Envoy container will run in.").Envar("Sesame_NAMESPACE").Default("projectsesame").StringVar(&config.Namespace)
 	bootstrap.Flag("xds-resource-version", "The versions of the xDS resources to request from Sesame.").Default("v3").StringVar((*string)(&config.XDSResourceVersion))
 	bootstrap.Flag("dns-lookup-family", "Defines what DNS Resolution Policy to use for Envoy -> Sesame cluster name lookup. Either v4, v6 or auto.").StringVar(&config.DNSLookupFamily)
 	return bootstrap, &config

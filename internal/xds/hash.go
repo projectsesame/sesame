@@ -21,7 +21,7 @@ import (
 const CONSTANT_HASH_VALUE = "sesame"
 
 // ConstantHashV3 is a specialized node ID hasher used to allow
-// any instance of Envoy to connect to Contour regardless of the
+// any instance of Envoy to connect to Sesame regardless of the
 // service-node flag configured on Envoy.
 type ConstantHashV3 struct{}
 

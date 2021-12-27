@@ -34,11 +34,11 @@ import (
 	"github.com/envoyproxy/go-control-plane/pkg/wellknown"
 	"github.com/golang/protobuf/proto"
 	"github.com/golang/protobuf/ptypes/any"
-	contour_api_v1alpha1 "github.com/projectcontour/sesame/apis/projectsesame/v1alpha1"
-	envoy_v3 "github.com/projectcontour/sesame/internal/envoy/v3"
-	xdscache_v3 "github.com/projectcontour/sesame/internal/xdscache/v3"
+	Sesame_api_v1alpha1 "github.com/projectsesame/sesame/apis/projectsesame/v1alpha1"
 	"github.com/projectsesame/sesame/internal/dag"
+	envoy_v3 "github.com/projectsesame/sesame/internal/envoy/v3"
 	"github.com/projectsesame/sesame/internal/protobuf"
+	xdscache_v3 "github.com/projectsesame/sesame/internal/xdscache/v3"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
@@ -264,7 +264,7 @@ func withSessionAffinity(route *envoy_route_v3.Route_Route) *envoy_route_v3.Rout
 	route.Route.HashPolicy = append(route.Route.HashPolicy, &envoy_route_v3.RouteAction_HashPolicy{
 		PolicySpecifier: &envoy_route_v3.RouteAction_HashPolicy_Cookie_{
 			Cookie: &envoy_route_v3.RouteAction_HashPolicy_Cookie{
-				Name: "X-Contour-Session-Affinity",
+				Name: "X-Sesame-Session-Affinity",
 				Ttl:  protobuf.Duration(0),
 				Path: "/",
 			},
@@ -467,8 +467,8 @@ func tcpproxyWeighted(statPrefix string, clusters ...clusterWeight) *envoy_liste
 func statsListener() *envoy_listener_v3.Listener {
 	// Single listener with metrics and health endpoints.
 	listeners := envoy_v3.StatsListeners(
-		contour_api_v1alpha1.MetricsConfig{Address: "0.0.0.0", Port: 8002},
-		contour_api_v1alpha1.HealthConfig{Address: "0.0.0.0", Port: 8002})
+		Sesame_api_v1alpha1.MetricsConfig{Address: "0.0.0.0", Port: 8002},
+		Sesame_api_v1alpha1.HealthConfig{Address: "0.0.0.0", Port: 8002})
 	return listeners[0]
 }
 

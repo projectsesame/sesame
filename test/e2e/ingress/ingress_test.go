@@ -20,7 +20,7 @@ import (
 	"context"
 	"testing"
 
-	contour_api_v1alpha1 "github.com/projectcontour/sesame/apis/projectsesame/v1alpha1"
+	Sesame_api_v1alpha1 "github.com/projectsesame/sesame/apis/projectsesame/v1alpha1"
 
 	certmanagerv1 "github.com/jetstack/cert-manager/pkg/apis/certmanager/v1"
 	certmanagermetav1 "github.com/jetstack/cert-manager/pkg/apis/meta/v1"
@@ -41,45 +41,45 @@ func TestIngress(t *testing.T) {
 }
 
 var _ = BeforeSuite(func() {
-	require.NoError(f.T(), f.Deployment.EnsureResourcesForLocalContour())
+	require.NoError(f.T(), f.Deployment.EnsureResourcesForLocalSesame())
 })
 
 var _ = AfterSuite(func() {
 	// Delete resources individually instead of deleting the entire sesame
 	// namespace as a performance optimization, because deleting non-empty
 	// namespaces can take up to a couple minutes to complete.
-	require.NoError(f.T(), f.Deployment.DeleteResourcesForLocalContour())
+	require.NoError(f.T(), f.Deployment.DeleteResourcesForLocalSesame())
 	gexec.CleanupBuildArtifacts()
 })
 
 var _ = Describe("Ingress", func() {
 	var (
-		contourCmd            *gexec.Session
-		contourConfig         *config.Parameters
-		contourConfiguration  *contour_api_v1alpha1.ContourConfiguration
-		contourConfigFile     string
-		additionalContourArgs []string
+		SesameCmd            *gexec.Session
+		SesameConfig         *config.Parameters
+		SesameConfiguration  *Sesame_api_v1alpha1.SesameConfiguration
+		SesameConfigFile     string
+		additionalSesameArgs []string
 	)
 
 	BeforeEach(func() {
-		// Contour config file contents, can be modified in nested
+		// Sesame config file contents, can be modified in nested
 		// BeforeEach.
-		contourConfig = &config.Parameters{}
+		SesameConfig = &config.Parameters{}
 
-		contourConfiguration = e2e.DefaultContourConfiguration()
+		SesameConfiguration = e2e.DefaultSesameConfiguration()
 
 		// Default sesame serve command line arguments can be appended to in
 		// nested BeforeEach.
-		additionalContourArgs = []string{}
+		additionalSesameArgs = []string{}
 	})
 
 	// JustBeforeEach is called after each of the nested BeforeEach are
 	// called, so it is a final setup step before running a test.
-	// A nested BeforeEach may have modified Contour config, so we wait
-	// until here to start Contour.
+	// A nested BeforeEach may have modified Sesame config, so we wait
+	// until here to start Sesame.
 	JustBeforeEach(func() {
 		var err error
-		contourCmd, contourConfigFile, err = f.Deployment.StartLocalContour(contourConfig, contourConfiguration, additionalContourArgs...)
+		SesameCmd, SesameConfigFile, err = f.Deployment.StartLocalSesame(SesameConfig, SesameConfiguration, additionalSesameArgs...)
 		require.NoError(f.T(), err)
 
 		// Wait for Envoy to be healthy.
@@ -87,7 +87,7 @@ var _ = Describe("Ingress", func() {
 	})
 
 	AfterEach(func() {
-		require.NoError(f.T(), f.Deployment.StopLocalContour(contourCmd, contourConfigFile))
+		require.NoError(f.T(), f.Deployment.StopLocalSesame(SesameCmd, SesameConfigFile))
 	})
 
 	f.NamespacedTest("ingress-tls-wildcard-host", testTLSWildcardHost)
@@ -165,13 +165,13 @@ var _ = Describe("Ingress", func() {
 				}
 				require.NoError(f.T(), f.Client.Create(context.TODO(), backendClientCert))
 
-				contourConfig.TLS = config.TLSParameters{
+				SesameConfig.TLS = config.TLSParameters{
 					ClientCertificate: config.NamespacedName{
 						Namespace: namespace,
 						Name:      "backend-client-cert",
 					},
 				}
-				contourConfiguration.Spec.Envoy.ClientCertificate = &contour_api_v1alpha1.NamespacedName{
+				SesameConfiguration.Spec.Envoy.ClientCertificate = &Sesame_api_v1alpha1.NamespacedName{
 					Namespace: namespace,
 					Name:      "backend-client-cert",
 				}

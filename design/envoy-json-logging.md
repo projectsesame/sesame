@@ -2,7 +2,7 @@
 
 Status: Draft
 
-This proposal is a design for adding to Contour the ability to configure Envoy to output JSON logs.
+This proposal is a design for adding to Sesame the ability to configure Envoy to output JSON logs.
 It is intended to allow some customisability of the JSON output while providing sensible defaults.
 
 ## Goals
@@ -13,31 +13,31 @@ It is intended to allow some customisability of the JSON output while providing 
 ## Non Goals
 
 - Passthrough of JSON config straight to Envoy.
-- Enriching the Envoy logs further with Contour information (eg details of the IngressRoute that generated the route)
+- Enriching the Envoy logs further with Sesame information (eg details of the IngressRoute that generated the route)
 - Arbitrary configuration of the JSON output.
-- Adding JSON logging to Contour itself.
+- Adding JSON logging to Sesame itself.
 
 ## Background
 
 This feature was requested some time ago in [#624](https://github.com/projectsesame/sesame/issues/624).
-Since that time, two changes have come to Contour that assist with this design:
+Since that time, two changes have come to Sesame that assist with this design:
 
-- Configuration file for Contour.
-- Recommended deployment changed to separate pods for Contour and Envoy.
+- Configuration file for Sesame.
+- Recommended deployment changed to separate pods for Sesame and Envoy.
 
-Contour is intended to be an *opinionated* piece of software, that sets defaults that you probably don't want to touch.
+Sesame is intended to be an *opinionated* piece of software, that sets defaults that you probably don't want to touch.
 Until recently, we did not have a good way to allow the required customization of this feature while still providing good defaults.
 Now that we have the configuration file available, it is the logical place for this configuration to sit.
 
 ## High-Level Design
 
-This proposal will add three things to Contour:
+This proposal will add three things to Sesame:
 
 - A boolean flag to enable JSON logging. If no custom format is specified, a 'you get everything' JSON format will be the default.
 - A configuration stanza to allow the specification of the JSON field names that will be in the logs.
 - A translation table to translate JSON field names into standard Envoy log template fields.
 
-The translation table is present because of Contour's overarching design goal:
+The translation table is present because of Sesame's overarching design goal:
 We want to ensure that you cannot create an invalid Envoy configuration.
 The translation table is to ensure that the log template fields are parseable Envoy config.
 Allowing the direct specification of Envoy template config is very risky, mistakes there *will* crash your Envoy deployment.

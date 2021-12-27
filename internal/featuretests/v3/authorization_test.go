@@ -24,9 +24,9 @@ import (
 	envoy_config_filter_http_ext_authz_v3 "github.com/envoyproxy/go-control-plane/envoy/extensions/filters/http/ext_authz/v3"
 	envoy_discovery_v3 "github.com/envoyproxy/go-control-plane/envoy/service/discovery/v3"
 	envoy_type "github.com/envoyproxy/go-control-plane/envoy/type/v3"
-	contour_api_v1 "github.com/projectcontour/sesame/apis/projectsesame/v1"
-	envoy_v3 "github.com/projectcontour/sesame/internal/envoy/v3"
+	Sesame_api_v1 "github.com/projectsesame/sesame/apis/projectsesame/v1"
 	"github.com/projectsesame/sesame/apis/projectsesame/v1alpha1"
+	envoy_v3 "github.com/projectsesame/sesame/internal/envoy/v3"
 	"github.com/projectsesame/sesame/internal/featuretests"
 	"github.com/projectsesame/sesame/internal/fixture"
 	"github.com/projectsesame/sesame/internal/protobuf"
@@ -49,22 +49,22 @@ func grpcCluster(name string) *envoy_config_filter_http_ext_authz_v3.ExtAuthz_Gr
 	}
 }
 
-func authzResponseTimeout(t *testing.T, rh cache.ResourceEventHandler, c *Contour) {
+func authzResponseTimeout(t *testing.T, rh cache.ResourceEventHandler, c *Sesame) {
 	const fqdn = "failopen.projectsesame.io"
 
 	p := fixture.NewProxy("proxy").
 		WithFQDN(fqdn).
 		WithCertificate("certificate").
-		WithAuthServer(contour_api_v1.AuthorizationServer{
-			ExtensionServiceRef: contour_api_v1.ExtensionServiceReference{
+		WithAuthServer(Sesame_api_v1.AuthorizationServer{
+			ExtensionServiceRef: Sesame_api_v1.ExtensionServiceReference{
 				Namespace: "auth",
 				Name:      "extension",
 			},
 			ResponseTimeout: "10m",
 		}).
-		WithSpec(contour_api_v1.HTTPProxySpec{
-			Routes: []contour_api_v1.Route{{
-				Services: []contour_api_v1.Service{{Name: "app-server", Port: 80}},
+		WithSpec(Sesame_api_v1.HTTPProxySpec{
+			Routes: []Sesame_api_v1.Route{{
+				Services: []Sesame_api_v1.Service{{Name: "app-server", Port: 80}},
 			}},
 		})
 
@@ -112,22 +112,22 @@ func authzResponseTimeout(t *testing.T, rh cache.ResourceEventHandler, c *Contou
 	}).Status(p).IsValid()
 }
 
-func authzInvalidResponseTimeout(t *testing.T, rh cache.ResourceEventHandler, c *Contour) {
+func authzInvalidResponseTimeout(t *testing.T, rh cache.ResourceEventHandler, c *Sesame) {
 	const fqdn = "failopen.projectsesame.io"
 
 	p := fixture.NewProxy("proxy").
 		WithFQDN(fqdn).
 		WithCertificate("certificate").
-		WithAuthServer(contour_api_v1.AuthorizationServer{
-			ExtensionServiceRef: contour_api_v1.ExtensionServiceReference{
+		WithAuthServer(Sesame_api_v1.AuthorizationServer{
+			ExtensionServiceRef: Sesame_api_v1.ExtensionServiceReference{
 				Namespace: "auth",
 				Name:      "extension",
 			},
 			ResponseTimeout: "invalid-timeout",
 		}).
-		WithSpec(contour_api_v1.HTTPProxySpec{
-			Routes: []contour_api_v1.Route{{
-				Services: []contour_api_v1.Service{{Name: "app-server", Port: 80}},
+		WithSpec(Sesame_api_v1.HTTPProxySpec{
+			Routes: []Sesame_api_v1.Route{{
+				Services: []Sesame_api_v1.Service{{Name: "app-server", Port: 80}},
 			}},
 		})
 
@@ -136,25 +136,25 @@ func authzInvalidResponseTimeout(t *testing.T, rh cache.ResourceEventHandler, c 
 	c.Request(listenerType).Equals(&envoy_discovery_v3.DiscoveryResponse{
 		TypeUrl:   listenerType,
 		Resources: resources(t, statsListener()),
-	}).Status(p).HasError(contour_api_v1.ConditionTypeAuthError, "AuthResponseTimeoutInvalid", `Spec.Virtualhost.Authorization.ResponseTimeout is invalid: unable to parse timeout string "invalid-timeout": time: invalid duration "invalid-timeout"`)
+	}).Status(p).HasError(Sesame_api_v1.ConditionTypeAuthError, "AuthResponseTimeoutInvalid", `Spec.Virtualhost.Authorization.ResponseTimeout is invalid: unable to parse timeout string "invalid-timeout": time: invalid duration "invalid-timeout"`)
 }
 
-func authzFailOpen(t *testing.T, rh cache.ResourceEventHandler, c *Contour) {
+func authzFailOpen(t *testing.T, rh cache.ResourceEventHandler, c *Sesame) {
 	const fqdn = "failopen.projectsesame.io"
 
 	p := fixture.NewProxy("proxy").
 		WithFQDN(fqdn).
 		WithCertificate("certificate").
-		WithAuthServer(contour_api_v1.AuthorizationServer{
-			ExtensionServiceRef: contour_api_v1.ExtensionServiceReference{
+		WithAuthServer(Sesame_api_v1.AuthorizationServer{
+			ExtensionServiceRef: Sesame_api_v1.ExtensionServiceReference{
 				Namespace: "auth",
 				Name:      "extension",
 			},
 			FailOpen: true,
 		}).
-		WithSpec(contour_api_v1.HTTPProxySpec{
-			Routes: []contour_api_v1.Route{{
-				Services: []contour_api_v1.Service{{Name: "app-server", Port: 80}},
+		WithSpec(Sesame_api_v1.HTTPProxySpec{
+			Routes: []Sesame_api_v1.Route{{
+				Services: []Sesame_api_v1.Service{{Name: "app-server", Port: 80}},
 			}},
 		})
 
@@ -198,19 +198,19 @@ func authzFailOpen(t *testing.T, rh cache.ResourceEventHandler, c *Contour) {
 	}).Status(p).IsValid()
 }
 
-func authzFallbackIncompat(t *testing.T, rh cache.ResourceEventHandler, c *Contour) {
+func authzFallbackIncompat(t *testing.T, rh cache.ResourceEventHandler, c *Sesame) {
 	p := fixture.NewProxy("proxy").
 		WithFQDN("echo.projectsesame.io").
 		WithCertificate("certificate").
-		WithAuthServer(contour_api_v1.AuthorizationServer{
-			ExtensionServiceRef: contour_api_v1.ExtensionServiceReference{
+		WithAuthServer(Sesame_api_v1.AuthorizationServer{
+			ExtensionServiceRef: Sesame_api_v1.ExtensionServiceReference{
 				Namespace: "auth",
 				Name:      "extension",
 			},
 		}).
-		WithSpec(contour_api_v1.HTTPProxySpec{
-			Routes: []contour_api_v1.Route{{
-				Services: []contour_api_v1.Service{{Name: "app-server", Port: 80}},
+		WithSpec(Sesame_api_v1.HTTPProxySpec{
+			Routes: []Sesame_api_v1.Route{{
+				Services: []Sesame_api_v1.Service{{Name: "app-server", Port: 80}},
 			}},
 		})
 
@@ -221,14 +221,14 @@ func authzFallbackIncompat(t *testing.T, rh cache.ResourceEventHandler, c *Conto
 	c.Request(listenerType).Equals(&envoy_discovery_v3.DiscoveryResponse{
 		TypeUrl:   listenerType,
 		Resources: resources(t, statsListener()),
-	}).Status(p).HasError(contour_api_v1.ConditionTypeTLSError, "TLSIncompatibleFeatures", "Spec.Virtualhost.TLS fallback & client authorization are incompatible")
+	}).Status(p).HasError(Sesame_api_v1.ConditionTypeTLSError, "TLSIncompatibleFeatures", "Spec.Virtualhost.TLS fallback & client authorization are incompatible")
 }
 
-func authzOverrideDisabled(t *testing.T, rh cache.ResourceEventHandler, c *Contour) {
+func authzOverrideDisabled(t *testing.T, rh cache.ResourceEventHandler, c *Sesame) {
 	const enabled = "enabled.projectsesame.io"
 	const disabled = "disabled.projectsesame.io"
 
-	var extensionRef = contour_api_v1.ExtensionServiceReference{
+	var extensionRef = Sesame_api_v1.ExtensionServiceReference{
 		Namespace: "auth",
 		Name:      "extension",
 	}
@@ -236,18 +236,18 @@ func authzOverrideDisabled(t *testing.T, rh cache.ResourceEventHandler, c *Conto
 	rh.OnAdd(fixture.NewProxy("enabled").
 		WithFQDN(enabled).
 		WithCertificate("certificate").
-		WithAuthServer(contour_api_v1.AuthorizationServer{
+		WithAuthServer(Sesame_api_v1.AuthorizationServer{
 			ExtensionServiceRef: extensionRef,
-			AuthPolicy:          &contour_api_v1.AuthorizationPolicy{Disabled: false},
+			AuthPolicy:          &Sesame_api_v1.AuthorizationPolicy{Disabled: false},
 		}).
-		WithSpec(contour_api_v1.HTTPProxySpec{
-			Routes: []contour_api_v1.Route{{
+		WithSpec(Sesame_api_v1.HTTPProxySpec{
+			Routes: []Sesame_api_v1.Route{{
 				Conditions: matchconditions(prefixMatchCondition("/disabled")),
-				Services:   []contour_api_v1.Service{{Name: "app-server", Port: 80}},
-				AuthPolicy: &contour_api_v1.AuthorizationPolicy{Disabled: true},
+				Services:   []Sesame_api_v1.Service{{Name: "app-server", Port: 80}},
+				AuthPolicy: &Sesame_api_v1.AuthorizationPolicy{Disabled: true},
 			}, {
 				Conditions: matchconditions(prefixMatchCondition("/default")),
-				Services:   []contour_api_v1.Service{{Name: "app-server", Port: 80}},
+				Services:   []Sesame_api_v1.Service{{Name: "app-server", Port: 80}},
 			}},
 		}),
 	)
@@ -255,18 +255,18 @@ func authzOverrideDisabled(t *testing.T, rh cache.ResourceEventHandler, c *Conto
 	rh.OnAdd(fixture.NewProxy("disabled").
 		WithFQDN(disabled).
 		WithCertificate("certificate").
-		WithAuthServer(contour_api_v1.AuthorizationServer{
+		WithAuthServer(Sesame_api_v1.AuthorizationServer{
 			ExtensionServiceRef: extensionRef,
-			AuthPolicy:          &contour_api_v1.AuthorizationPolicy{Disabled: true},
+			AuthPolicy:          &Sesame_api_v1.AuthorizationPolicy{Disabled: true},
 		}).
-		WithSpec(contour_api_v1.HTTPProxySpec{
-			Routes: []contour_api_v1.Route{{
+		WithSpec(Sesame_api_v1.HTTPProxySpec{
+			Routes: []Sesame_api_v1.Route{{
 				Conditions: matchconditions(prefixMatchCondition("/enabled")),
-				Services:   []contour_api_v1.Service{{Name: "app-server", Port: 80}},
-				AuthPolicy: &contour_api_v1.AuthorizationPolicy{},
+				Services:   []Sesame_api_v1.Service{{Name: "app-server", Port: 80}},
+				AuthPolicy: &Sesame_api_v1.AuthorizationPolicy{},
 			}, {
 				Conditions: matchconditions(prefixMatchCondition("/default")),
-				Services:   []contour_api_v1.Service{{Name: "app-server", Port: 80}},
+				Services:   []Sesame_api_v1.Service{{Name: "app-server", Port: 80}},
 			}},
 		}),
 	)
@@ -340,39 +340,39 @@ func authzOverrideDisabled(t *testing.T, rh cache.ResourceEventHandler, c *Conto
 	})
 }
 
-func authzMergeRouteContext(t *testing.T, rh cache.ResourceEventHandler, c *Contour) {
+func authzMergeRouteContext(t *testing.T, rh cache.ResourceEventHandler, c *Sesame) {
 	const fqdn = "echo.projectsesame.io"
 
 	rh.OnAdd(fixture.NewProxy("proxy-root").
 		WithFQDN(fqdn).
 		WithCertificate("certificate").
-		WithAuthServer(contour_api_v1.AuthorizationServer{
-			ExtensionServiceRef: contour_api_v1.ExtensionServiceReference{
+		WithAuthServer(Sesame_api_v1.AuthorizationServer{
+			ExtensionServiceRef: Sesame_api_v1.ExtensionServiceReference{
 				Namespace: "auth",
 				Name:      "extension",
 			},
-			AuthPolicy: &contour_api_v1.AuthorizationPolicy{
+			AuthPolicy: &Sesame_api_v1.AuthorizationPolicy{
 				Context: map[string]string{
 					"root-element":   "root",
 					"common-element": "root",
 				},
 			},
 		}).
-		WithSpec(contour_api_v1.HTTPProxySpec{
-			Includes: []contour_api_v1.Include{{
+		WithSpec(Sesame_api_v1.HTTPProxySpec{
+			Includes: []Sesame_api_v1.Include{{
 				Name: "proxy-leaf",
 			}},
 		}),
 	)
 
 	rh.OnAdd(fixture.NewProxy("proxy-leaf").
-		WithSpec(contour_api_v1.HTTPProxySpec{
-			Routes: []contour_api_v1.Route{{
-				Services: []contour_api_v1.Service{{
+		WithSpec(Sesame_api_v1.HTTPProxySpec{
+			Routes: []Sesame_api_v1.Route{{
+				Services: []Sesame_api_v1.Service{{
 					Name: "app-server",
 					Port: 80,
 				}},
-				AuthPolicy: &contour_api_v1.AuthorizationPolicy{
+				AuthPolicy: &Sesame_api_v1.AuthorizationPolicy{
 					Context: map[string]string{
 						"common-element": "leaf",
 						"leaf-element":   "leaf",
@@ -423,23 +423,23 @@ func authzMergeRouteContext(t *testing.T, rh cache.ResourceEventHandler, c *Cont
 	})
 }
 
-func authzInvalidReference(t *testing.T, rh cache.ResourceEventHandler, c *Contour) {
+func authzInvalidReference(t *testing.T, rh cache.ResourceEventHandler, c *Sesame) {
 	const fqdn = "echo.projectsesame.io"
 
 	invalid := fixture.NewProxy("proxy").
 		WithFQDN(fqdn).
 		WithCertificate("certificate").
-		WithAuthServer(contour_api_v1.AuthorizationServer{}).
-		WithSpec(contour_api_v1.HTTPProxySpec{
-			Routes: []contour_api_v1.Route{{
-				Services: []contour_api_v1.Service{{
+		WithAuthServer(Sesame_api_v1.AuthorizationServer{}).
+		WithSpec(Sesame_api_v1.HTTPProxySpec{
+			Routes: []Sesame_api_v1.Route{{
+				Services: []Sesame_api_v1.Service{{
 					Name: "app-server",
 					Port: 80,
 				}},
 			}},
 		})
 
-	invalid.Spec.VirtualHost.Authorization.ExtensionServiceRef = contour_api_v1.ExtensionServiceReference{
+	invalid.Spec.VirtualHost.Authorization.ExtensionServiceRef = Sesame_api_v1.ExtensionServiceReference{
 		APIVersion: "foo/bar",
 		Namespace:  "",
 		Name:       "",
@@ -451,9 +451,9 @@ func authzInvalidReference(t *testing.T, rh cache.ResourceEventHandler, c *Conto
 	c.Request(listenerType).Equals(&envoy_discovery_v3.DiscoveryResponse{
 		TypeUrl:   listenerType,
 		Resources: resources(t, statsListener()),
-	}).Status(invalid).HasError(contour_api_v1.ConditionTypeAuthError, "AuthBadResourceVersion", `Spec.Virtualhost.Authorization.extensionRef specifies an unsupported resource version "foo/bar"`)
+	}).Status(invalid).HasError(Sesame_api_v1.ConditionTypeAuthError, "AuthBadResourceVersion", `Spec.Virtualhost.Authorization.extensionRef specifies an unsupported resource version "foo/bar"`)
 
-	invalid.Spec.VirtualHost.Authorization.ExtensionServiceRef = contour_api_v1.ExtensionServiceReference{
+	invalid.Spec.VirtualHost.Authorization.ExtensionServiceRef = Sesame_api_v1.ExtensionServiceReference{
 		APIVersion: "projectsesame.io/v1alpha1",
 		Namespace:  "missing",
 		Name:       "extension",
@@ -465,9 +465,9 @@ func authzInvalidReference(t *testing.T, rh cache.ResourceEventHandler, c *Conto
 	c.Request(listenerType).Equals(&envoy_discovery_v3.DiscoveryResponse{
 		TypeUrl:   listenerType,
 		Resources: resources(t, statsListener()),
-	}).Status(invalid).HasError(contour_api_v1.ConditionTypeAuthError, "ExtensionServiceNotFound", `Spec.Virtualhost.Authorization.ServiceRef extension service "missing/extension" not found`)
+	}).Status(invalid).HasError(Sesame_api_v1.ConditionTypeAuthError, "ExtensionServiceNotFound", `Spec.Virtualhost.Authorization.ServiceRef extension service "missing/extension" not found`)
 
-	invalid.Spec.VirtualHost.Authorization.ExtensionServiceRef = contour_api_v1.ExtensionServiceReference{
+	invalid.Spec.VirtualHost.Authorization.ExtensionServiceRef = Sesame_api_v1.ExtensionServiceReference{
 		Namespace: "auth",
 		Name:      "extension",
 	}
@@ -513,27 +513,27 @@ func authzInvalidReference(t *testing.T, rh cache.ResourceEventHandler, c *Conto
 	}).Status(invalid).IsValid()
 }
 
-func authzWithRequestBodyBufferSettings(t *testing.T, rh cache.ResourceEventHandler, c *Contour) {
+func authzWithRequestBodyBufferSettings(t *testing.T, rh cache.ResourceEventHandler, c *Sesame) {
 	const fqdn = "buffersettings.projectsesame.io"
 
 	p := fixture.NewProxy("proxy").
 		WithFQDN(fqdn).
 		WithCertificate("certificate").
-		WithAuthServer(contour_api_v1.AuthorizationServer{
-			ExtensionServiceRef: contour_api_v1.ExtensionServiceReference{
+		WithAuthServer(Sesame_api_v1.AuthorizationServer{
+			ExtensionServiceRef: Sesame_api_v1.ExtensionServiceReference{
 				Namespace: "auth",
 				Name:      "extension",
 			},
 			FailOpen: true,
-			WithRequestBody: &contour_api_v1.AuthorizationServerBufferSettings{
+			WithRequestBody: &Sesame_api_v1.AuthorizationServerBufferSettings{
 				MaxRequestBytes:     100,
 				AllowPartialMessage: true,
 				PackAsBytes:         true,
 			},
 		}).
-		WithSpec(contour_api_v1.HTTPProxySpec{
-			Routes: []contour_api_v1.Route{{
-				Services: []contour_api_v1.Service{{Name: "app-server", Port: 80}},
+		WithSpec(Sesame_api_v1.HTTPProxySpec{
+			Routes: []Sesame_api_v1.Route{{
+				Services: []Sesame_api_v1.Service{{Name: "app-server", Port: 80}},
 			}},
 		})
 
@@ -583,7 +583,7 @@ func authzWithRequestBodyBufferSettings(t *testing.T, rh cache.ResourceEventHand
 }
 
 func TestAuthorization(t *testing.T) {
-	subtests := map[string]func(*testing.T, cache.ResourceEventHandler, *Contour){
+	subtests := map[string]func(*testing.T, cache.ResourceEventHandler, *Sesame){
 		"MissingExtension":                   authzInvalidReference,
 		"MergeRouteContext":                  authzMergeRouteContext,
 		"OverrideDisabled":                   authzOverrideDisabled,
@@ -616,7 +616,7 @@ func TestAuthorization(t *testing.T) {
 					Services: []v1alpha1.ExtensionServiceTarget{
 						{Name: "oidc-server", Port: 8081},
 					},
-					TimeoutPolicy: &contour_api_v1.TimeoutPolicy{
+					TimeoutPolicy: &Sesame_api_v1.TimeoutPolicy{
 						Response: defaultResponseTimeout.String(),
 					},
 				},

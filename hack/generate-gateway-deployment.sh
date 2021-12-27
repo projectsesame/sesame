@@ -7,7 +7,7 @@ set -o pipefail
 readonly HERE=$(cd "$(dirname "$0")" && pwd)
 readonly REPO=$(cd "${HERE}"/.. && pwd)
 readonly PROGNAME=$(basename "$0")
-readonly TARGET="${REPO}/examples/render/contour-gateway.yaml"
+readonly TARGET="${REPO}/examples/render/sesame-gateway.yaml"
 
 exec > >(git stripspace >"$TARGET")
 
@@ -18,7 +18,7 @@ cat <<EOF
 # Generated from:
 EOF
 
-for f in "examples/contour/"*.yaml "examples/gateway/"*.yaml ; do
+for f in "examples/sesame/"*.yaml "examples/gateway/"*.yaml ; do
   (cd "${REPO}" && ls $f) | awk '{printf "#       %s\n", $0}'
 done
 echo "#"
@@ -26,8 +26,8 @@ echo
 
 # certgen uses the ':latest' image tag, so it always needs to be pulled. Everything
 # else correctly uses versioned image tags so we should use IfNotPresent and updates
-# the Contour config for Gateway API.
-for y in "${REPO}/examples/contour/"*.yaml ; do
+# the Sesame config for Gateway API.
+for y in "${REPO}/examples/sesame/"*.yaml ; do
     echo # Ensure we have at least one newline between joined fragments.
     case $y in
     */01-sesame-config.yaml)

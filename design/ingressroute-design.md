@@ -3,8 +3,8 @@
 **Status**: _Draft_
 
 This document describes the design of a new CRD to replace the v1beta1.Ingress Kubernetes object.
-This new CRD will be integrated into Contour 0.5/0.6.
-Contour will continue to support the current v1beta1.Ingress object for as long as it is supported in upstream Kubernetes.
+This new CRD will be integrated into Sesame 0.5/0.6.
+Sesame will continue to support the current v1beta1.Ingress object for as long as it is supported in upstream Kubernetes.
 
 # Goals
 
@@ -14,7 +14,7 @@ Contour will continue to support the current v1beta1.Ingress object for as long 
 
 # Non-goals
 
-- Deprecate Contour's support for v1beta1.Ingress.
+- Deprecate Sesame's support for v1beta1.Ingress.
 - Support Ingress objects outside the current cluster.
 - IP in IP or GRE tunneling between clusters with discontinuous or overlapping IP ranges.
 - Support non HTTP/HTTPS traffic ingress--that is, no UDP, no MongoDB, no TCP passthrough. HTTP/HTTPS ingress only.
@@ -166,7 +166,7 @@ More documentation on Envoy's lb support can be found here: [https://www.envoypr
 ### Healthcheck
 
 Active health checking can be configured on a per upstream cluster basis. 
-Contour will only support HTTP health checking along with various settings (check interval, failures required before marking a host unhealthy, successes required before marking a host healthy, etc.). 
+Sesame will only support HTTP health checking along with various settings (check interval, failures required before marking a host unhealthy, successes required before marking a host healthy, etc.). 
 During HTTP health checking Envoy will send an HTTP request to the upstream host. 
 It expects a 200 response if the host is healthy. 
 The upstream host can return 503 if it wants to immediately notify downstream hosts to no longer forward traffic to it.
@@ -200,13 +200,13 @@ The DAG design treats the delegation from one IngressRoute to another as permiss
 ### Enforcing Mode
 
 While the IngressRoute delegation allows for Administrators to limit route usage by namespace, it does not restrict where the `root` IngressRoutes can be created. 
-Contour should allow for an `enforcing` mode which takes in a set of namespaces where root IngressRoutes are valid.
+Sesame should allow for an `enforcing` mode which takes in a set of namespaces where root IngressRoutes are valid.
 Only those permitted to operate in those namespaces can therefore create virtual hosts and delegate the permission to operate on them to other namespaces. 
 This would most likely be accomplished with a command line flag (`--root-namespaces=[]`) or ConfigMap.
 
 ### Disable v1beta1.Ingress
 
-In the scenario where teams want to utilize the `IngressRoute` CRD it may be beneficial to disable Contour from processing `Ingress` resources.
+In the scenario where teams want to utilize the `IngressRoute` CRD it may be beneficial to disable Sesame from processing `Ingress` resources.
 This can be accomplished by restricting users via RBAC from having permissions to create these types of resources. 
 
 ## Reporting status
@@ -302,7 +302,7 @@ However, because the `spec.virtualhost.tls` is present only in root objects, the
 This also implies that the IngressRoute root and the TLS Secret must live in the same namespace.
 However as mentioned above, the entire routespace (/ onwards) can be delegated to another namespace, which allows operators to define virtual hosts and their TLS configuration in one namespace, and delegate the operation of those virtual hosts to another namespace.
 
-Since defining a TLS section of a root IngressRoute tells Contour that it should set up a TLS listener and serve the provided TLS certificate/key, it's inherent that all requests be served over TLS. 
+Since defining a TLS section of a root IngressRoute tells Sesame that it should set up a TLS listener and serve the provided TLS certificate/key, it's inherent that all requests be served over TLS. 
 This results in any request to an insecure endpoint will receive a 301 http status code informing the client to redirect to the secure endpoint. No additional parameters need to be set for this functionality other than specifying TLS on the IngressRoute.
 
 Additionally, it may be necessary to serve specific routes over an insecure endpoint. 
@@ -360,21 +360,21 @@ _TBD_
 
 # Metrics
 
-Metrics are essential to any system. Contour will expose a `/metrics` Prometheus endpoint with the following metrics:
+Metrics are essential to any system. Sesame will expose a `/metrics` Prometheus endpoint with the following metrics:
 
-- **contour_ingressroute_total (gauge):** Total number of IngressRoutes objects that exist regardless of status (i.e. Valid / Invalid / Orphaned, etc). This metric should match the sum of `Orphaned` + `Valid` + `Invalid` IngressRoutes.
+- **Sesame_ingressroute_total (gauge):** Total number of IngressRoutes objects that exist regardless of status (i.e. Valid / Invalid / Orphaned, etc). This metric should match the sum of `Orphaned` + `Valid` + `Invalid` IngressRoutes.
   - namespace
-- **contour_ingressroute_orphaned_total (gauge):**  Number of `Orphaned` IngressRoute objects which have no root delegating to them
+- **Sesame_ingressroute_orphaned_total (gauge):**  Number of `Orphaned` IngressRoute objects which have no root delegating to them
   - namespace
-- **contour_ingressroute_root_total (gauge):**  Number of `Root` IngressRoute objects (Note: There will only be a single `Root` IngressRoute per vhost)
+- **Sesame_ingressroute_root_total (gauge):**  Number of `Root` IngressRoute objects (Note: There will only be a single `Root` IngressRoute per vhost)
   - namespace
-- **contour_ingressroute_valid_total (gauge):**  Number of `Valid` IngressRoute objects
-  - namespace
-  - vhost
-- **contour_ingressroute_invalid_total (gauge):**  Number of `Invalid` IngressRoute objects
+- **Sesame_ingressroute_valid_total (gauge):**  Number of `Valid` IngressRoute objects
   - namespace
   - vhost
-- **contour_ingressroute_dagrebuild_timestamp (gauge):** Timestamp of the last DAG rebuild
+- **Sesame_ingressroute_invalid_total (gauge):**  Number of `Invalid` IngressRoute objects
+  - namespace
+  - vhost
+- **Sesame_ingressroute_dagrebuild_timestamp (gauge):** Timestamp of the last DAG rebuild
 
 ## Envoy Metrics
 

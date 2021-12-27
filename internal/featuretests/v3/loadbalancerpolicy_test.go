@@ -19,8 +19,8 @@ import (
 	envoy_cluster_v3 "github.com/envoyproxy/go-control-plane/envoy/config/cluster/v3"
 	envoy_route_v3 "github.com/envoyproxy/go-control-plane/envoy/config/route/v3"
 	envoy_discovery_v3 "github.com/envoyproxy/go-control-plane/envoy/service/discovery/v3"
-	contour_api_v1 "github.com/projectcontour/sesame/apis/projectsesame/v1"
-	envoy_v3 "github.com/projectcontour/sesame/internal/envoy/v3"
+	Sesame_api_v1 "github.com/projectsesame/sesame/apis/projectsesame/v1"
+	envoy_v3 "github.com/projectsesame/sesame/internal/envoy/v3"
 	"github.com/projectsesame/sesame/internal/fixture"
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
@@ -39,13 +39,13 @@ func TestLoadBalancerPolicySessionAffinity(t *testing.T) {
 	// simple single service
 	proxy1 := fixture.NewProxy("simple").
 		WithFQDN("www.example.com").
-		WithSpec(contour_api_v1.HTTPProxySpec{
-			Routes: []contour_api_v1.Route{{
+		WithSpec(Sesame_api_v1.HTTPProxySpec{
+			Routes: []Sesame_api_v1.Route{{
 				Conditions: matchconditions(prefixMatchCondition("/cart")),
-				LoadBalancerPolicy: &contour_api_v1.LoadBalancerPolicy{
+				LoadBalancerPolicy: &Sesame_api_v1.LoadBalancerPolicy{
 					Strategy: "Cookie",
 				},
-				Services: []contour_api_v1.Service{{
+				Services: []Sesame_api_v1.Service{{
 					Name: s1.Name,
 					Port: 80,
 				}},
@@ -88,13 +88,13 @@ func TestLoadBalancerPolicySessionAffinity(t *testing.T) {
 		proxy1,
 		fixture.NewProxy("simple").
 			WithFQDN("www.example.com").
-			WithSpec(contour_api_v1.HTTPProxySpec{
-				Routes: []contour_api_v1.Route{{
+			WithSpec(Sesame_api_v1.HTTPProxySpec{
+				Routes: []Sesame_api_v1.Route{{
 					Conditions: matchconditions(prefixMatchCondition("/cart")),
-					LoadBalancerPolicy: &contour_api_v1.LoadBalancerPolicy{
+					LoadBalancerPolicy: &Sesame_api_v1.LoadBalancerPolicy{
 						Strategy: "Cookie",
 					},
-					Services: []contour_api_v1.Service{{
+					Services: []Sesame_api_v1.Service{{
 						Name: s1.Name,
 						Port: 80,
 					}, {
@@ -163,26 +163,26 @@ func TestLoadBalancerPolicyRequestHashHeader(t *testing.T) {
 
 	proxy1 := fixture.NewProxy("simple").
 		WithFQDN("www.example.com").
-		WithSpec(contour_api_v1.HTTPProxySpec{
-			Routes: []contour_api_v1.Route{{
+		WithSpec(Sesame_api_v1.HTTPProxySpec{
+			Routes: []Sesame_api_v1.Route{{
 				Conditions: matchconditions(prefixMatchCondition("/cart")),
-				LoadBalancerPolicy: &contour_api_v1.LoadBalancerPolicy{
+				LoadBalancerPolicy: &Sesame_api_v1.LoadBalancerPolicy{
 					Strategy: "RequestHash",
-					RequestHashPolicies: []contour_api_v1.RequestHashPolicy{
+					RequestHashPolicies: []Sesame_api_v1.RequestHashPolicy{
 						{
 							Terminal: true,
-							HeaderHashOptions: &contour_api_v1.HeaderHashOptions{
+							HeaderHashOptions: &Sesame_api_v1.HeaderHashOptions{
 								HeaderName: "X-Some-Header",
 							},
 						},
 						{
-							HeaderHashOptions: &contour_api_v1.HeaderHashOptions{
+							HeaderHashOptions: &Sesame_api_v1.HeaderHashOptions{
 								HeaderName: "X-Some-Other-Header",
 							},
 						},
 					},
 				},
-				Services: []contour_api_v1.Service{{
+				Services: []Sesame_api_v1.Service{{
 					Name: s1.Name,
 					Port: 80,
 				}},
@@ -236,14 +236,14 @@ func TestLoadBalancerPolicyRequestHashSourceIP(t *testing.T) {
 
 	proxy1 := fixture.NewProxy("simple").
 		WithFQDN("www.example.com").
-		WithSpec(contour_api_v1.HTTPProxySpec{
-			Routes: []contour_api_v1.Route{{
+		WithSpec(Sesame_api_v1.HTTPProxySpec{
+			Routes: []Sesame_api_v1.Route{{
 				Conditions: matchconditions(prefixMatchCondition("/cart")),
-				LoadBalancerPolicy: &contour_api_v1.LoadBalancerPolicy{
+				LoadBalancerPolicy: &Sesame_api_v1.LoadBalancerPolicy{
 					Strategy: "RequestHash",
-					RequestHashPolicies: []contour_api_v1.RequestHashPolicy{
+					RequestHashPolicies: []Sesame_api_v1.RequestHashPolicy{
 						{
-							HeaderHashOptions: &contour_api_v1.HeaderHashOptions{
+							HeaderHashOptions: &Sesame_api_v1.HeaderHashOptions{
 								HeaderName: "X-Some-Header",
 							},
 						},
@@ -252,7 +252,7 @@ func TestLoadBalancerPolicyRequestHashSourceIP(t *testing.T) {
 						},
 					},
 				},
-				Services: []contour_api_v1.Service{{
+				Services: []Sesame_api_v1.Service{{
 					Name: s1.Name,
 					Port: 80,
 				}},

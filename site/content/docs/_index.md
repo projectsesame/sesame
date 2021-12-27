@@ -1,6 +1,6 @@
 ---
-title: Contour Documentation
-description: Contour Documentation
+title: Sesame Documentation
+description: Sesame Documentation
 redirect_to:
 - LATEST
 ---

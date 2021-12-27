@@ -19,6 +19,7 @@ if [[ "$REF_TYPE" != "tags" ]]; then
     exit 0
 fi
 
+
 # Get the current tag name.
 CURRENT_TAG=$(echo "$GITHUB_REF" | cut -d / -f 3)
 if [[ -z "$CURRENT_TAG" ]]; then

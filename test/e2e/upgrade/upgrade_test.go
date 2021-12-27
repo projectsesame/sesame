@@ -34,8 +34,8 @@ import (
 var (
 	f = e2e.NewFramework(true)
 
-	// Contour version we are upgrading from.
-	contourUpgradeFromVersion string
+	// Sesame version we are upgrading from.
+	SesameUpgradeFromVersion string
 )
 
 func TestUpgrade(t *testing.T) {
@@ -43,9 +43,9 @@ func TestUpgrade(t *testing.T) {
 }
 
 var _ = BeforeSuite(func() {
-	contourUpgradeFromVersion = os.Getenv("CONTOUR_UPGRADE_FROM_VERSION")
-	require.NotEmpty(f.T(), contourUpgradeFromVersion, "CONTOUR_UPGRADE_FROM_VERSION environment variable not supplied")
-	By("Testing Contour upgrade from " + contourUpgradeFromVersion)
+	SesameUpgradeFromVersion = os.Getenv("Sesame_UPGRADE_FROM_VERSION")
+	require.NotEmpty(f.T(), SesameUpgradeFromVersion, "Sesame_UPGRADE_FROM_VERSION environment variable not supplied")
+	By("Testing Sesame upgrade from " + SesameUpgradeFromVersion)
 
 	// We should be running in a multi-node cluster with a proper load
 	// balancer, so fetch load balancer ip to make requests to.
@@ -56,7 +56,7 @@ var _ = BeforeSuite(func() {
 	f.HTTP.HTTPSURLBase = "https://" + f.Deployment.EnvoyService.Status.LoadBalancer.Ingress[0].IP
 })
 
-var _ = Describe("upgrading Contour", func() {
+var _ = Describe("upgrading Sesame", func() {
 	const appHost = "upgrade-echo.test.com"
 
 	f.NamespacedTest("sesame-upgrade-test", func(namespace string) {
@@ -101,10 +101,10 @@ var _ = Describe("upgrading Contour", func() {
 			require.NoError(f.T(), err)
 
 			By("deploying updated sesame resources")
-			require.NoError(f.T(), f.Deployment.EnsureResourcesForInclusterContour(true))
+			require.NoError(f.T(), f.Deployment.EnsureResourcesForInclusterSesame(true))
 
 			By("waiting for sesame deployment to be updated")
-			require.NoError(f.T(), f.Deployment.WaitForContourDeploymentUpdated())
+			require.NoError(f.T(), f.Deployment.WaitForSesameDeploymentUpdated())
 
 			By("waiting for envoy daemonset to be updated")
 			require.NoError(f.T(), f.Deployment.WaitForEnvoyDaemonSetOutOfDate())

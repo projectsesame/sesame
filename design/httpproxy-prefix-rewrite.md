@@ -49,7 +49,7 @@ This is because a regex rewrite can be used to re-order arbitrary portions of th
 
 ## High Level Design
 
-Add a `PathRewrite` field to the HTTPProxy [Route](https://github.com/projectsesame/sesame/blob/main/apis/projectcontour/v1/httpproxy.go#L125) object.
+Add a `PathRewrite` field to the HTTPProxy [Route](https://github.com/projectsesame/sesame/blob/main/apis/projectsesame/v1/httpproxy.go#L125) object.
 This allows us to specify different kinds of rewrite for URL paths without also needing to specify a specific kind of request rewriting (i.e. we can add host rewrite later).
 
 Locating the `PathRewritePolicy` on the `Route` means that rewriting is controlled by the team that controls the leaf HTTPProxy document.
@@ -131,7 +131,7 @@ because wildcard paths will generate a Envoy [regex_match][1]
 object but the Envoy prefix rewrite feature requires a [prefix][2]
 and only one kind of path match can be used at a time.
 
-This means that Contour must validate that prefix replacement may
+This means that Sesame must validate that prefix replacement may
 not be used in conjunction with wildcard path matching.
 
 ### Prefix fragility
@@ -172,7 +172,7 @@ generating.
 
 In the case that the user has already specified distinct routes for
 `/foo` and `/foo/`, we should not generate any implicit prefix
-matches or rewrites. Contour should build the Envoy route config
+matches or rewrites. Sesame should build the Envoy route config
 exactly as the user specifies.
 
 ### Empty replacements
@@ -199,7 +199,7 @@ Rewrite a single prefix:
 
 ```
 ---
-apiVersion: projectcontour.io/v1
+apiVersion: projectsesame.io/v1
 kind: HTTPProxy
 metadata:
   name: httpbin
@@ -222,7 +222,7 @@ and rewrites them both to a single canonical `/v3/` path:
 
 ```
 ---
-apiVersion: projectcontour.io/v1
+apiVersion: projectsesame.io/v1
 kind: HTTPProxy
 metadata:
   name: httpbin-vhost
@@ -237,7 +237,7 @@ spec:
     conditions:
     - prefix: /v2/
 ---
-apiVersion: projectcontour.io/v1
+apiVersion: projectsesame.io/v1
 kind: HTTPProxy
 metadata:
   name: httpbin-app
@@ -259,7 +259,7 @@ only applies to the `/` route.
 
 ```
 ---
-apiVersion: projectcontour.io/v1
+apiVersion: projectsesame.io/v1
 kind: HTTPProxy
 metadata:
   name: httpbin-vhost
@@ -277,7 +277,7 @@ spec:
     conditions:
     - prefix: /
 ---
-apiVersion: projectcontour.io/v1
+apiVersion: projectsesame.io/v1
 kind: HTTPProxy
 metadata:
   name: httpbin-app
@@ -299,7 +299,7 @@ components of a prefix:
 ```
 ---
 # Create a root proxy that includes a proxy on the /api/ path:
-apiVersion: projectcontour.io/v1
+apiVersion: projectsesame.io/v1
 kind: HTTPProxy
 metadata:
   name: artifactory
@@ -311,7 +311,7 @@ spec:
 
 ---
 # Now split the root into 2 proxies for /v1/ and /v2/.
-apiVersion: projectcontour.io/v1
+apiVersion: projectsesame.io/v1
 kind: HTTPProxy
 metadata:
   name: artifactory-api
@@ -327,7 +327,7 @@ spec:
 ---
 # Now, it turns out we don't need a separate proxy for /v1/ any
 # more, so we can send that traffic over to /v2/
-apiVersion: projectcontour.io/v1
+apiVersion: projectsesame.io/v1
 kind: HTTPProxy
 metadata:
   name: artifactory-v1
@@ -340,7 +340,7 @@ spec:
 # multiple services to justify specifying this as a single proxy
 # with multiple replacements.
 ---
-apiVersion: projectcontour.io/v1
+apiVersion: projectsesame.io/v1
 kind: HTTPProxy
 metadata:
   name: artifactory-v2

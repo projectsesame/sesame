@@ -18,7 +18,7 @@ package httpproxy
 
 import (
 	. "github.com/onsi/ginkgo"
-	contourv1 "github.com/projectcontour/sesame/apis/projectsesame/v1"
+	Sesamev1 "github.com/projectsesame/sesame/apis/projectsesame/v1"
 	"github.com/projectsesame/sesame/test/e2e"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -31,25 +31,25 @@ func testHostHeaderRewrite(namespace string) {
 
 		f.Fixtures.Echo.Deploy(namespace, "ingress-conformance-echo")
 
-		p := &contourv1.HTTPProxy{
+		p := &Sesamev1.HTTPProxy{
 			ObjectMeta: metav1.ObjectMeta{
 				Namespace: namespace,
 				Name:      "host-header-rewrite",
 			},
-			Spec: contourv1.HTTPProxySpec{
-				VirtualHost: &contourv1.VirtualHost{
+			Spec: Sesamev1.HTTPProxySpec{
+				VirtualHost: &Sesamev1.VirtualHost{
 					Fqdn: "hostheaderrewrite.projectsesame.io",
 				},
-				Routes: []contourv1.Route{
+				Routes: []Sesamev1.Route{
 					{
-						Services: []contourv1.Service{
+						Services: []Sesamev1.Service{
 							{
 								Name: "ingress-conformance-echo",
 								Port: 80,
 							},
 						},
-						RequestHeadersPolicy: &contourv1.HeadersPolicy{
-							Set: []contourv1.HeaderValue{
+						RequestHeadersPolicy: &Sesamev1.HeadersPolicy{
+							Set: []Sesamev1.HeaderValue{
 								{
 									Name:  "Host",
 									Value: "rewritten.com",

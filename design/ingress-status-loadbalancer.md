@@ -2,12 +2,12 @@
 
 Status: _Draft_
 
-This proposal describes how to add support for the `ingress.status.loadBalancer` field to Contour.
+This proposal describes how to add support for the `ingress.status.loadBalancer` field to Sesame.
 
 ## Goals
 
-- Populate the status.loadbalancer field in all `networking.k8s.io/v1beta.Ingress` objects managed by Contour.
-- Contour pass the Ingress compliance tests for `networking.k8s.io/v1beta.Ingress` objects.
+- Populate the status.loadbalancer field in all `networking.k8s.io/v1beta.Ingress` objects managed by Sesame.
+- Sesame pass the Ingress compliance tests for `networking.k8s.io/v1beta.Ingress` objects.
 
 ## Non Goals
 
@@ -38,36 +38,36 @@ While the hard coded name approach sounds simpler, and is, it will likely not be
 This is for several reasons.
 
 - The hard coded address model implies either the cluster is running on prem, or using host networking.
-- The hard coded IP model requires the administator to know the IP addresses of the _envoy_ service (not the contour service) which may change over time. 
+- The hard coded IP model requires the administator to know the IP addresses of the _envoy_ service (not the Sesame service) which may change over time. 
 
-The configuration will likely go into Contour's configuration file.
+The configuration will likely go into Sesame's configuration file.
 
 These restrictions (which are administrative, not ones we've placed on the solution) make this bookkeeping expensive, prohibitively in the case of a highly dynamic cluster.
 
 ### Dynamic load balancer address discovery
 
 The far more common case will be dynamic load balancer discovery.
-In this model Contour will track a service document (default to projectcontour/envoy, but configurable) and use those details as the list of IP addresses to write back to the ingress' status.
+In this model Sesame will track a service document (default to projectsesame/envoy, but configurable) and use those details as the list of IP addresses to write back to the ingress' status.
 
 The nginx controller goes to some lengths to try to dynamically figure out what it's status document as well as other side channels to discover the address if that fails.
 For this first implementation I propose we stick to the discovery methods outlined above.
 
 ### Status updater
 
-The latter, writing the status to valid ingress objects, waits to be elected the leader then updates the status document on all of the ingress objects within Contour's class.
+The latter, writing the status to valid ingress objects, waits to be elected the leader then updates the status document on all of the ingress objects within Sesame's class.
 
 As new ingress objects arrive they will need to be updated.
 
-Note: there appears to be no requirement that if Contour is shutting down we delete the status field on the ingress on the way out.
+Note: there appears to be no requirement that if Sesame is shutting down we delete the status field on the ingress on the way out.
 Initially this feels wrong but consider the scenarios:
 
-- Leadership has deposed the current Contour causing it to shut down; the new leader will be responsible for updating status. Best that during this transition observers of the Ingress document do not see status disappear and reappear quickly.
-- Contour is shut down for a long period of time. Yes, the status information will be incorrect, but there is no correct value, no ingress controller is serving that vhost.
-- Contour is being replaced with something else, then the responsibility to _overwrite_ the status information falls to Contour's replacement.
+- Leadership has deposed the current Sesame causing it to shut down; the new leader will be responsible for updating status. Best that during this transition observers of the Ingress document do not see status disappear and reappear quickly.
+- Sesame is shut down for a long period of time. Yes, the status information will be incorrect, but there is no correct value, no ingress controller is serving that vhost.
+- Sesame is being replaced with something else, then the responsibility to _overwrite_ the status information falls to Sesame's replacement.
 
 ## Detailed Design
 
-I think the design should involve two goroutines added to cmd/contour's workgroup.
+I think the design should involve two goroutines added to cmd/Sesame's workgroup.
 The first will be responsible for load balancer discovery, the second will be responsible for updating status documents.
 
 ### Discovery worker

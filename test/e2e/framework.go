@@ -29,8 +29,8 @@ import (
 	certmanagerv1 "github.com/jetstack/cert-manager/pkg/apis/certmanager/v1"
 	"github.com/onsi/ginkgo"
 	"github.com/onsi/gomega/gexec"
-	contourv1 "github.com/projectcontour/sesame/apis/projectsesame/v1"
-	contourv1alpha1 "github.com/projectcontour/sesame/apis/projectsesame/v1alpha1"
+	Sesamev1 "github.com/projectsesame/sesame/apis/projectsesame/v1"
+	Sesamev1alpha1 "github.com/projectsesame/sesame/apis/projectsesame/v1alpha1"
 	"github.com/stretchr/testify/require"
 	corev1 "k8s.io/api/core/v1"
 	apiextensions_v1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
@@ -48,7 +48,7 @@ import (
 )
 
 // Framework provides a collection of helpful functions for
-// writing end-to-end (E2E) tests for Contour.
+// writing end-to-end (E2E) tests for Sesame.
 type Framework struct {
 	// Client is a controller-runtime Kubernetes client.
 	Client client.Client
@@ -72,7 +72,7 @@ type Framework struct {
 	Certs *Certs
 
 	// Deployment provides helpers for managing deploying resources that
-	// are part of a full Contour deployment manifest.
+	// are part of a full Sesame deployment manifest.
 	Deployment *Deployment
 
 	// Kubectl provides helpers for managing kubectl port-forward helpers.
@@ -85,13 +85,13 @@ func NewFramework(inClusterTestSuite bool) *Framework {
 	t := ginkgo.GinkgoT()
 
 	// Deferring GinkgoRecover() provides better error messages in case of panic
-	// e.g. when CONTOUR_E2E_LOCAL_HOST environment variable is not set.
+	// e.g. when Sesame_E2E_LOCAL_HOST environment variable is not set.
 	defer ginkgo.GinkgoRecover()
 
 	scheme := runtime.NewScheme()
 	require.NoError(t, kubescheme.AddToScheme(scheme))
-	require.NoError(t, contourv1.AddToScheme(scheme))
-	require.NoError(t, contourv1alpha1.AddToScheme(scheme))
+	require.NoError(t, Sesamev1.AddToScheme(scheme))
+	require.NoError(t, Sesamev1alpha1.AddToScheme(scheme))
 	require.NoError(t, gatewayapi_v1alpha2.AddToScheme(scheme))
 	require.NoError(t, certmanagerv1.AddToScheme(scheme))
 	require.NoError(t, apiextensions_v1.AddToScheme(scheme))
@@ -121,37 +121,37 @@ func NewFramework(inClusterTestSuite bool) *Framework {
 	crClient, err := client.New(config, client.Options{Scheme: scheme})
 	require.NoError(t, err)
 
-	httpURLBase := os.Getenv("CONTOUR_E2E_HTTP_URL_BASE")
+	httpURLBase := os.Getenv("Sesame_E2E_HTTP_URL_BASE")
 	if httpURLBase == "" {
 		httpURLBase = "http://127.0.0.1:9080"
 	}
 
-	httpsURLBase := os.Getenv("CONTOUR_E2E_HTTPS_URL_BASE")
+	httpsURLBase := os.Getenv("Sesame_E2E_HTTPS_URL_BASE")
 	if httpsURLBase == "" {
 		httpsURLBase = "https://127.0.0.1:9443"
 	}
 
-	httpURLMetricsBase := os.Getenv("CONTOUR_E2E_HTTP_URL_METRICS_BASE")
+	httpURLMetricsBase := os.Getenv("Sesame_E2E_HTTP_URL_METRICS_BASE")
 	if httpURLMetricsBase == "" {
 		httpURLMetricsBase = "http://127.0.0.1:8002"
 	}
 
-	httpURLAdminBase := os.Getenv("CONTOUR_E2E_HTTP_URL_ADMIN_BASE")
+	httpURLAdminBase := os.Getenv("Sesame_E2E_HTTP_URL_ADMIN_BASE")
 	if httpURLAdminBase == "" {
 		httpURLAdminBase = "http://127.0.0.1:19001"
 	}
 
 	var (
-		kubeConfig   string
-		contourHost  string
-		contourPort  string
-		contourBin   string
-		contourImage string
+		kubeConfig  string
+		SesameHost  string
+		SesamePort  string
+		SesameBin   string
+		SesameImage string
 	)
 	if inClusterTestSuite {
 		var found bool
-		if contourImage, found = os.LookupEnv("CONTOUR_E2E_IMAGE"); !found {
-			contourImage = "ghcr.io/projectsesame/sesame:main"
+		if SesameImage, found = os.LookupEnv("Sesame_E2E_IMAGE"); !found {
+			SesameImage = "ghcr.io/projectsesame/sesame:main"
 		}
 	} else {
 		var found bool
@@ -159,26 +159,26 @@ func NewFramework(inClusterTestSuite bool) *Framework {
 			kubeConfig = filepath.Join(os.Getenv("HOME"), ".kube", "config")
 		}
 
-		contourHost = os.Getenv("CONTOUR_E2E_LOCAL_HOST")
-		require.NotEmpty(t, contourHost, "CONTOUR_E2E_LOCAL_HOST environment variable not supplied")
+		SesameHost = os.Getenv("Sesame_E2E_LOCAL_HOST")
+		require.NotEmpty(t, SesameHost, "Sesame_E2E_LOCAL_HOST environment variable not supplied")
 
-		if contourPort, found = os.LookupEnv("CONTOUR_E2E_LOCAL_PORT"); !found {
-			contourPort = "8001"
+		if SesamePort, found = os.LookupEnv("Sesame_E2E_LOCAL_PORT"); !found {
+			SesamePort = "8001"
 		}
 
 		var err error
-		contourBin, err = gexec.Build("github.com/projectsesame/sesame/cmd/sesame")
+		SesameBin, err = gexec.Build("github.com/projectsesame/sesame/cmd/sesame")
 		require.NoError(t, err)
 	}
 
 	deployment := &Deployment{
-		client:           crClient,
-		cmdOutputWriter:  ginkgo.GinkgoWriter,
-		kubeConfig:       kubeConfig,
-		localContourHost: contourHost,
-		localContourPort: contourPort,
-		contourBin:       contourBin,
-		contourImage:     contourImage,
+		client:          crClient,
+		cmdOutputWriter: ginkgo.GinkgoWriter,
+		kubeConfig:      kubeConfig,
+		localSesameHost: SesameHost,
+		localSesamePort: SesamePort,
+		SesameBin:       SesameBin,
+		SesameImage:     SesameImage,
 	}
 
 	kubectl := &Kubectl{
@@ -249,16 +249,16 @@ func (f *Framework) Test(body TestBody) {
 }
 
 // CreateHTTPProxy creates the provided HTTPProxy and returns any relevant error.
-func (f *Framework) CreateHTTPProxy(proxy *contourv1.HTTPProxy) error {
+func (f *Framework) CreateHTTPProxy(proxy *Sesamev1.HTTPProxy) error {
 	return f.Client.Create(context.TODO(), proxy)
 }
 
 // CreateHTTPProxyAndWaitFor creates the provided HTTPProxy in the Kubernetes API
 // and then waits for the specified condition to be true.
-func (f *Framework) CreateHTTPProxyAndWaitFor(proxy *contourv1.HTTPProxy, condition func(*contourv1.HTTPProxy) bool) (*contourv1.HTTPProxy, bool) {
+func (f *Framework) CreateHTTPProxyAndWaitFor(proxy *Sesamev1.HTTPProxy, condition func(*Sesamev1.HTTPProxy) bool) (*Sesamev1.HTTPProxy, bool) {
 	require.NoError(f.t, f.Client.Create(context.TODO(), proxy))
 
-	res := &contourv1.HTTPProxy{}
+	res := &Sesamev1.HTTPProxy{}
 
 	if err := wait.PollImmediate(f.RetryInterval, f.RetryTimeout, func() (bool, error) {
 		if err := f.Client.Get(context.TODO(), client.ObjectKeyFromObject(proxy), res); err != nil {
@@ -453,14 +453,14 @@ type EchoResponseBody struct {
 	Pod            string      `json:"pod"`
 }
 
-func UsingContourConfigCRD() bool {
-	useContourConfiguration, found := os.LookupEnv("USE_CONTOUR_CONFIGURATION_CRD")
-	return found && useContourConfiguration == "true"
+func UsingSesameConfigCRD() bool {
+	useSesameConfiguration, found := os.LookupEnv("USE_Sesame_CONFIGURATION_CRD")
+	return found && useSesameConfiguration == "true"
 }
 
 // HTTPProxyValid returns true if the proxy has a .status.currentStatus
 // of "valid".
-func HTTPProxyValid(proxy *contourv1.HTTPProxy) bool {
+func HTTPProxyValid(proxy *Sesamev1.HTTPProxy) bool {
 
 	if proxy == nil {
 		return false
@@ -477,13 +477,13 @@ func HTTPProxyValid(proxy *contourv1.HTTPProxy) bool {
 
 // HTTPProxyInvalid returns true if the proxy has a .status.currentStatus
 // of "valid".
-func HTTPProxyInvalid(proxy *contourv1.HTTPProxy) bool {
+func HTTPProxyInvalid(proxy *Sesamev1.HTTPProxy) bool {
 	return proxy != nil && proxy.Status.CurrentStatus == "invalid"
 }
 
 // HTTPProxyErrors provides a pretty summary of any Errors on the HTTPProxy Valid condition.
 // If there are no errors, the return value will be empty.
-func HTTPProxyErrors(proxy *contourv1.HTTPProxy) string {
+func HTTPProxyErrors(proxy *Sesamev1.HTTPProxy) string {
 	cond := proxy.Status.GetConditionFor("Valid")
 	errors := cond.Errors
 	if len(errors) > 0 {
@@ -495,7 +495,7 @@ func HTTPProxyErrors(proxy *contourv1.HTTPProxy) string {
 
 // DetailedConditionInvalid returns true if the provided detailed condition
 // list contains a condition of type "Valid" and status "False".
-func DetailedConditionInvalid(conditions []contourv1.DetailedCondition) bool {
+func DetailedConditionInvalid(conditions []Sesamev1.DetailedCondition) bool {
 	for _, c := range conditions {
 		if c.Condition.Type == "Valid" {
 			return c.Condition.Status == "False"

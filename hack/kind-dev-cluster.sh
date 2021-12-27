@@ -1,17 +1,17 @@
 #! /usr/bin/env bash
 
-# kind-dev-cluster.sh: spin up a Contour dev configuration in Kind
+# kind-dev-cluster.sh: spin up a Sesame dev configuration in Kind
 #
-# This script starts a cluster in kind and deploys Contour. We map
+# This script starts a cluster in kind and deploys Sesame. We map
 # the envoy listening ports to the host so that host traffic can
-# easily be proxied. We deploy Contour in insecure mode because we
-# assume that the user will run a development Contour locally on the
+# easily be proxied. We deploy Sesame in insecure mode because we
+# assume that the user will run a development Sesame locally on the
 # host and set it as the Envoy xDS server.
 
 readonly KIND=${KIND:-kind}
 readonly KUBECTL=${KUBECTL:-kubectl}
 
-readonly CLUSTER=${CLUSTER:-contour}
+readonly CLUSTER=${CLUSTER:-sesame}
 
 readonly HERE=$(cd $(dirname $0) && pwd)
 readonly REPO=$(cd ${HERE}/.. && pwd)
@@ -72,25 +72,25 @@ kubectl::apply() {
 kind::cluster::create
 kubectl::do get nodes
 
-kubectl::apply ${REPO}/examples/contour/00-common.yaml
+kubectl::apply ${REPO}/examples/sesame/00-common.yaml
 
-kubectl::apply ${REPO}/examples/contour/01-contour-config.yaml
-kubectl::apply ${REPO}/examples/contour/01-crds.yaml
-kubectl::apply ${REPO}/examples/contour/02-rbac.yaml
+kubectl::apply ${REPO}/examples/sesame/01-sesame-config.yaml
+kubectl::apply ${REPO}/examples/sesame/01-crds.yaml
+kubectl::apply ${REPO}/examples/sesame/02-rbac.yaml
 
 # Skip 02-job-certgen.yaml, since we want to be running in
 # insecure mode.
 
-kubectl::apply ${REPO}/examples/contour/02-service-contour.yaml
+kubectl::apply ${REPO}/examples/sesame/02-service-sesame.yaml
 
 # We don't need to create an envoy service, since kind has mapped
 # the envoy ports to the host, so don't apply 02-service-envoy.yaml.
 
 # We don't need to deploy sesame to the cluster because we expect
-# the user to manually run a devel Contour, so don't apply
+# the user to manually run a devel Sesame, so don't apply
 # 03-sesame.yaml.
 
-kubectl::apply ${REPO}/examples/contour/03-envoy.yaml
+kubectl::apply ${REPO}/examples/sesame/03-envoy.yaml
 
 # TODO(jpeach): figure out how to eliminate the manual CRD edits.
 # Look into kustomize as an option.
@@ -100,12 +100,12 @@ cat <<EOF
 Host IP address(es): $(host::addresses | tr '\n' ' ')
 Next steps:
 
-* Edit the envoy daemonset to remove the contourcert and cacert secrets volume, and
+* Edit the envoy daemonset to remove the sesamecert and cacert secrets volume, and
   update the bootstrap container to point the xDS server to the host IP:
 
-    ${KUBECTL} --context kind-${CLUSTER} --namespace projectcontour edit daemonset envoy
+    ${KUBECTL} --context kind-${CLUSTER} --namespace projectsesame edit daemonset envoy
 
-Run contour:
+Run Sesame:
 
-    contour serve --insecure --xds-address=0.0.0.0 --envoy-service-http-port=80 --envoy-service-https-port=443
+    Sesame serve --insecure --xds-address=0.0.0.0 --envoy-service-http-port=80 --envoy-service-https-port=443
 EOF

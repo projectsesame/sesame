@@ -16,7 +16,7 @@ package envoy
 import "syscall"
 
 // We only support Envoy on Linux so always configure Linux TCP keep-alive
-// socket options regardless of the platform that Contour is running on.
+// socket options regardless of the platform that Sesame is running on.
 // nolint:revive
 const (
 	TCP_KEEPIDLE  = 0x4 // Linux syscall.TCP_KEEPIDLE

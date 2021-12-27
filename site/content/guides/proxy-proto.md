@@ -3,15 +3,15 @@ title: How to Configure PROXY v1/v2 Support
 layout: page
 ---
 
-If you deploy Contour as a Deployment or Daemonset, you will likely use a `type: LoadBalancer` Service to request an [external load balancer][1] from your hosting provider.
+If you deploy Sesame as a Deployment or Daemonset, you will likely use a `type: LoadBalancer` Service to request an [external load balancer][1] from your hosting provider.
 If you use the Elastic Load Balancer (ELB) service from Amazon's EC2, you need to perform a couple of additional steps to enable the [PROXY][0] protocol. Here's why:
 
 External load balancers typically operate in one of two modes: a layer 7 HTTP proxy, or a layer 4 TCP proxy.
 The former cannot be used to load balance TLS traffic, because your cloud provider attempts HTTP negotiation on port 443.
-So the latter must be used when Contour handles HTTP and HTTPS traffic.
+So the latter must be used when Sesame handles HTTP and HTTPS traffic.
 
 However this leads to a situation where the remote IP address of the client is reported as the inside address of your cloud provider's load balancer.
-To rectify the situation, you can add annotations to your service and flags to your Contour Deployment or DaemonSet to enable the [PROXY][0] protocol which forwards the original client IP details to Envoy. 
+To rectify the situation, you can add annotations to your service and flags to your Sesame Deployment or DaemonSet to enable the [PROXY][0] protocol which forwards the original client IP details to Envoy. 
 
 ## Enable PROXY protocol on your service in GKE
 
@@ -20,7 +20,7 @@ Your services should see the addresses in the `X-Forwarded-For` or `X-Envoy-Exte
 
 ## Enable PROXY protocol on your service in AWS
 
-To instruct EC2 to place the ELB into `tcp`+`PROXY` mode, add the following annotations to the `contour` Service:
+To instruct EC2 to place the ELB into `tcp`+`PROXY` mode, add the following annotations to the `Sesame` Service:
 
 ```
 apiVersion: v1
@@ -29,8 +29,8 @@ metadata:
   annotations:
       service.beta.kubernetes.io/aws-load-balancer-backend-protocol: tcp
       service.beta.kubernetes.io/aws-load-balancer-proxy-protocol: '*'
-    name: contour
-    namespace: projectcontour
+    name: Sesame
+    namespace: projectsesame
 spec:
   type: LoadBalancer
 ...
@@ -44,10 +44,10 @@ spec:
 ...
 spec:
   containers:
-  - image: ghcr.io/projectcontour/contour:{{< param latest_version >}}
+  - image: ghcr.io/projectsesame/Sesame:{{< param latest_version >}}
     imagePullPolicy: Always
-    name: contour
-    command: ["contour"]
+    name: Sesame
+    command: ["Sesame"]
     args: ["serve", "--incluster", "--use-proxy-protocol"]
 ...
 ```

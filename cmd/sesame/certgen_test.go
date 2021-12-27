@@ -64,7 +64,7 @@ func TestGeneratedSecretsValid(t *testing.T) {
 			fmt.Sprintf("envoy.%s.svc", conf.Namespace),
 			fmt.Sprintf("envoy.%s.svc.cluster.local", conf.Namespace),
 		},
-		"contourcert": {
+		"Sesamecert": {
 			"sesame",
 			fmt.Sprintf("sesame.%s", conf.Namespace),
 			fmt.Sprintf("sesame.%s.svc", conf.Namespace),
@@ -120,7 +120,7 @@ func TestOutputFileMode(t *testing.T) {
 		},
 		{
 			name:         "pem format with overwrite",
-			insecureFile: "contourcert.pem",
+			insecureFile: "Sesamecert.pem",
 			cc: &certgenConfig{
 				OutputPEM: true,
 				Overwrite: true,
@@ -136,7 +136,7 @@ func TestOutputFileMode(t *testing.T) {
 		},
 		{
 			name:         "yaml format with overwrite",
-			insecureFile: "contourcert.yaml",
+			insecureFile: "Sesamecert.yaml",
 			cc: &certgenConfig{
 				OutputYAML: true,
 				Overwrite:  true,

@@ -142,8 +142,8 @@ func registerServe(app *kingpin.Application) (*kingpin.CmdClause, *serveContext)
 	serve.Flag("health-port", "Port the health HTTP endpoint will bind to.").PlaceHolder("<port>").IntVar(&ctx.healthPort)
 
 	serve.Flag("sesame-cafile", "CA bundle file name for serving gRPC with TLS.").Envar("SESAME_CAFILE").StringVar(&ctx.caFile)
-	serve.Flag("sesame-cert-file", "Sesame certificate file name for serving gRPC over TLS.").PlaceHolder("/path/to/file").Envar("CONTOUR_CERT_FILE").StringVar(&ctx.contourCert)
-	serve.Flag("sesame-key-file", "Sesame key file name for serving gRPC over TLS.").PlaceHolder("/path/to/file").Envar("CONTOUR_KEY_FILE").StringVar(&ctx.contourKey)
+	serve.Flag("sesame-cert-file", "Sesame certificate file name for serving gRPC over TLS.").PlaceHolder("/path/to/file").Envar("Sesame_CERT_FILE").StringVar(&ctx.SesameCert)
+	serve.Flag("sesame-key-file", "Sesame key file name for serving gRPC over TLS.").PlaceHolder("/path/to/file").Envar("Sesame_KEY_FILE").StringVar(&ctx.SesameKey)
 	serve.Flag("insecure", "Allow serving without TLS secured gRPC.").BoolVar(&ctx.PermitInsecureGRPC)
 	serve.Flag("root-namespaces", "Restrict sesame to searching these namespaces for root ingress routes.").PlaceHolder("<ns,ns>").StringVar(&ctx.rootNamespaces)
 
@@ -240,7 +240,7 @@ func (s *Server) doServe() error {
 	// Get the SesameConfiguration CRD if specified
 	if len(s.ctx.sesameConfigurationName) > 0 {
 		// Determine the name/namespace of the configuration resource utilizing the environment
-		// variable "CONTOUR_NAMESPACE" which should exist on the Sesame deployment.
+		// variable "Sesame_NAMESPACE" which should exist on the Sesame deployment.
 		//
 		// If the env variable is not present, it will default to "projectsesame".
 		sesameNamespace, found := os.LookupEnv("SESAME_NAMESPACE")
@@ -248,17 +248,17 @@ func (s *Server) doServe() error {
 			sesameNamespace = "projectsesame"
 		}
 
-		contourConfig := &sesame_api_v1alpha1.SesameConfiguration{}
+		SesameConfig := &sesame_api_v1alpha1.SesameConfiguration{}
 		key := client.ObjectKey{Namespace: sesameNamespace, Name: s.ctx.sesameConfigurationName}
 
 		// Using GetAPIReader() here because the manager's caches won't be started yet,
 		// so reads from the manager's client (which uses the caches for reads) will fail.
-		if err := s.mgr.GetAPIReader().Get(context.Background(), key, contourConfig); err != nil {
+		if err := s.mgr.GetAPIReader().Get(context.Background(), key, SesameConfig); err != nil {
 			return fmt.Errorf("error getting sesame configuration %s: %v", key, err)
 		}
 
 		// Copy the Spec from the parsed Configuration
-		sesameConfiguration = contourConfig.Spec
+		sesameConfiguration = SesameConfig.Spec
 	} else {
 		// No sesame configuration passed, so convert the ServeContext into a SesameConfigurationSpec.
 		sesameConfiguration = s.ctx.convertToSesameConfigurationSpec()
@@ -342,7 +342,7 @@ func (s *Server) doServe() error {
 		return err
 	}
 
-	contourMetrics := metrics.NewMetrics(s.registry)
+	SesameMetrics := metrics.NewMetrics(s.registry)
 
 	// Endpoints updates are handled directly by the EndpointsTranslator
 	// due to their high update rate and their orthogonal nature.
@@ -403,11 +403,11 @@ func (s *Server) doServe() error {
 
 	// Build the core Kubernetes event handler.
 	observer := sesame.NewRebuildMetricsObserver(
-		contourMetrics,
+		SesameMetrics,
 		dag.ComposeObservers(append(xdscache.ObserversOf(resources), snapshotHandler)...),
 	)
-	contourHandler := sesame.NewEventHandler(sesame.EventHandlerConfig{
-		Logger:          s.log.WithField("context", "contourEventHandler"),
+	SesameHandler := sesame.NewEventHandler(sesame.EventHandlerConfig{
+		Logger:          s.log.WithField("context", "SesameEventHandler"),
 		HoldoffDelay:    100 * time.Millisecond,
 		HoldoffMaxDelay: 500 * time.Millisecond,
 		Observer:        observer,
@@ -415,10 +415,10 @@ func (s *Server) doServe() error {
 		Builder:         builder,
 	})
 
-	// Wrap contourHandler in an EventRecorder which tracks API server events.
+	// Wrap SesameHandler in an EventRecorder which tracks API server events.
 	eventHandler := &sesame.EventRecorder{
-		Next:    contourHandler,
-		Counter: contourMetrics.EventHandlerOperations,
+		Next:    SesameHandler,
+		Counter: SesameMetrics.EventHandlerOperations,
 	}
 
 	// Inform on default resources.
@@ -454,13 +454,13 @@ func (s *Server) doServe() error {
 	// Inform on endpoints.
 	if err := informOnResource(&corev1.Endpoints{}, &sesame.EventRecorder{
 		Next:    endpointHandler,
-		Counter: contourMetrics.EventHandlerOperations,
+		Counter: SesameMetrics.EventHandlerOperations,
 	}, s.mgr.GetCache()); err != nil {
 		s.log.WithError(err).WithField("resource", "endpoints").Fatal("failed to create informer")
 	}
 
 	// Register our event handler with the manager.
-	if err := s.mgr.Add(contourHandler); err != nil {
+	if err := s.mgr.Add(SesameHandler); err != nil {
 		return err
 	}
 
@@ -536,7 +536,7 @@ func (s *Server) doServe() error {
 
 	notifier := &leadership.Notifier{
 		ToNotify: append([]leadership.NeedLeaderElectionNotification{
-			contourHandler,
+			SesameHandler,
 			observer,
 		}, needsNotification...),
 	}
@@ -548,16 +548,16 @@ func (s *Server) doServe() error {
 	return s.mgr.Start(signals.SetupSignalHandler())
 }
 
-func (s *Server) setupRateLimitService(contourConfiguration sesame_api_v1alpha1.SesameConfigurationSpec) (*xdscache_v3.RateLimitConfig, error) {
-	if contourConfiguration.RateLimitService == nil {
+func (s *Server) setupRateLimitService(SesameConfiguration sesame_api_v1alpha1.SesameConfigurationSpec) (*xdscache_v3.RateLimitConfig, error) {
+	if SesameConfiguration.RateLimitService == nil {
 		return nil, nil
 	}
 
 	// ensure the specified ExtensionService exists
 	extensionSvc := &sesame_api_v1alpha1.ExtensionService{}
 	key := client.ObjectKey{
-		Namespace: contourConfiguration.RateLimitService.ExtensionService.Namespace,
-		Name:      contourConfiguration.RateLimitService.ExtensionService.Name,
+		Namespace: SesameConfiguration.RateLimitService.ExtensionService.Namespace,
+		Name:      SesameConfiguration.RateLimitService.ExtensionService.Name,
 	}
 
 	// Using GetAPIReader() here because the manager's caches won't be started yet,
@@ -579,10 +579,10 @@ func (s *Server) setupRateLimitService(contourConfiguration sesame_api_v1alpha1.
 
 	return &xdscache_v3.RateLimitConfig{
 		ExtensionService:        key,
-		Domain:                  contourConfiguration.RateLimitService.Domain,
+		Domain:                  SesameConfiguration.RateLimitService.Domain,
 		Timeout:                 responseTimeout,
-		FailOpen:                contourConfiguration.RateLimitService.FailOpen,
-		EnableXRateLimitHeaders: contourConfiguration.RateLimitService.EnableXRateLimitHeaders,
+		FailOpen:                SesameConfiguration.RateLimitService.FailOpen,
+		EnableXRateLimitHeaders: SesameConfiguration.RateLimitService.EnableXRateLimitHeaders,
 	}, nil
 }
 
@@ -712,15 +712,15 @@ func (s *Server) setupHealth(healthConfig sesame_api_v1alpha1.HealthConfig,
 	return nil
 }
 
-func (s *Server) setupGatewayAPI(contourConfiguration sesame_api_v1alpha1.SesameConfigurationSpec,
+func (s *Server) setupGatewayAPI(SesameConfiguration sesame_api_v1alpha1.SesameConfigurationSpec,
 	mgr manager.Manager, eventHandler *sesame.EventRecorder, sh *k8s.StatusUpdateHandler) []leadership.NeedLeaderElectionNotification {
 
 	needLeadershipNotification := []leadership.NeedLeaderElectionNotification{}
 
 	// Check if GatewayAPI is configured.
-	if contourConfiguration.Gateway != nil {
+	if SesameConfiguration.Gateway != nil {
 		// Create and register the gatewayclass controller with the manager.
-		gatewayClassControllerName := contourConfiguration.Gateway.ControllerName
+		gatewayClassControllerName := SesameConfiguration.Gateway.ControllerName
 		gwClass, err := controller.RegisterGatewayClassController(
 			s.log.WithField("context", "gatewayclass-controller"),
 			mgr,

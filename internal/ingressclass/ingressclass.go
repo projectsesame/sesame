@@ -47,13 +47,13 @@ func MatchesHTTPProxy(obj *sesame_v1.HTTPProxy, ingressClassName string) bool {
 	return matches(obj.Spec.IngressClassName, ingressClassName)
 }
 
-func matches(objIngressClass, contourIngressClass string) bool {
+func matches(objIngressClass, SesameIngressClass string) bool {
 	// If Sesame's configured ingress class is empty, the object can either
 	// not have an ingress class, or can have a "sesame" ingress class.
-	if contourIngressClass == "" {
+	if SesameIngressClass == "" {
 		return objIngressClass == "" || objIngressClass == DefaultClassName
 	}
 
 	// Otherwise, the object's ingress class must match Sesame's.
-	return objIngressClass == contourIngressClass
+	return objIngressClass == SesameIngressClass
 }

@@ -1,26 +1,26 @@
-# Contour Installation
+# Sesame Installation
 
-This is an installation guide to configure Contour in a Deployment separate from Envoy which allows for easier scaling of each component.
+This is an installation guide to configure Sesame in a Deployment separate from Envoy which allows for easier scaling of each component.
 
 This configuration has several advantages:
 
-1. Envoy runs as a daemonset which allows for distributed scaling across workers in the cluster
-2. Communication between Contour and Envoy is secured by mutually-checked self-signed certificates.
+1. Envoy runs as a DaemonSet which allows for distributed scaling across workers in the cluster
+2. Communication between Sesame and Envoy is secured by mutually-checked self-signed certificates.
 
 ## Moving parts
 
-- Contour is run as Deployment and Envoy as a Daemonset
+- Sesame is run as Deployment and Envoy as a DaemonSet
 - Envoy runs on host networking
 - Envoy runs on ports 80 & 443
 
-The TLS secrets used to secure the gRPC session between Contour and Envoy are generated using a Job that runs `contour certgen`.
-For detailed instructions on how to configure the required secrets manually, see the [step-by-step TLS HOWTO](https://projectcontour.io/docs/main/grpc-tls-howto).
+The TLS secrets used to secure the gRPC session between Sesame and Envoy are generated using a Job that runs `sesame certgen`.
+For detailed instructions on how to configure the required secrets manually, see the [step-by-step TLS HOWTO](https://projectsesame.io/docs/main/grpc-tls-howto).
 
-## Deploy Contour
+## Deploy Sesame
 
 Either:
 
-1. Run `kubectl apply -f https://projectcontour.io/quickstart/contour.yaml`
+1. Run `kubectl apply -f https://projectsesame.io/quickstart/sesame.yaml`
 
 or:
 Clone or fork the repository, then run:
@@ -31,19 +31,19 @@ kubectl apply -f examples/sesame
 
 This will:
 
-- set up RBAC and Contour's CRDs (CRDs include HTTPProxy, TLSCertificateDelegation)
-- run a Kubernetes Job that will generate one-year validity certs and put them into `projectcontour`
-- Install Contour and Envoy in a Deployment and Daemonset respectively.
+- set up RBAC and Sesame's CRDs (CRDs include HTTPProxy, TLSCertificateDelegation)
+- run a Kubernetes Job that will generate one-year validity certs and put them into `projectsesame`
+- Install Sesame and Envoy in a Deployment and DaemonSet respectively.
 
 **NOTE**: The current configuration exposes the `/stats` path from the Envoy Admin UI so that Prometheus can scrape for metrics.
 
 ## Test
 
-1. Install a workload (see the kuard example in the [main deployment guide](https://projectcontour.io/docs/main/deploy-options/#test-with-httpproxy)).
+1. Install a workload (see the kuard example in the [main deployment guide](https://projectsesame.io/docs/main/deploy-options/#test-with-httpproxy)).
 
 ## Deploying with Host Networking enabled for Envoy
 
-In order to deploy the Envoy Daemonset with host networking enabled, you need to make two changes.
+In order to deploy the Envoy DaemonSet with host networking enabled, you need to make two changes.
 
 In the Envoy daemonset definition, at the Pod spec level, change:
 

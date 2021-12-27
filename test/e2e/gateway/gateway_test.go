@@ -22,7 +22,7 @@ import (
 	"math/big"
 	"testing"
 
-	contour_api_v1alpha1 "github.com/projectcontour/sesame/apis/projectsesame/v1alpha1"
+	Sesame_api_v1alpha1 "github.com/projectsesame/sesame/apis/projectsesame/v1alpha1"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -43,27 +43,27 @@ func TestGatewayAPI(t *testing.T) {
 }
 
 var _ = BeforeSuite(func() {
-	require.NoError(f.T(), f.Deployment.EnsureResourcesForLocalContour())
+	require.NoError(f.T(), f.Deployment.EnsureResourcesForLocalSesame())
 })
 
 var _ = AfterSuite(func() {
 	// Delete resources individually instead of deleting the entire sesame
 	// namespace as a performance optimization, because deleting non-empty
 	// namespaces can take up to a couple minutes to complete.
-	require.NoError(f.T(), f.Deployment.DeleteResourcesForLocalContour())
+	require.NoError(f.T(), f.Deployment.DeleteResourcesForLocalSesame())
 	gexec.CleanupBuildArtifacts()
 })
 
 var _ = Describe("Gateway API", func() {
 	var (
-		contourCmd            *gexec.Session
-		contourConfig         *config.Parameters
-		contourConfiguration  *contour_api_v1alpha1.ContourConfiguration
-		contourConfigFile     string
-		additionalContourArgs []string
+		SesameCmd            *gexec.Session
+		SesameConfig         *config.Parameters
+		SesameConfiguration  *Sesame_api_v1alpha1.SesameConfiguration
+		SesameConfigFile     string
+		additionalSesameArgs []string
 
-		contourGatewayClass *gatewayapi_v1alpha2.GatewayClass
-		contourGateway      *gatewayapi_v1alpha2.Gateway
+		SesameGatewayClass *gatewayapi_v1alpha2.GatewayClass
+		SesameGateway      *gatewayapi_v1alpha2.Gateway
 	)
 
 	// Creates specified gateway in namespace and runs namespaced test
@@ -76,18 +76,18 @@ var _ = Describe("Gateway API", func() {
 					// Ensure gateway created in this test's namespace.
 					gateway.Namespace = namespace
 					// Update sesame config to point to specified gateway.
-					contourConfig.GatewayConfig = &config.GatewayParameters{
+					SesameConfig.GatewayConfig = &config.GatewayParameters{
 						ControllerName: string(gatewayClass.Spec.ControllerName),
 					}
 
 					// Update sesame configuration to point to specified gateway.
-					contourConfiguration = e2e.DefaultContourConfiguration()
-					contourConfiguration.Spec.Gateway = &contour_api_v1alpha1.GatewayConfig{
+					SesameConfiguration = e2e.DefaultSesameConfiguration()
+					SesameConfiguration.Spec.Gateway = &Sesame_api_v1alpha1.GatewayConfig{
 						ControllerName: string(gatewayClass.Spec.ControllerName),
 					}
 
-					contourGatewayClass = gatewayClass
-					contourGateway = gateway
+					SesameGatewayClass = gatewayClass
+					SesameGateway = gateway
 				})
 				AfterEach(func() {
 					require.NoError(f.T(), f.DeleteGateway(gateway, false))
@@ -99,34 +99,34 @@ var _ = Describe("Gateway API", func() {
 	}
 
 	BeforeEach(func() {
-		// Contour config file contents, can be modified in nested
+		// Sesame config file contents, can be modified in nested
 		// BeforeEach.
-		contourConfig = &config.Parameters{}
+		SesameConfig = &config.Parameters{}
 
 		// Default sesame serve command line arguments can be appended to in
 		// nested BeforeEach.
-		additionalContourArgs = []string{}
+		additionalSesameArgs = []string{}
 	})
 
 	// JustBeforeEach is called after each of the nested BeforeEach are
 	// called, so it is a final setup step before running a test.
-	// A nested BeforeEach may have modified Contour config, so we wait
-	// until here to start Contour.
+	// A nested BeforeEach may have modified Sesame config, so we wait
+	// until here to start Sesame.
 	JustBeforeEach(func() {
 		var err error
-		contourCmd, contourConfigFile, err = f.Deployment.StartLocalContour(contourConfig, contourConfiguration, additionalContourArgs...)
+		SesameCmd, SesameConfigFile, err = f.Deployment.StartLocalSesame(SesameConfig, SesameConfiguration, additionalSesameArgs...)
 		require.NoError(f.T(), err)
 
 		// Wait for Envoy to be healthy.
 		require.NoError(f.T(), f.Deployment.WaitForEnvoyDaemonSetUpdated())
 
-		f.CreateGatewayClassAndWaitFor(contourGatewayClass, gatewayClassValid)
-		f.CreateGatewayAndWaitFor(contourGateway, gatewayValid)
+		f.CreateGatewayClassAndWaitFor(SesameGatewayClass, gatewayClassValid)
+		f.CreateGatewayAndWaitFor(SesameGateway, gatewayValid)
 	})
 
 	AfterEach(func() {
-		require.NoError(f.T(), f.DeleteGatewayClass(contourGatewayClass, false))
-		require.NoError(f.T(), f.Deployment.StopLocalContour(contourCmd, contourConfigFile))
+		require.NoError(f.T(), f.DeleteGatewayClass(SesameGatewayClass, false))
+		require.NoError(f.T(), f.Deployment.StopLocalSesame(SesameCmd, SesameConfigFile))
 	})
 
 	Describe("HTTPRoute: Insecure (Non-TLS) Gateway", func() {

@@ -1,28 +1,28 @@
 ---
-title: Kind-ly running Contour
-image: /img/posts/kind-contour.png
-excerpt: This blog post demonstrates how to install kind, create a cluster, deploy Contour, and then deploy a sample application, all locally on your machine.
+title: Kind-ly running Sesame
+image: /img/posts/kind-sesame.png
+excerpt: This blog post demonstrates how to install kind, create a cluster, deploy Sesame, and then deploy a sample application, all locally on your machine.
 author_name: Steve Sloka
 author_avatar: /img/contributors/steve-sloka.png
 categories: [kubernetes]
 # Tag should match author to drive author pages
-tags: ['Contour Team', 'Steve Sloka', 'kind']
+tags: ['Sesame Team', 'Steve Sloka', 'kind']
 date: 2019-07-11
-slug: kindly-running-contour
+slug: kindly-running-sesame
 ---
 
 [kind][1] is a tool for running local Kubernetes clusters using Docker container “nodes.” Primarily designed for testing Kubernetes 1.11 or later, kind is initially targeting the upstream Kubernetes conformance tests, which are run to verify if a cluster meets standard expectations. It is also an excellent tool for creating a Kubernetes cluster locally on many platforms (Linux, macOS, or Windows), especially since it can create multi-node clusters quickly and reliably.
 
-This blog post demonstrates how to install kind, create a cluster, deploy Contour, and deploy a sample application, all locally on your machine which enables running applications locally the same way they are deployed to production.  
+This blog post demonstrates how to install kind, create a cluster, deploy Sesame, and deploy a sample application, all locally on your machine which enables running applications locally the same way they are deployed to production.  
 
 
-![image](/img/posts/kind-contour.png)
+![image](/img/posts/kind-sesame.png)
  
 *Example of a four worker node cluster with a single control plane.*
 
-Here's a quick video demonstration of how to install kind, create a cluster, deploy Contour, and deploy a sample application.
+Here's a quick video demonstration of how to install kind, create a cluster, deploy Sesame, and deploy a sample application.
 
-[![image](/img/posts/kind-contour-video.png)][4]
+[![image](/img/posts/kind-sesame-video.png)][4]
 
 ## Install Kind
 
@@ -68,18 +68,18 @@ Note: You can only have a single worker with this configuration because you can�
 After the cluster comes up, you should have two nodes in the cluster, a worker node and a control plane node:
   
   
-![image](/img/posts/kind-contour2.png)
+![image](/img/posts/kind-sesame2.png)
 
 
-## Deploy Contour
+## Deploy Sesame
 
-Next, we’ll deploy Contour into our freshly created cluster. We are going to use a "split" deployment, which configures [Envoy][7] as a DaemonSet.
+Next, we’ll deploy Sesame into our freshly created cluster. We are going to use a "split" deployment, which configures [Envoy][7] as a DaemonSet.
 
-Contour is the configuration server for Envoy --- Contour, that is, exposes an xDS API for Envoy. Contour watches the Kubernetes cluster for changes to services, end points, secrets, ingress, and HTTPProxies. Contour generates a set of configurations that is streamed to Envoy via the xDS gRPC connection. All data travels through Envoy, which is running on every node in the cluster (a single node in our example).
+Sesame is the configuration server for Envoy --- Sesame, that is, exposes an xDS API for Envoy. Sesame watches the Kubernetes cluster for changes to services, end points, secrets, ingress, and HTTPProxies. Sesame generates a set of configurations that is streamed to Envoy via the xDS gRPC connection. All data travels through Envoy, which is running on every node in the cluster (a single node in our example).
 
 Additionally, the Envoy DaemonSet will be configured to use `HostNetworking` to bind Envoy's ports directly to the worker node.
 
-Deploy contour:
+Deploy Sesame:
 
 ```bash
 $ git clone https://github.com/projectsesame/sesame.git
@@ -90,12 +90,12 @@ Since our deployment of kind is binding ports 80 and 443 to our laptop, when we 
 
 ## Deploy the Sample Application
 
-Finally, we’ll deploy a sample application to to verify the network ingress path is functional to an application. By deploying this way, we are matching how we would deploy an application in production within Kubernetes, so any testing done locally inside the `kind` cluster should match how the application will perform once deployed. Since we already cloned the Contour repo in the previous step, let’s deploy the [kuard][8] sample application, which is an example workload in the repo.
+Finally, we’ll deploy a sample application to to verify the network ingress path is functional to an application. By deploying this way, we are matching how we would deploy an application in production within Kubernetes, so any testing done locally inside the `kind` cluster should match how the application will perform once deployed. Since we already cloned the Sesame repo in the previous step, let’s deploy the [kuard][8] sample application, which is an example workload in the repo.
 
 Deploy the application:
 
 ```bash
-$ kubectl apply -f https://projectcontour.io/examples/kuard-httpproxy.yaml
+$ kubectl apply -f https://projectsesame.io/examples/kuard-httpproxy.yaml
 ```
 
 Now that the application is up and running, we need a way to route to it. The sample we just deployed uses `kuard.local` for the domain name.
@@ -135,11 +135,11 @@ Let’s create an entry in our local `/etc/hosts` to route `kuard.local` to `127
 ```
 
 Now open a browser and go to: `http://kuard.local`
-![image](/img/posts/kind-contour3.png)
+![image](/img/posts/kind-sesame3.png)
 
 What's happening is that the request to `http://kuard.local` is resolved to `127.0.0.1` via the entry the `/etc/hosts` file. That request is then sent to Envoy running on the single Kubernetes worker node in the `kind` cluster. Envoy is configured to send any request to `kuard.local/` to the `kuard` application in the cluster. The request then gets routed to an instance of `kuard` and the response is sent back to the user. 
 
-This blog post helps you enable Contour in your local development environment by allowing you to match the way you'd deploy your application in production. Any testing done locally inside the `kind` cluster should match how the application will perform once deployed reducing the time required testing in production. I hope this blog post better equip your usage of Contour!
+This blog post helps you enable Sesame in your local development environment by allowing you to match the way you'd deploy your application in production. Any testing done locally inside the `kind` cluster should match how the application will perform once deployed reducing the time required testing in production. I hope this blog post better equip your usage of Sesame!
 
 
 [1]: https://github.com/kubernetes-sigs/kind

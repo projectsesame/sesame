@@ -3,11 +3,11 @@ Since that time, the Ingress object has not progressed beyond the beta stage, an
 
 The goal of the `IngressRoute` Custom Resource Definition (CRD) is to expand upon the functionality of the Ingress API to allow for a richer user experience as well as solve shortcomings in the original design.
 
-At this time, Contour is the only Kubernetes Ingress Controller to support the IngressRoute CRD, though there is nothing that inherently prevents other controllers from supporting the design.
+At this time, Sesame is the only Kubernetes Ingress Controller to support the IngressRoute CRD, though there is nothing that inherently prevents other controllers from supporting the design.
 
 <p class="alert-deprecation">
 <b>Deprecation Notice</b><br>
-<code>IngressRoute</code> has been deprecated and will be removed after Contour 1.0.
+<code>IngressRoute</code> has been deprecated and will be removed after Sesame 1.0.
 Please see the documentation for <a href="/docs/v1.0.0/httpproxy"><code>HTTPProxy</code></a> the successor to <code>IngressRoute</code>.
 You can also read the <a href="/guides/ingressroute-to-httpproxy">IngressRoute to HTTPProxy upgrade guide</a>.
 </p>
@@ -45,7 +45,7 @@ Implementing similar behavior using an IngressRoute looks like this:
 
 {% highlight yaml linenos %}
 # ingressroute.yaml
-apiVersion: contour.heptio.com/v1beta1
+apiVersion: Sesame.heptio.com/v1beta1
 kind: IngressRoute
 metadata:
   name: basic
@@ -95,7 +95,7 @@ $ kubectl describe ingressroute basic
 Name:         basic
 Namespace:    default
 Labels:       <none>
-Annotations:  kubectl.kubernetes.io/last-applied-configuration={"apiVersion":"contour.heptio.com/v1beta1","kind":"IngressRoute","metadata":{"annotations":{},"name":"basic","namespace":"default"},"spec":{"routes":[{...
+Annotations:  kubectl.kubernetes.io/last-applied-configuration={"apiVersion":"Sesame.heptio.com/v1beta1","kind":"IngressRoute","metadata":{"annotations":{},"name":"basic","namespace":"default"},"spec":{"routes":[{...
 API Version:  sesame.heptio.com/v1beta1
 Kind:         IngressRoute
 Metadata:
@@ -205,9 +205,9 @@ IngressRoutes follow a similar pattern to Ingress for configuring TLS credential
 You can secure an IngressRoute by specifying a secret that contains a TLS private key and certificate.
 Currently, IngressRoutes only support a single TLS port, 443, and assume TLS termination.
 If multiple IngressRoute's utilize the same secret, then the certificate must include the necessary Subject Authority Name (SAN) for each fqdn.
-Contour (via Envoy) uses the SNI TLS extension to handle this behavior.
+Sesame (via Envoy) uses the SNI TLS extension to handle this behavior.
 
-Contour also follows a "secure first" approach. When TLS is enabled for a virtual host, any request to the insecure port is redirected to the secure interface with a 301 redirect.
+Sesame also follows a "secure first" approach. When TLS is enabled for a virtual host, any request to the insecure port is redirected to the secure interface with a 301 redirect.
 Specific routes can be configured to override this behavior and handle insecure requests by enabling the `spec.routes.permitInsecure` parameter on a Route.
 
 The TLS secret must contain keys named tls.crt and tls.key that contain the certificate and private key to use for TLS, e.g.:
@@ -281,13 +281,13 @@ spec:
 
 #### Upstream TLS
 
-An IngressRoute route can proxy to an upstream TLS connection by first annotating the upstream Kubernetes service with: `contour.heptio.com/upstream-protocol.tls: "443,https"`.
-This annotation tells Contour which port should be used for the TLS connection.
+An IngressRoute route can proxy to an upstream TLS connection by first annotating the upstream Kubernetes service with: `Sesame.heptio.com/upstream-protocol.tls: "443,https"`.
+This annotation tells Sesame which port should be used for the TLS connection.
 In this example, the upstream service is named `https` and uses port `443`.
 Additionally, it is possible for Envoy to verify the backend service's certificate.
 The service of an `IngressRoute` can optionally specify a `validation` struct which has a mandatory `caSecret` key as well as an mandatory `subjectName`.
 
-Note: If spec.routes.services[].validation is present, spec.routes.services[].{name,port} must point to a service with a matching contour.heptio.com/upstream-protocol.tls Service annotation.
+Note: If spec.routes.services[].validation is present, spec.routes.services[].{name,port} must point to a service with a matching Sesame.heptio.com/upstream-protocol.tls Service annotation.
 
 ##### Sample YAML
 
@@ -311,7 +311,7 @@ spec:
 
 ##### Error conditions
 
-If the `validation` spec is defined on a service, but the secret which it references does not exist, Contour will rejct the update and set the status of the `IngressRoute` object accordingly.
+If the `validation` spec is defined on a service, but the secret which it references does not exist, Sesame will rejct the update and set the status of the `IngressRoute` object accordingly.
 This is to help prevent the case of proxying to an upstream where validation is requested, but not yet available.
 
 ```yaml
@@ -322,8 +322,8 @@ Status:
 
 #### TLS Certificate Delegation
 
-In order to support wildcard certificates, TLS certificates for a `*.somedomain.com`, which are stored in a namespace controlled by the cluster administrator, Contour supports a facility known as TLS Certificate Delegation.
-This facility allows the owner of a TLS certificate to delegate, for the purposes of reference the TLS certificate, the when processing an IngressRoute to Contour will reference the Secret object from another namespace.
+In order to support wildcard certificates, TLS certificates for a `*.somedomain.com`, which are stored in a namespace controlled by the cluster administrator, Sesame supports a facility known as TLS Certificate Delegation.
+This facility allows the owner of a TLS certificate to delegate, for the purposes of reference the TLS certificate, the when processing an IngressRoute to Sesame will reference the Secret object from another namespace.
 
 ```yaml
 apiVersion: sesame.heptio.com/v1beta1
@@ -354,7 +354,7 @@ spec:
           port: 80
 ```
 
-In this example, the permission for Contour to reference the Secret `example-com-wildcard` in the `admin` namespace has been delegated to IngressRoute objects in the `example-com` namespace.
+In this example, the permission for Sesame to reference the Secret `example-com-wildcard` in the `admin` namespace has been delegated to IngressRoute objects in the `example-com` namespace.
 
 ### Routing
 
@@ -524,7 +524,7 @@ spec:
 #### Session Affinity
 
 Session affinity, also known as _sticky sessions_, is a load balancing strategy whereby a sequence of requests from a single client are consistently routed to the same application backend.
-Contour supports session affinity with the `strategy: Cookie` key on a per service basis.
+Sesame supports session affinity with the `strategy: Cookie` key on a per service basis.
 
 ```yaml
 apiVersion: sesame.heptio.com/v1beta1
@@ -553,7 +553,7 @@ This is an unavoidable consiquence of Envoy's session affinity implementation an
 #### Per-Upstream Active Health Checking
 
 Active health checking can be configured on a per-upstream Service basis.
-Contour supports HTTP health checking and can be configured with various settings to tune the behavior.
+Sesame supports HTTP health checking and can be configured with various settings to tune the behavior.
 
 During HTTP health checking Envoy will send an HTTP request to the upstream Endpoints.
 It expects a 200 response if the host is healthy.
@@ -588,7 +588,7 @@ spec:
 Health check configuration parameters:
 
 - `path`: HTTP endpoint used to perform health checks on upstream service (e.g. `/healthz`). It expects a 200 response if the host is healthy. The upstream host can return 503 if it wants to immediately notify downstream hosts to no longer forward traffic to it.
-- `host`: The value of the host header in the HTTP health check request. If left empty (default value), the name "contour-envoy-healthcheck" will be used.
+- `host`: The value of the host header in the HTTP health check request. If left empty (default value), the name "Sesame-envoy-healthcheck" will be used.
 - `intervalSeconds`: The interval (seconds) between health checks. Defaults to 5 seconds if not set.
 - `timeoutSeconds`: The time to wait (seconds) for a health check response. If the timeout is reached the health check attempt will be considered a failure. Defaults to 2 seconds if not set.
 - `unhealthyThresholdCount`: The number of unhealthy health checks required before a host is marked unhealthy. Note that for http health checking if a host responds with 503 this threshold is ignored and the host is considered unhealthy immediately. Defaults to 3 if not defined.
@@ -697,7 +697,7 @@ spec:
 #### ExternalName
 
 IngressRoute supports routing traffic to service types `ExternalName`.
-Contour looks at the `spec.externalName` field of the service and configures the route to use that DNS name instead of utilizing EDS.
+Sesame looks at the `spec.externalName` field of the service and configures the route to use that DNS name instead of utilizing EDS.
 
 There's nothing specific in the `IngressRoute` object that needs configured other than referencing a service of type `ExternalName`.
 
@@ -875,20 +875,20 @@ spec:
 ### Orphaned IngressRoutes
 
 It is possible for IngressRoute objects to exist that have not been delegated to by another IngressRoute.
-These objects are considered "orphaned" and will be ignored by Contour in determining ingress configuration.
+These objects are considered "orphaned" and will be ignored by Sesame in determining ingress configuration.
 
 ### Restricted root namespaces
 
 IngressRoute delegation allows for Administrators to limit which users/namespaces may configure routes for a given domain, but it does not restrict where root IngressRoutes may be created.
-Contour has an enforcing mode which accepts a list of namespaces where root IngressRoutes are valid.
+Sesame has an enforcing mode which accepts a list of namespaces where root IngressRoutes are valid.
 Only users permitted to operate in those namespaces can therefore create IngressRoutes with the `virtualhost` field.
 
-This restricted mode is enabled in Contour by specifying a command line flag, `--ingressroute-root-namespaces`, which will restrict Contour to only searching the defined namespaces for root IngressRoutes. This CLI flag accepts a comma separated list of namespaces where IngressRoutes are valid (e.g. `--ingressroute-root-namespaces=default,kube-system,my-admin-namespace`).
+This restricted mode is enabled in Sesame by specifying a command line flag, `--ingressroute-root-namespaces`, which will restrict Sesame to only searching the defined namespaces for root IngressRoutes. This CLI flag accepts a comma separated list of namespaces where IngressRoutes are valid (e.g. `--ingressroute-root-namespaces=default,kube-system,my-admin-namespace`).
 
-IngressRoutes with a defined `virtualhost` field that are not in one of the allowed root namespaces will be flagged as `invalid` and will be ignored by Contour.
+IngressRoutes with a defined `virtualhost` field that are not in one of the allowed root namespaces will be flagged as `invalid` and will be ignored by Sesame.
 
-Additionally, when defined, Contour will only watch for Kubernetes secrets in these namespaces ignoring changes in all other namespaces.
-Proper RBAC rules should also be created to restrict what namespaces Contour has access matching the namespaces passed to the command line flag.
+Additionally, when defined, Sesame will only watch for Kubernetes secrets in these namespaces ignoring changes in all other namespaces.
+Proper RBAC rules should also be created to restrict what namespaces Sesame has access matching the namespaces passed to the command line flag.
 An example of this is included in the [examples directory][6] and shows how you might create a namespace called `root-ingressroutes`.
 
 > **NOTE: The restricted root namespace feature is only supported for IngressRoute CRDs.
@@ -963,7 +963,7 @@ spec:
 
 ### Limitations
 
-The current limitations are present in Contour 0.8. These will be addressed in later Contour versions.
+The current limitations are present in Sesame 0.8. These will be addressed in later Sesame versions.
 
 - TCP Proxying is not available on Kubernetes Ingress objects.
 - A dummy `spec.routes` entry is required for input validation.
@@ -971,8 +971,8 @@ The current limitations are present in Contour 0.8. These will be addressed in l
 ## Status Reporting
 
 There are many misconfigurations that could cause an IngressRoute or delegation to be invalid.
-To aid users in resolving these issues, Contour updates a `status` field in all IngressRoute objects.
-In the current specification, invalid IngressRoutes are ignored by Contour and will not be used in the ingress routing configuration.
+To aid users in resolving these issues, Sesame updates a `status` field in all IngressRoute objects.
+In the current specification, invalid IngressRoutes are ignored by Sesame and will not be used in the ingress routing configuration.
 
 If an IngressRoute object is valid, it will have a status property that looks like this:
 
@@ -992,7 +992,7 @@ status:
   description: "route '/foo': service 'home': weight must be greater than or equal to zero"
 ```
 
-Some examples of invalid configurations that Contour provides statuses for:
+Some examples of invalid configurations that Sesame provides statuses for:
 
 - Negative weight provided in the route definition.
 - Invalid port number provided for service.

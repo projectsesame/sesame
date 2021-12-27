@@ -20,8 +20,8 @@ import (
 	envoy_listener_v3 "github.com/envoyproxy/go-control-plane/envoy/config/listener/v3"
 	envoy_route_v3 "github.com/envoyproxy/go-control-plane/envoy/config/route/v3"
 	envoy_discovery_v3 "github.com/envoyproxy/go-control-plane/envoy/service/discovery/v3"
-	contour_api_v1 "github.com/projectcontour/sesame/apis/projectsesame/v1"
-	envoy_v3 "github.com/projectcontour/sesame/internal/envoy/v3"
+	Sesame_api_v1 "github.com/projectsesame/sesame/apis/projectsesame/v1"
+	envoy_v3 "github.com/projectsesame/sesame/internal/envoy/v3"
 	"github.com/projectsesame/sesame/internal/fixture"
 	"github.com/projectsesame/sesame/internal/gatewayapi"
 	"github.com/projectsesame/sesame/internal/protobuf"
@@ -44,16 +44,16 @@ func TestHTTPProxy_RouteWithAServiceWeight(t *testing.T) {
 	rh.OnAdd(fixture.NewService("kuard").
 		WithPorts(v1.ServicePort{Port: 80, TargetPort: intstr.FromInt(8080)}))
 
-	proxy1 := &contour_api_v1.HTTPProxy{
+	proxy1 := &Sesame_api_v1.HTTPProxy{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "simple",
 			Namespace: "default",
 		},
-		Spec: contour_api_v1.HTTPProxySpec{
-			VirtualHost: &contour_api_v1.VirtualHost{Fqdn: "test2.test.com"},
-			Routes: []contour_api_v1.Route{{
+		Spec: Sesame_api_v1.HTTPProxySpec{
+			VirtualHost: &Sesame_api_v1.VirtualHost{Fqdn: "test2.test.com"},
+			Routes: []Sesame_api_v1.Route{{
 				Conditions: conditions(prefixCondition("/a")),
-				Services: []contour_api_v1.Service{{
+				Services: []Sesame_api_v1.Service{{
 					Name:   "kuard",
 					Port:   80,
 					Weight: 90, // ignored
@@ -72,16 +72,16 @@ func TestHTTPProxy_RouteWithAServiceWeight(t *testing.T) {
 		),
 	), nil)
 
-	proxy2 := &contour_api_v1.HTTPProxy{
+	proxy2 := &Sesame_api_v1.HTTPProxy{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "simple",
 			Namespace: "default",
 		},
-		Spec: contour_api_v1.HTTPProxySpec{
-			VirtualHost: &contour_api_v1.VirtualHost{Fqdn: "test2.test.com"},
-			Routes: []contour_api_v1.Route{{
+		Spec: Sesame_api_v1.HTTPProxySpec{
+			VirtualHost: &Sesame_api_v1.VirtualHost{Fqdn: "test2.test.com"},
+			Routes: []Sesame_api_v1.Route{{
 				Conditions: conditions(prefixCondition("/a")),
-				Services: []contour_api_v1.Service{{
+				Services: []Sesame_api_v1.Service{{
 					Name:   "kuard",
 					Port:   80,
 					Weight: 90,
@@ -116,20 +116,20 @@ func TestHTTPProxy_TCPProxyWithAServiceWeight(t *testing.T) {
 	rh.OnAdd(fixture.NewService("kuard-3").WithPorts(v1.ServicePort{Port: 443, TargetPort: intstr.FromInt(8443)}))
 
 	// proxy1 has a TCPProxy with a single service.
-	proxy1 := &contour_api_v1.HTTPProxy{
+	proxy1 := &Sesame_api_v1.HTTPProxy{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "simple",
 			Namespace: "default",
 		},
-		Spec: contour_api_v1.HTTPProxySpec{
-			VirtualHost: &contour_api_v1.VirtualHost{
+		Spec: Sesame_api_v1.HTTPProxySpec{
+			VirtualHost: &Sesame_api_v1.VirtualHost{
 				Fqdn: "tcpproxy.test.com",
-				TLS: &contour_api_v1.TLS{
+				TLS: &Sesame_api_v1.TLS{
 					Passthrough: true,
 				},
 			},
-			TCPProxy: &contour_api_v1.TCPProxy{
-				Services: []contour_api_v1.Service{
+			TCPProxy: &Sesame_api_v1.TCPProxy{
+				Services: []Sesame_api_v1.Service{
 					{
 						Name:   "kuard-1",
 						Port:   443,
@@ -175,20 +175,20 @@ func TestHTTPProxy_TCPProxyWithAServiceWeight(t *testing.T) {
 
 	// proxy2 has a TCPProxy with multiple services,
 	// each with an explicit weight.
-	proxy2 := &contour_api_v1.HTTPProxy{
+	proxy2 := &Sesame_api_v1.HTTPProxy{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "simple",
 			Namespace: "default",
 		},
-		Spec: contour_api_v1.HTTPProxySpec{
-			VirtualHost: &contour_api_v1.VirtualHost{
+		Spec: Sesame_api_v1.HTTPProxySpec{
+			VirtualHost: &Sesame_api_v1.VirtualHost{
 				Fqdn: "tcpproxy.test.com",
-				TLS: &contour_api_v1.TLS{
+				TLS: &Sesame_api_v1.TLS{
 					Passthrough: true,
 				},
 			},
-			TCPProxy: &contour_api_v1.TCPProxy{
-				Services: []contour_api_v1.Service{
+			TCPProxy: &Sesame_api_v1.TCPProxy{
+				Services: []Sesame_api_v1.Service{
 					{Name: "kuard-1", Port: 443, Weight: 7},
 					{Name: "kuard-2", Port: 443, Weight: 77},
 				},
@@ -234,20 +234,20 @@ func TestHTTPProxy_TCPProxyWithAServiceWeight(t *testing.T) {
 
 	// proxy3 has a TCPProxy with multiple services,
 	// each with no weight specified.
-	proxy3 := &contour_api_v1.HTTPProxy{
+	proxy3 := &Sesame_api_v1.HTTPProxy{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "simple",
 			Namespace: "default",
 		},
-		Spec: contour_api_v1.HTTPProxySpec{
-			VirtualHost: &contour_api_v1.VirtualHost{
+		Spec: Sesame_api_v1.HTTPProxySpec{
+			VirtualHost: &Sesame_api_v1.VirtualHost{
 				Fqdn: "tcpproxy.test.com",
-				TLS: &contour_api_v1.TLS{
+				TLS: &Sesame_api_v1.TLS{
 					Passthrough: true,
 				},
 			},
-			TCPProxy: &contour_api_v1.TCPProxy{
-				Services: []contour_api_v1.Service{
+			TCPProxy: &Sesame_api_v1.TCPProxy{
+				Services: []Sesame_api_v1.Service{
 					{Name: "kuard-1", Port: 443},
 					{Name: "kuard-2", Port: 443},
 				},
@@ -293,20 +293,20 @@ func TestHTTPProxy_TCPProxyWithAServiceWeight(t *testing.T) {
 
 	// proxy4 has a TCPProxy with multiple services,
 	// some with weights specified and some without.
-	proxy4 := &contour_api_v1.HTTPProxy{
+	proxy4 := &Sesame_api_v1.HTTPProxy{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "simple",
 			Namespace: "default",
 		},
-		Spec: contour_api_v1.HTTPProxySpec{
-			VirtualHost: &contour_api_v1.VirtualHost{
+		Spec: Sesame_api_v1.HTTPProxySpec{
+			VirtualHost: &Sesame_api_v1.VirtualHost{
 				Fqdn: "tcpproxy.test.com",
-				TLS: &contour_api_v1.TLS{
+				TLS: &Sesame_api_v1.TLS{
 					Passthrough: true,
 				},
 			},
-			TCPProxy: &contour_api_v1.TCPProxy{
-				Services: []contour_api_v1.Service{
+			TCPProxy: &Sesame_api_v1.TCPProxy{
+				Services: []Sesame_api_v1.Service{
 					{Name: "kuard-1", Port: 443, Weight: 77},
 					{Name: "kuard-2", Port: 443},
 					{Name: "kuard-3", Port: 443, Weight: 7},

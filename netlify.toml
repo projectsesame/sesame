@@ -45,112 +45,112 @@ HUGO_ENABLEGITINFO = "true"
 # Optimization blog post: https://www.netlify.com/blog/2019/08/05/control-your-asset-optimization-settings-from-netlify.toml/
 # How to guide: https://docs.netlify.com/configure-builds/file-based-configuration/#post-processing
 
-# Redirect /quickstart/contour.yaml to the deployment that matches :latest.
+# Redirect /quickstart/Sesame.yaml to the deployment that matches :latest.
 #
-# kubectl apply https://projectcontour.io/quickstart/contour.yaml
+# kubectl apply https://projectsesame.io/quickstart/Sesame.yaml
 [[redirects]]
-  from = "/quickstart/contour.yaml"
-  to = "https://raw.githubusercontent.com/projectcontour/contour/release-1.19/examples/render/contour.yaml"
+  from = "/quickstart/Sesame.yaml"
+  to = "https://raw.githubusercontent.com/projectsesame/Sesame/release-1.19/examples/render/Sesame.yaml"
   status = 302
 
 # Redirect versioned quickstarts so that they can easily be referenced by
 # users or for upgrade testing.
 #
-# kubectl apply https://projectcontour.io/quickstart/v1.4.0/contour.yaml
+# kubectl apply https://projectsesame.io/quickstart/v1.4.0/Sesame.yaml
 [[redirects]]
-  from = "/quickstart/*/contour.yaml"
-  to = "https://raw.githubusercontent.com/projectcontour/contour/:splat/examples/render/contour.yaml"
+  from = "/quickstart/*/Sesame.yaml"
+  to = "https://raw.githubusercontent.com/projectsesame/Sesame/:splat/examples/render/Sesame.yaml"
   status = 302
 
 # Redirect /quickstart/operator.yaml to the deployment that matches :latest.
 #
-# kubectl apply https://projectcontour.io/quickstart/operator.yaml
+# kubectl apply https://projectsesame.io/quickstart/operator.yaml
 [[redirects]]
 from = "/quickstart/operator.yaml"
-to = "https://raw.githubusercontent.com/projectcontour/contour-operator/release-1.19/examples/operator/operator.yaml"
+to = "https://raw.githubusercontent.com/projectsesame/sesame-operator/release-1.19/examples/operator/operator.yaml"
 status = 302
 
 # Redirect versioned quickstarts so that they can easily be referenced by
 # users or for upgrade testing.
 #
-# kubectl apply https://projectcontour.io/quickstart/v1.11.0/operator.yaml
+# kubectl apply https://projectsesame.io/quickstart/v1.11.0/operator.yaml
 [[redirects]]
 from = "/quickstart/*/operator.yaml"
-to = "https://raw.githubusercontent.com/projectcontour/contour-operator/:splat/examples/operator/operator.yaml"
+to = "https://raw.githubusercontent.com/projectsesame/sesame-operator/:splat/examples/operator/operator.yaml"
 status = 302
 
-# Redirect /quickstart/contour-custom-resource.yaml to the Contour custom resource that matches :latest.
+# Redirect /quickstart/Sesame-custom-resource.yaml to the Sesame custom resource that matches :latest.
 #
-# kubectl apply https://projectcontour.io/quickstart/contour-custom-resource.yaml
+# kubectl apply https://projectsesame.io/quickstart/Sesame-custom-resource.yaml
 [[redirects]]
-from = "/quickstart/contour-custom-resource.yaml"
-to = "https://raw.githubusercontent.com/projectcontour/contour-operator/release-1.19/examples/contour/contour.yaml"
+from = "/quickstart/Sesame-custom-resource.yaml"
+to = "https://raw.githubusercontent.com/projectsesame/sesame-operator/release-1.19/examples/Sesame/Sesame.yaml"
 status = 302
 
 # Redirect versioned quickstarts so that they can easily be referenced by
 # users or for upgrade testing.
 #
-# kubectl apply https://projectcontour.io/quickstart/v1.11.0/contour-custom-resource.yaml
+# kubectl apply https://projectsesame.io/quickstart/v1.11.0/Sesame-custom-resource.yaml
 [[redirects]]
-from = "/quickstart/*/contour-custom-resource.yaml"
-to = "https://raw.githubusercontent.com/projectcontour/contour-operator/:splat/examples/contour/contour.yaml"
+from = "/quickstart/*/Sesame-custom-resource.yaml"
+to = "https://raw.githubusercontent.com/projectsesame/sesame-operator/:splat/examples/Sesame/Sesame.yaml"
 status = 302
 
 # Redirect /quickstart/gateway.yaml to the example Gateway manifest that matches :latest.
 #
-# kubectl apply https://projectcontour.io/quickstart/gateway.yaml
+# kubectl apply https://projectsesame.io/quickstart/gateway.yaml
 [[redirects]]
 from = "/quickstart/gateway.yaml"
-to = "https://raw.githubusercontent.com/projectcontour/contour-operator/release-1.19/examples/gateway/gateway.yaml"
+to = "https://raw.githubusercontent.com/projectsesame/sesame-operator/release-1.19/examples/gateway/gateway.yaml"
 status = 302
 
-# Redirect /quickstart/contour-gateway.yaml to the example Contour-Gateway manifest that matches :latest.
+# Redirect /quickstart/Sesame-gateway.yaml to the example Sesame-Gateway manifest that matches :latest.
 #
-# kubectl apply https://projectcontour.io/quickstart/contour-gateway.yaml
+# kubectl apply https://projectsesame.io/quickstart/Sesame-gateway.yaml
 [[redirects]]
-from = "/quickstart/contour-gateway.yaml"
-to = "https://raw.githubusercontent.com/projectcontour/contour/release-1.19/examples/render/contour-gateway.yaml"
+from = "/quickstart/Sesame-gateway.yaml"
+to = "https://raw.githubusercontent.com/projectsesame/Sesame/release-1.19/examples/render/Sesame-gateway.yaml"
 status = 302
 
 # Redirect versioned quickstarts so that they can easily be referenced by
 # users or for upgrade testing.
 #
-# kubectl apply https://projectcontour.io/quickstart/v1.11.0/gateway.yaml
+# kubectl apply https://projectsesame.io/quickstart/v1.11.0/gateway.yaml
 [[redirects]]
 from = "/quickstart/*/gateway.yaml"
-to = "https://raw.githubusercontent.com/projectcontour/contour-operator/:splat/examples/gateway/gateway.yaml"
+to = "https://raw.githubusercontent.com/projectsesame/sesame-operator/:splat/examples/gateway/gateway.yaml"
 status = 302
 
 # Redirect /quickstart/gateway-nodeport.yaml to the example Gateway manifest that matches :latest.
 #
-# kubectl apply https://projectcontour.io/quickstart/gateway-nodeport.yaml
+# kubectl apply https://projectsesame.io/quickstart/gateway-nodeport.yaml
 [[redirects]]
 from = "/quickstart/gateway-nodeport.yaml"
-to = "https://raw.githubusercontent.com/projectcontour/contour-operator/release-1.19/examples/gateway/gateway-nodeport.yaml"
+to = "https://raw.githubusercontent.com/projectsesame/sesame-operator/release-1.19/examples/gateway/gateway-nodeport.yaml"
 status = 302
 
 # Redirect versioned quickstarts so that they can easily be referenced by
 # users or for upgrade testing.
 #
-# kubectl apply https://projectcontour.io/quickstart/v1.11.0/gateway-nodeport.yaml
+# kubectl apply https://projectsesame.io/quickstart/v1.11.0/gateway-nodeport.yaml
 [[redirects]]
 from = "/quickstart/*/gateway-nodeport.yaml"
-to = "https://raw.githubusercontent.com/projectcontour/contour-operator/:splat/examples/gateway/gateway-nodeport.yaml"
+to = "https://raw.githubusercontent.com/projectsesame/sesame-operator/:splat/examples/gateway/gateway-nodeport.yaml"
 status = 302
 
 # Redirect /quickstart/kuard.yaml to the example Kuard manifest that matches :latest.
 #
-# kubectl apply https://projectcontour.io/quickstart/kuard.yaml
+# kubectl apply https://projectsesame.io/quickstart/kuard.yaml
 [[redirects]]
 from = "/quickstart/kuard.yaml"
-to = "https://raw.githubusercontent.com/projectcontour/contour-operator/release-1.19/examples/gateway/kuard/kuard.yaml"
+to = "https://raw.githubusercontent.com/projectsesame/sesame-operator/release-1.19/examples/gateway/kuard/kuard.yaml"
 status = 302
 
 # Redirect versioned quickstarts so that they can easily be referenced by
 # users or for upgrade testing.
 #
-# kubectl apply https://projectcontour.io/quickstart/v1.11.0/kuard.yaml
+# kubectl apply https://projectsesame.io/quickstart/v1.11.0/kuard.yaml
 [[redirects]]
 from = "/quickstart/*/kuard.yaml"
-to = "https://raw.githubusercontent.com/projectcontour/contour-operator/:splat/examples/gateway/kuard/kuard.yaml"
+to = "https://raw.githubusercontent.com/projectsesame/sesame-operator/:splat/examples/gateway/kuard/kuard.yaml"
 status = 302

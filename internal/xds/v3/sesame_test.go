@@ -33,12 +33,12 @@ func TestXDSHandlerStream(t *testing.T) {
 	log := logrus.New()
 	log.SetOutput(ioutil.Discard)
 	tests := map[string]struct {
-		xh     contourServer
+		xh     SesameServer
 		stream grpcStream
 		want   error
 	}{
 		"recv returns error immediately": {
-			xh: contourServer{FieldLogger: log},
+			xh: SesameServer{FieldLogger: log},
 			stream: &mockStream{
 				context: context.Background,
 				recv: func() (*envoy_service_discovery_v3.DiscoveryRequest, error) {
@@ -48,7 +48,7 @@ func TestXDSHandlerStream(t *testing.T) {
 			want: io.EOF,
 		},
 		"no registered typeURL": {
-			xh: contourServer{FieldLogger: log},
+			xh: SesameServer{FieldLogger: log},
 			stream: &mockStream{
 				context: context.Background,
 				recv: func() (*envoy_service_discovery_v3.DiscoveryRequest, error) {
@@ -60,7 +60,7 @@ func TestXDSHandlerStream(t *testing.T) {
 			want: fmt.Errorf("no resource registered for typeURL %q", "io.projectsesame.potato"),
 		},
 		"failed to convert values to any": {
-			xh: contourServer{
+			xh: SesameServer{
 				FieldLogger: log,
 				resources: map[string]xds.Resource{
 					"io.projectsesame.potato": &mockResource{
@@ -85,7 +85,7 @@ func TestXDSHandlerStream(t *testing.T) {
 			want: protoimpl.X.NewError("invalid nil source message"),
 		},
 		"failed to send": {
-			xh: contourServer{
+			xh: SesameServer{
 				FieldLogger: log,
 				resources: map[string]xds.Resource{
 					"io.projectsesame.potato": &mockResource{
@@ -113,7 +113,7 @@ func TestXDSHandlerStream(t *testing.T) {
 			want: io.EOF,
 		},
 		"context canceled": {
-			xh: contourServer{
+			xh: SesameServer{
 				FieldLogger: log,
 				resources: map[string]xds.Resource{
 					"io.projectsesame.potato": &mockResource{

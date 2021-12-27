@@ -2,11 +2,11 @@ ARG BUILDPLATFORM=linux/amd64
 ARG BUILD_BASE_IMAGE
 
 FROM --platform=$BUILDPLATFORM $BUILD_BASE_IMAGE AS build
-WORKDIR /contour
+WORKDIR /Sesame
 
 ARG BUILD_GOPROXY
 ENV GOPROXY=${BUILD_GOPROXY}
-COPY go.mod go.sum /contour/
+COPY go.mod go.sum /Sesame/
 RUN go mod download
 
 COPY cmd cmd
@@ -33,7 +33,7 @@ RUN make build \
 	    BUILD_BRANCH=${BUILD_BRANCH}
 
 # Ensure we produced a static binary.
-RUN ldd contour 2>&1 | grep 'not a dynamic executable'
+RUN ldd Sesame 2>&1 | grep 'not a dynamic executable'
 
 FROM scratch AS final
-COPY --from=build /contour/contour /bin/contour
+COPY --from=build /Sesame/Sesame /bin/Sesame

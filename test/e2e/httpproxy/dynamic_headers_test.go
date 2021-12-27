@@ -21,7 +21,7 @@ import (
 	"strings"
 
 	. "github.com/onsi/ginkgo"
-	contourv1 "github.com/projectcontour/sesame/apis/projectsesame/v1"
+	Sesamev1 "github.com/projectsesame/sesame/apis/projectsesame/v1"
 	"github.com/projectsesame/sesame/test/e2e"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -34,23 +34,23 @@ func testDynamicHeaders(namespace string) {
 
 		f.Fixtures.Echo.Deploy(namespace, "ingress-conformance-echo")
 
-		p := &contourv1.HTTPProxy{
+		p := &Sesamev1.HTTPProxy{
 			ObjectMeta: metav1.ObjectMeta{
 				Namespace: namespace,
 				Name:      "dynamic-headers",
 			},
-			Spec: contourv1.HTTPProxySpec{
-				VirtualHost: &contourv1.VirtualHost{
+			Spec: Sesamev1.HTTPProxySpec{
+				VirtualHost: &Sesamev1.VirtualHost{
 					Fqdn: "dynamicheaders.projectsesame.io",
 				},
-				Routes: []contourv1.Route{
+				Routes: []Sesamev1.Route{
 					{
-						Services: []contourv1.Service{
+						Services: []Sesamev1.Service{
 							{
 								Name:                  "ingress-conformance-echo",
 								Port:                  80,
-								RequestHeadersPolicy:  &contourv1.HeadersPolicy{},
-								ResponseHeadersPolicy: &contourv1.HeadersPolicy{},
+								RequestHeadersPolicy:  &Sesamev1.HeadersPolicy{},
+								ResponseHeadersPolicy: &Sesamev1.HeadersPolicy{},
 							},
 						},
 					},
@@ -91,11 +91,11 @@ func testDynamicHeaders(namespace string) {
 			"X-Dynamic-Header-22":             "%UPSTREAM_REMOTE_ADDRESS%",
 			"X-Dynamic-Header-23":             "%RESPONSE_FLAGS%",
 			"X-Dynamic-Header-24":             "%RESPONSE_CODE_DETAILS%",
-			"X-Contour-Namespace":             "%CONTOUR_NAMESPACE%",
-			"X-Contour-Service":               "%CONTOUR_SERVICE_NAME%:%CONTOUR_SERVICE_PORT%",
+			"X-Sesame-Namespace":              "%Sesame_NAMESPACE%",
+			"X-Sesame-Service":                "%Sesame_SERVICE_NAME%:%Sesame_SERVICE_PORT%",
 		}
 		for k, v := range requestHeaders {
-			hv := contourv1.HeaderValue{
+			hv := Sesamev1.HeaderValue{
 				Name:  k,
 				Value: v,
 			}
@@ -137,7 +137,7 @@ func testDynamicHeaders(namespace string) {
 			"X-Dynamic-Header-24":             "%RESPONSE_CODE_DETAILS%",
 		}
 		for k, v := range responseHeaders {
-			hv := contourv1.HeaderValue{
+			hv := Sesamev1.HeaderValue{
 				Name:  k,
 				Value: v,
 			}
@@ -184,6 +184,6 @@ func testDynamicHeaders(namespace string) {
 		}
 
 		// Check dynamic service headers are populated as expected (only on request headers)
-		assert.Equal(t, "ingress-conformance-echo:80", body.RequestHeaders.Get("X-Contour-Service"))
+		assert.Equal(t, "ingress-conformance-echo:80", body.RequestHeaders.Get("X-Sesame-Service"))
 	})
 }

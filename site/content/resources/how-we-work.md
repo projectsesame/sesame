@@ -3,7 +3,7 @@ title: How We Work
 layout: how-we-work
 ---
 
-This page captures how we work on Contour.
+This page captures how we work on Sesame.
 
 ## Github Issue Management
 

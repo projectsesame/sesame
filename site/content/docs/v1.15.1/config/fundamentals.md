@@ -114,8 +114,8 @@ httpproxy "basic" deleted
 ## Status Reporting
 
 There are many misconfigurations that could cause an HTTPProxy or delegation to be invalid.
-To aid users in resolving these issues, Contour updates a `status` field in all HTTPProxy objects.
-In the current specification, invalid HTTPProxy are ignored by Contour and will not be used in the ingress routing configuration.
+To aid users in resolving these issues, Sesame updates a `status` field in all HTTPProxy objects.
+In the current specification, invalid HTTPProxy are ignored by Sesame and will not be used in the ingress routing configuration.
 
 If an HTTPProxy object is valid, it will have a status property that looks like this:
 
@@ -135,7 +135,7 @@ status:
   description: "route '/foo': service 'home': weight must be greater than or equal to zero"
 ```
 
-Some examples of invalid configurations that Contour provides statuses for:
+Some examples of invalid configurations that Sesame provides statuses for:
 
 - Negative weight provided in the route definition.
 - Invalid port number provided for service.
@@ -152,7 +152,7 @@ Some examples of invalid configurations that Contour provides statuses for:
 ## HTTPProxy API Specification
 
 The full HTTPProxy specification is described in detail in the [API documentation][4].
-There are a number of working examples of HTTPProxy objects in the [`examples/example-workload`][3] directory of the Contour Github repository.
+There are a number of working examples of HTTPProxy objects in the [`examples/example-workload`][3] directory of the Sesame Github repository.
 
  [1]: https://kubernetes.io/docs/concepts/services-networking/ingress/
  [2]: https://github.com/kubernetes/ingress-nginx/blob/master/docs/user-guide/nginx-configuration/annotations.md

@@ -1,7 +1,7 @@
-ORG = projectcontour
-PROJECT = contour
+ORG = projectsesame
+PROJECT = Sesame
 MODULE = github.com/$(ORG)/$(PROJECT)
-REGISTRY ?= ghcr.io/projectcontour
+REGISTRY ?= ghcr.io/projectsesame
 IMAGE := $(REGISTRY)/$(PROJECT)
 SRCDIRS := ./cmd ./internal ./apis
 LOCAL_BOOTSTRAP_CONFIG = localenvoyconfig.yaml
@@ -15,10 +15,10 @@ GATEWAY_API_VERSION = $(shell grep "sigs.k8s.io/gateway-api" go.mod | awk '{prin
 LOCALIP ?= $(shell ifconfig | grep inet | grep -v '::' | grep -v 127.0.0.1 | head -n1 | awk '{print $$2}')
 
 # Variables needed for running e2e tests.
-CONTOUR_E2E_LOCAL_HOST ?= $(LOCALIP)
+Sesame_E2E_LOCAL_HOST ?= $(LOCALIP)
 # Variables needed for running e2e and upgrade tests.
-CONTOUR_UPGRADE_FROM_VERSION ?= $(shell ./test/scripts/get-contour-upgrade-from-version.sh)
-CONTOUR_E2E_IMAGE ?= ghcr.io/projectcontour/contour:main
+Sesame_UPGRADE_FROM_VERSION ?= $(shell ./test/scripts/get-Sesame-upgrade-from-version.sh)
+Sesame_E2E_IMAGE ?= ghcr.io/projectsesame/Sesame:main
 
 TAG_LATEST ?= false
 
@@ -31,7 +31,7 @@ else
 		--tag $(IMAGE):$(VERSION)
 endif
 
-IMAGE_RESULT_FLAG = --output=type=oci,dest=$(shell pwd)/image/contour-$(VERSION).tar
+IMAGE_RESULT_FLAG = --output=type=oci,dest=$(shell pwd)/image/Sesame-$(VERSION).tar
 ifeq ($(PUSH_IMAGE), true)
 	IMAGE_RESULT_FLAG = --push
 endif
@@ -50,7 +50,7 @@ BUILD_GOPROXY ?= https://proxy.golang.org
 
 # Sets GIT_REF to a tag if it's present, otherwise the short git sha will be used.
 GIT_REF = $(shell git describe --tags --exact-match 2>/dev/null || git rev-parse --short=8 --verify HEAD)
-# Used for Contour container image tag.
+# Used for Sesame container image tag.
 VERSION ?= $(GIT_REF)
 
 # Stash the ISO 8601 date. Note that the GMT offset is missing the :
@@ -75,21 +75,21 @@ GO_BUILD_VARS = \
 GO_TAGS := -tags "oidc gcp osusergo netgo"
 GO_LDFLAGS := -s -w $(patsubst %,-X %, $(GO_BUILD_VARS)) $(EXTRA_GO_LDFLAGS)
 
-# Docker labels to be applied to the Contour image. We don't transform
+# Docker labels to be applied to the Sesame image. We don't transform
 # this with make because it's not worth pulling the tricks needed to handle
 # the embedded whitespace.
 #
 # See https://github.com/opencontainers/image-spec/blob/master/annotations.md
 DOCKER_BUILD_LABELS = \
 	--label "org.opencontainers.image.created=${ISO_8601_DATE}" \
-	--label "org.opencontainers.image.url=https://projectcontour.io/" \
-	--label "org.opencontainers.image.documentation=https://projectcontour.io/" \
+	--label "org.opencontainers.image.url=https://projectsesame.io/" \
+	--label "org.opencontainers.image.documentation=https://projectsesame.io/" \
 	--label "org.opencontainers.image.source=https://github.com/projectsesame/sesame/archive/${BUILD_VERSION}.tar.gz" \
 	--label "org.opencontainers.image.version=${BUILD_VERSION}" \
 	--label "org.opencontainers.image.revision=${BUILD_SHA}" \
-	--label "org.opencontainers.image.vendor=Project Contour" \
+	--label "org.opencontainers.image.vendor=Project Sesame" \
 	--label "org.opencontainers.image.licenses=Apache-2.0" \
-	--label "org.opencontainers.image.title=Contour" \
+	--label "org.opencontainers.image.title=Sesame" \
 	--label "org.opencontainers.image.description=High performance ingress controller for Kubernetes"
 
 export GO111MODULE=on
@@ -101,18 +101,18 @@ check: install check-test check-test-race ## Install and run tests
 checkall: check lint check-generate
 
 build: ## Build the sesame binary
-	go build -mod=readonly -v -ldflags="$(GO_LDFLAGS)" $(GO_TAGS) $(MODULE)/cmd/contour
+	go build -mod=readonly -v -ldflags="$(GO_LDFLAGS)" $(GO_TAGS) $(MODULE)/cmd/Sesame
 
 install: ## Build and install the sesame binary
-	go install -mod=readonly -v -ldflags="$(GO_LDFLAGS)" $(GO_TAGS) $(MODULE)/cmd/contour
+	go install -mod=readonly -v -ldflags="$(GO_LDFLAGS)" $(GO_TAGS) $(MODULE)/cmd/Sesame
 
 race:
-	go install -mod=readonly -v -race $(GO_TAGS) $(MODULE)/cmd/contour
+	go install -mod=readonly -v -race $(GO_TAGS) $(MODULE)/cmd/Sesame
 
 download: ## Download Go modules
 	go mod download
 
-multiarch-build: ## Build and optionally push a multi-arch Contour container image to the Docker registry
+multiarch-build: ## Build and optionally push a multi-arch Sesame container image to the Docker registry
 	@mkdir -p $(shell pwd)/image
 	docker buildx build $(IMAGE_RESULT_FLAG) \
 		--platform $(IMAGE_PLATFORMS) \
@@ -127,7 +127,7 @@ multiarch-build: ## Build and optionally push a multi-arch Contour container ima
 		$(IMAGE_TAGS) \
 		$(shell pwd)
 
-container: ## Build the Contour container image
+container: ## Build the Sesame container image
 	docker build \
 		--build-arg "BUILD_GOPROXY=$(BUILD_GOPROXY)" \
 		--build-arg "BUILD_BASE_IMAGE=$(BUILD_BASE_IMAGE)" \
@@ -140,7 +140,7 @@ container: ## Build the Contour container image
 		$(shell pwd) \
 		--tag $(IMAGE):$(VERSION)
 
-push: ## Push the Contour container image to the Docker registry
+push: ## Push the Sesame container image to the Docker registry
 push: container
 	docker push $(IMAGE):$(VERSION)
 ifeq ($(TAG_LATEST), true)
@@ -194,11 +194,11 @@ lint-yamllint:
 # the first rule.
 .PHONY: check-flags
 lint-flags:
-	@if git --no-pager grep --extended-regexp '[.]Flag\("[^"]+", "([^A-Zxg][^"]+|[^"]+[^.])"' cmd/contour; then \
+	@if git --no-pager grep --extended-regexp '[.]Flag\("[^"]+", "([^A-Zxg][^"]+|[^"]+[^.])"' cmd/Sesame; then \
 		echo "ERROR: CLI flag help strings must start with a capital and end with a period."; \
 		exit 2; \
 	fi
-	@if git --no-pager grep --extended-regexp '[.]Command\("[^"]+", "([^A-Z][^"]+|[^"]+[^.])"' cmd/contour; then \
+	@if git --no-pager grep --extended-regexp '[.]Command\("[^"]+", "([^A-Z][^"]+|[^"]+[^.])"' cmd/Sesame; then \
 		echo "ERROR: CLI flag help strings must start with a capital and end with a period."; \
 		exit 2; \
 	fi
@@ -225,7 +225,7 @@ generate-deployment:
 
 .PHONY: generate-crd-yaml
 generate-crd-yaml:
-	@echo "Generating Contour CRD YAML documents..."
+	@echo "Generating Sesame CRD YAML documents..."
 	@./hack/generate-crd-yaml.sh
 
 .PHONY: generate-gateway-crd-yaml
@@ -236,7 +236,7 @@ generate-gateway-crd-yaml:
 .PHONY: generate-api-docs
 generate-api-docs:
 	@echo "Generating API documentation..."
-	@./hack/generate-api-docs.sh github.com/projectsesame/sesame/apis/projectcontour
+	@./hack/generate-api-docs.sh github.com/projectsesame/sesame/apis/projectsesame
 
 .PHONY: generate-metrics-docs
 generate-metrics-docs:
@@ -277,21 +277,21 @@ site-check: ## Test the site's links
 setup-kind-cluster: ## Make a kind cluster for testing
 	./test/scripts/make-kind-cluster.sh
 
-.PHONY: install-contour-working
-install-contour-working: | setup-kind-cluster ## Install the local working directory version of Contour into a kind cluster
-	./test/scripts/install-contour-working.sh
+.PHONY: install-Sesame-working
+install-Sesame-working: | setup-kind-cluster ## Install the local working directory version of Sesame into a kind cluster
+	./test/scripts/install-Sesame-working.sh
 
-.PHONY: install-contour-release 
-install-contour-release: | setup-kind-cluster ## Install the release version of Contour in CONTOUR_UPGRADE_FROM_VERSION, defaults to latest
-	./test/scripts/install-contour-release.sh $(CONTOUR_UPGRADE_FROM_VERSION)
+.PHONY: install-Sesame-release
+install-Sesame-release: | setup-kind-cluster ## Install the release version of Sesame in Sesame_UPGRADE_FROM_VERSION, defaults to latest
+	./test/scripts/install-Sesame-release.sh $(Sesame_UPGRADE_FROM_VERSION)
 
 .PHONY: e2e
-e2e: | setup-kind-cluster load-contour-image-kind run-e2e cleanup-kind ## Run E2E tests against a real k8s cluster
+e2e: | setup-kind-cluster load-Sesame-image-kind run-e2e cleanup-kind ## Run E2E tests against a real k8s cluster
 
 .PHONY: run-e2e
 run-e2e:
-	CONTOUR_E2E_LOCAL_HOST=$(CONTOUR_E2E_LOCAL_HOST) \
-		CONTOUR_E2E_IMAGE=$(CONTOUR_E2E_IMAGE) \
+	Sesame_E2E_LOCAL_HOST=$(Sesame_E2E_LOCAL_HOST) \
+		Sesame_E2E_IMAGE=$(Sesame_E2E_IMAGE) \
 		ginkgo -tags=e2e -mod=readonly -skip-package=upgrade -keep-going -randomize-suites -randomize-all -slow-spec-threshold=120s -r ./test/e2e
 
 .PHONY: cleanup-kind
@@ -302,31 +302,31 @@ cleanup-kind:
 ## sesame-e2e). By default for local development will build the current
 ## working sesame source and load into the cluster. If LOAD_PREBUILT_IMAGE
 ## is specified and set to true, it will load a pre-build image. This requires
-## the multiarch-build target to have been run which puts the Contour docker
+## the multiarch-build target to have been run which puts the Sesame docker
 ## image at <repo>/image/sesame-version.tar.gz. This second option is chosen
 ## in CI to speed up builds.
-.PHONY: load-contour-image-kind
-load-contour-image-kind: ## Load Contour image from building working source or pre-built image into Kind.
-	./test/scripts/kind-load-contour-image.sh
+.PHONY: load-Sesame-image-kind
+load-Sesame-image-kind: ## Load Sesame image from building working source or pre-built image into Kind.
+	./test/scripts/kind-load-Sesame-image.sh
 
 .PHONY: upgrade
-upgrade: | install-contour-release load-contour-image-kind run-upgrade cleanup-kind ## Run upgrade tests against a real k8s cluster
+upgrade: | install-Sesame-release load-Sesame-image-kind run-upgrade cleanup-kind ## Run upgrade tests against a real k8s cluster
 
 .PHONY: run-upgrade
 run-upgrade:
-	CONTOUR_UPGRADE_FROM_VERSION=$(CONTOUR_UPGRADE_FROM_VERSION) \
-		CONTOUR_E2E_IMAGE=$(CONTOUR_E2E_IMAGE) \
+	Sesame_UPGRADE_FROM_VERSION=$(Sesame_UPGRADE_FROM_VERSION) \
+		Sesame_E2E_IMAGE=$(Sesame_E2E_IMAGE) \
 		ginkgo -tags=e2e -mod=readonly -randomize-all -slow-spec-threshold=300s -v ./test/e2e/upgrade
 
 .PHONY: check-ingress-conformance
-check-ingress-conformance: | install-contour-working run-ingress-conformance cleanup-kind ## Run Ingress controller conformance
+check-ingress-conformance: | install-Sesame-working run-ingress-conformance cleanup-kind ## Run Ingress controller conformance
 
 .PHONY: run-ingress-conformance
 run-ingress-conformance:
 	./test/scripts/run-ingress-conformance.sh
 
 help: ## Display this help
-	@echo Contour high performance Ingress controller for Kubernetes
+	@echo Sesame high performance Ingress controller for Kubernetes
 	@echo
 	@echo Targets:
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z0-9._-]+:.*?## / {printf "  %-25s %s\n", $$1, $$2}' $(MAKEFILE_LIST) | sort

@@ -5,7 +5,7 @@ metadata:
   namespace: projectsesame
 data:
   ratelimit-config.yaml: |
-    domain: contour
+    domain: Sesame
     descriptors:
       # requests with a descriptor of ["generic_key": "foo"]
       # are limited to one per minute.

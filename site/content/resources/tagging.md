@@ -1,31 +1,31 @@
 ---
-title: Contour Tagging Policy
+title: Sesame Tagging Policy
 layout: page
 ---
 
-This document describes Contour's image tagging policy.
+This document describes Sesame's image tagging policy.
 
 ## Released versions
 
-`ghcr.io/projectcontour/contour:<SemVer>`
+`ghcr.io/projectsesame/Sesame:<SemVer>`
 
-Contour follows the [Semantic Versioning][1] standard for releases.
-Each tag in the github.com/projectsesame/sesame repository has a matching image. eg. `ghcr.io/projectcontour/contour:{{< param latest_version >}}`
+Sesame follows the [Semantic Versioning][1] standard for releases.
+Each tag in the github.com/projectsesame/sesame repository has a matching image. eg. `ghcr.io/projectsesame/Sesame:{{< param latest_version >}}`
 
-`ghcr.io/projectcontour/contour:v<major>.<minor>`
+`ghcr.io/projectsesame/Sesame:v<major>.<minor>`
 
 This tag will point to the latest available patch of the release train mentioned.
 That is, it's `:latest` where you're guaranteed to not have a minor version bump.
 
 ### Latest
 
-`ghcr.io/projectcontour/contour:latest`
+`ghcr.io/projectsesame/Sesame:latest`
 
-The `latest` tag follows the most recent stable version of Contour.
+The `latest` tag follows the most recent stable version of Sesame.
 
 ## Development
 
-`ghcr.io/projectcontour/contour:main`
+`ghcr.io/projectsesame/Sesame:main`
 
 The `main` tag follows the latest commit to land on the `main` branch.
 

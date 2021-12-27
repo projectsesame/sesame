@@ -69,12 +69,12 @@ func TestHTTPSService(t *testing.T) {
 	trustedCACert := certyaml.Certificate{
 		Subject: "cn=ca",
 	}
-	contourCertBeforeRotation := certyaml.Certificate{
+	SesameCertBeforeRotation := certyaml.Certificate{
 		Subject:         "cn=sesame-before-rotation",
 		SubjectAltNames: []string{"DNS:localhost"},
 		Issuer:          &trustedCACert,
 	}
-	contourCertAfterRotation := certyaml.Certificate{
+	SesameCertAfterRotation := certyaml.Certificate{
 		Subject:         "cn=sesame-after-rotation",
 		SubjectAltNames: []string{"DNS:localhost"},
 		Issuer:          &trustedCACert,
@@ -110,7 +110,7 @@ func TestHTTPSService(t *testing.T) {
 	// Write server credentials to temp directory.
 	err = trustedCACert.WritePEM(svc.CABundle, filepath.Join(configDir, "ca-key.pem"))
 	checkFatalErr(t, err)
-	err = contourCertBeforeRotation.WritePEM(svc.Cert, svc.Key)
+	err = SesameCertBeforeRotation.WritePEM(svc.Cert, svc.Key)
 	checkFatalErr(t, err)
 
 	svc.ServeMux.HandleFunc("/test", func(w http.ResponseWriter, r *http.Request) {
@@ -138,7 +138,7 @@ func TestHTTPSService(t *testing.T) {
 			return false
 		}
 		resp.Body.Close()
-		expectedCert, _ := contourCertBeforeRotation.X509Certificate()
+		expectedCert, _ := SesameCertBeforeRotation.X509Certificate()
 		assert.Equal(t, &expectedCert, resp.TLS.PeerCertificates[0])
 		assert.True(t, uint16(tls.VersionTLS13) >= resp.TLS.Version)
 		assert.Equal(t, http.StatusOK, resp.StatusCode)
@@ -146,13 +146,13 @@ func TestHTTPSService(t *testing.T) {
 	}, 1*time.Second, 100*time.Millisecond)
 
 	// Rotate server certificates.
-	err = contourCertAfterRotation.WritePEM(svc.Cert, svc.Key)
+	err = SesameCertAfterRotation.WritePEM(svc.Cert, svc.Key)
 	checkFatalErr(t, err)
 
 	resp, err := tryGet("https://localhost:8001/test", trustedTLSClientCert, caCertPool)
 	assert.Nil(t, err)
 	resp.Body.Close()
-	expectedCert, _ := contourCertAfterRotation.X509Certificate()
+	expectedCert, _ := SesameCertAfterRotation.X509Certificate()
 	assert.Equal(t, &expectedCert, resp.TLS.PeerCertificates[0])
 
 	// Connection should fail when trying to connect with untrusted client cert.

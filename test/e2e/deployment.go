@@ -32,7 +32,7 @@ import (
 	"time"
 
 	"github.com/onsi/gomega/gexec"
-	contour_api_v1alpha1 "github.com/projectcontour/sesame/apis/projectsesame/v1alpha1"
+	Sesame_api_v1alpha1 "github.com/projectsesame/sesame/apis/projectsesame/v1alpha1"
 	"github.com/projectsesame/sesame/pkg/config"
 	"gopkg.in/yaml.v2"
 	apps_v1 "k8s.io/api/apps/v1"
@@ -56,37 +56,37 @@ type Deployment struct {
 	// Command output is written to this writer.
 	cmdOutputWriter io.Writer
 
-	// Path to kube config to use with a local Contour.
+	// Path to kube config to use with a local Sesame.
 	kubeConfig string
-	// Hostname to use when running Contour locally.
-	localContourHost string
-	// Port for local Contour to bind to.
-	localContourPort string
-	// Path to Contour binary for use when running locally.
-	contourBin string
+	// Hostname to use when running Sesame locally.
+	localSesameHost string
+	// Port for local Sesame to bind to.
+	localSesamePort string
+	// Path to Sesame binary for use when running locally.
+	SesameBin string
 
-	// Contour image to use in in-cluster deployment.
-	contourImage string
+	// Sesame image to use in in-cluster deployment.
+	SesameImage string
 
-	Namespace                 *v1.Namespace
-	ContourServiceAccount     *v1.ServiceAccount
-	EnvoyServiceAccount       *v1.ServiceAccount
-	ContourConfigMap          *v1.ConfigMap
-	ExtensionServiceCRD       *apiextensions_v1.CustomResourceDefinition
-	HTTPProxyCRD              *apiextensions_v1.CustomResourceDefinition
-	TLSCertDelegationCRD      *apiextensions_v1.CustomResourceDefinition
-	ContourConfigurationCRD   *apiextensions_v1.CustomResourceDefinition
-	ContourDeploymentCRD      *apiextensions_v1.CustomResourceDefinition
-	CertgenServiceAccount     *v1.ServiceAccount
-	ContourRoleBinding        *rbac_v1.RoleBinding
-	CertgenRole               *rbac_v1.Role
-	CertgenJob                *batch_v1.Job
-	ContourClusterRoleBinding *rbac_v1.ClusterRoleBinding
-	ContourClusterRole        *rbac_v1.ClusterRole
-	ContourService            *v1.Service
-	EnvoyService              *v1.Service
-	ContourDeployment         *apps_v1.Deployment
-	EnvoyDaemonSet            *apps_v1.DaemonSet
+	Namespace                *v1.Namespace
+	SesameServiceAccount     *v1.ServiceAccount
+	EnvoyServiceAccount      *v1.ServiceAccount
+	SesameConfigMap          *v1.ConfigMap
+	ExtensionServiceCRD      *apiextensions_v1.CustomResourceDefinition
+	HTTPProxyCRD             *apiextensions_v1.CustomResourceDefinition
+	TLSCertDelegationCRD     *apiextensions_v1.CustomResourceDefinition
+	SesameConfigurationCRD   *apiextensions_v1.CustomResourceDefinition
+	SesameDeploymentCRD      *apiextensions_v1.CustomResourceDefinition
+	CertgenServiceAccount    *v1.ServiceAccount
+	SesameRoleBinding        *rbac_v1.RoleBinding
+	CertgenRole              *rbac_v1.Role
+	CertgenJob               *batch_v1.Job
+	SesameClusterRoleBinding *rbac_v1.ClusterRoleBinding
+	SesameClusterRole        *rbac_v1.ClusterRole
+	SesameService            *v1.Service
+	EnvoyService             *v1.Service
+	SesameDeployment         *apps_v1.Deployment
+	EnvoyDaemonSet           *apps_v1.DaemonSet
 
 	// Optional volumes that will be attached to Envoy daemonset.
 	EnvoyExtraVolumes      []v1.Volume
@@ -95,10 +95,10 @@ type Deployment struct {
 	// Ratelimit deployment.
 	RateLimitDeployment       *apps_v1.Deployment
 	RateLimitService          *v1.Service
-	RateLimitExtensionService *contour_api_v1alpha1.ExtensionService
+	RateLimitExtensionService *Sesame_api_v1alpha1.ExtensionService
 }
 
-// UnmarshalResources unmarshals resources from rendered Contour manifest in
+// UnmarshalResources unmarshals resources from rendered Sesame manifest in
 // order.
 // Note: This will need to be updated if any new resources are added to the
 // rendered deployment manifest.
@@ -121,43 +121,43 @@ func (d *Deployment) UnmarshalResources() error {
 	}
 
 	d.Namespace = new(v1.Namespace)
-	d.ContourServiceAccount = new(v1.ServiceAccount)
+	d.SesameServiceAccount = new(v1.ServiceAccount)
 	d.EnvoyServiceAccount = new(v1.ServiceAccount)
-	d.ContourConfigMap = new(v1.ConfigMap)
+	d.SesameConfigMap = new(v1.ConfigMap)
 	d.ExtensionServiceCRD = new(apiextensions_v1.CustomResourceDefinition)
 	d.HTTPProxyCRD = new(apiextensions_v1.CustomResourceDefinition)
 	d.TLSCertDelegationCRD = new(apiextensions_v1.CustomResourceDefinition)
-	d.ContourConfigurationCRD = new(apiextensions_v1.CustomResourceDefinition)
-	d.ContourDeploymentCRD = new(apiextensions_v1.CustomResourceDefinition)
+	d.SesameConfigurationCRD = new(apiextensions_v1.CustomResourceDefinition)
+	d.SesameDeploymentCRD = new(apiextensions_v1.CustomResourceDefinition)
 	d.CertgenServiceAccount = new(v1.ServiceAccount)
-	d.ContourRoleBinding = new(rbac_v1.RoleBinding)
+	d.SesameRoleBinding = new(rbac_v1.RoleBinding)
 	d.CertgenRole = new(rbac_v1.Role)
 	d.CertgenJob = new(batch_v1.Job)
-	d.ContourClusterRoleBinding = new(rbac_v1.ClusterRoleBinding)
-	d.ContourClusterRole = new(rbac_v1.ClusterRole)
-	d.ContourService = new(v1.Service)
+	d.SesameClusterRoleBinding = new(rbac_v1.ClusterRoleBinding)
+	d.SesameClusterRole = new(rbac_v1.ClusterRole)
+	d.SesameService = new(v1.Service)
 	d.EnvoyService = new(v1.Service)
-	d.ContourDeployment = new(apps_v1.Deployment)
+	d.SesameDeployment = new(apps_v1.Deployment)
 	d.EnvoyDaemonSet = new(apps_v1.DaemonSet)
 	objects := []interface{}{
 		d.Namespace,
-		d.ContourServiceAccount,
+		d.SesameServiceAccount,
 		d.EnvoyServiceAccount,
-		d.ContourConfigMap,
+		d.SesameConfigMap,
 		d.ExtensionServiceCRD,
 		d.HTTPProxyCRD,
 		d.TLSCertDelegationCRD,
-		d.ContourConfigurationCRD,
-		d.ContourDeploymentCRD,
+		d.SesameConfigurationCRD,
+		d.SesameDeploymentCRD,
 		d.CertgenServiceAccount,
-		d.ContourRoleBinding,
+		d.SesameRoleBinding,
 		d.CertgenRole,
 		d.CertgenJob,
-		d.ContourClusterRoleBinding,
-		d.ContourClusterRole,
-		d.ContourService,
+		d.SesameClusterRoleBinding,
+		d.SesameClusterRole,
+		d.SesameService,
 		d.EnvoyService,
-		d.ContourDeployment,
+		d.SesameDeployment,
 		d.EnvoyDaemonSet,
 	}
 	for _, o := range objects {
@@ -191,7 +191,7 @@ func (d *Deployment) UnmarshalResources() error {
 	}
 	defer rLESFile.Close()
 	decoder = apimachinery_util_yaml.NewYAMLToJSONDecoder(rLESFile)
-	d.RateLimitExtensionService = new(contour_api_v1alpha1.ExtensionService)
+	d.RateLimitExtensionService = new(Sesame_api_v1alpha1.ExtensionService)
 
 	return decoder.Decode(d.RateLimitExtensionService)
 }
@@ -219,16 +219,16 @@ func (d *Deployment) EnsureNamespace() error {
 	return d.ensureResource(d.Namespace, new(v1.Namespace))
 }
 
-func (d *Deployment) EnsureContourServiceAccount() error {
-	return d.ensureResource(d.ContourServiceAccount, new(v1.ServiceAccount))
+func (d *Deployment) EnsureSesameServiceAccount() error {
+	return d.ensureResource(d.SesameServiceAccount, new(v1.ServiceAccount))
 }
 
 func (d *Deployment) EnsureEnvoyServiceAccount() error {
 	return d.ensureResource(d.EnvoyServiceAccount, new(v1.ServiceAccount))
 }
 
-func (d *Deployment) EnsureContourConfigMap() error {
-	return d.ensureResource(d.ContourConfigMap, new(v1.ConfigMap))
+func (d *Deployment) EnsureSesameConfigMap() error {
+	return d.ensureResource(d.SesameConfigMap, new(v1.ConfigMap))
 }
 
 func (d *Deployment) EnsureExtensionServiceCRD() error {
@@ -243,20 +243,20 @@ func (d *Deployment) EnsureTLSCertDelegationCRD() error {
 	return d.ensureResource(d.TLSCertDelegationCRD, new(apiextensions_v1.CustomResourceDefinition))
 }
 
-func (d *Deployment) EnsureContourConfigurationCRD() error {
-	return d.ensureResource(d.ContourConfigurationCRD, new(apiextensions_v1.CustomResourceDefinition))
+func (d *Deployment) EnsureSesameConfigurationCRD() error {
+	return d.ensureResource(d.SesameConfigurationCRD, new(apiextensions_v1.CustomResourceDefinition))
 }
 
-func (d *Deployment) EnsureContourDeploymentCRD() error {
-	return d.ensureResource(d.ContourDeploymentCRD, new(apiextensions_v1.CustomResourceDefinition))
+func (d *Deployment) EnsureSesameDeploymentCRD() error {
+	return d.ensureResource(d.SesameDeploymentCRD, new(apiextensions_v1.CustomResourceDefinition))
 }
 
 func (d *Deployment) EnsureCertgenServiceAccount() error {
 	return d.ensureResource(d.CertgenServiceAccount, new(v1.ServiceAccount))
 }
 
-func (d *Deployment) EnsureContourRoleBinding() error {
-	return d.ensureResource(d.ContourRoleBinding, new(rbac_v1.RoleBinding))
+func (d *Deployment) EnsureSesameRoleBinding() error {
+	return d.ensureResource(d.SesameRoleBinding, new(rbac_v1.RoleBinding))
 }
 
 func (d *Deployment) EnsureCertgenRole() error {
@@ -280,56 +280,56 @@ func (d *Deployment) EnsureCertgenJob() error {
 	return d.client.Create(context.TODO(), d.CertgenJob)
 }
 
-func (d *Deployment) EnsureContourClusterRoleBinding() error {
-	return d.ensureResource(d.ContourClusterRoleBinding, new(rbac_v1.ClusterRoleBinding))
+func (d *Deployment) EnsureSesameClusterRoleBinding() error {
+	return d.ensureResource(d.SesameClusterRoleBinding, new(rbac_v1.ClusterRoleBinding))
 }
 
-func (d *Deployment) EnsureContourClusterRole() error {
-	return d.ensureResource(d.ContourClusterRole, new(rbac_v1.ClusterRole))
+func (d *Deployment) EnsureSesameClusterRole() error {
+	return d.ensureResource(d.SesameClusterRole, new(rbac_v1.ClusterRole))
 }
 
-func (d *Deployment) EnsureContourService() error {
-	return d.ensureResource(d.ContourService, new(v1.Service))
+func (d *Deployment) EnsureSesameService() error {
+	return d.ensureResource(d.SesameService, new(v1.Service))
 }
 
 func (d *Deployment) EnsureEnvoyService() error {
 	return d.ensureResource(d.EnvoyService, new(v1.Service))
 }
 
-func (d *Deployment) EnsureContourDeployment() error {
-	return d.ensureResource(d.ContourDeployment, new(apps_v1.Deployment))
+func (d *Deployment) EnsureSesameDeployment() error {
+	return d.ensureResource(d.SesameDeployment, new(apps_v1.Deployment))
 }
 
-func (d *Deployment) WaitForContourDeploymentUpdated() error {
+func (d *Deployment) WaitForSesameDeploymentUpdated() error {
 	// List pods with app label "sesame" and check that pods are updated
 	// with expected container image and in ready state.
 	// We do this instead of checking Deployment status as it is possible
 	// for it not to have been updated yet and replicas not yet been shut
 	// down.
 
-	if len(d.ContourDeployment.Spec.Template.Spec.Containers) != 1 {
-		return errors.New("invalid Contour Deployment containers spec")
+	if len(d.SesameDeployment.Spec.Template.Spec.Containers) != 1 {
+		return errors.New("invalid Sesame Deployment containers spec")
 	}
-	contourPodImage := d.ContourDeployment.Spec.Template.Spec.Containers[0].Image
+	SesamePodImage := d.SesameDeployment.Spec.Template.Spec.Containers[0].Image
 	updatedPods := func() (bool, error) {
 		pods := new(v1.PodList)
-		labelSelectAppContour := &client.ListOptions{
-			LabelSelector: labels.SelectorFromSet(d.ContourDeployment.Spec.Selector.MatchLabels),
-			Namespace:     d.ContourDeployment.Namespace,
+		labelSelectAppSesame := &client.ListOptions{
+			LabelSelector: labels.SelectorFromSet(d.SesameDeployment.Spec.Selector.MatchLabels),
+			Namespace:     d.SesameDeployment.Namespace,
 		}
-		if err := d.client.List(context.TODO(), pods, labelSelectAppContour); err != nil {
+		if err := d.client.List(context.TODO(), pods, labelSelectAppSesame); err != nil {
 			return false, err
 		}
 		if pods == nil {
-			return false, errors.New("failed to fetch Contour Deployment pods")
+			return false, errors.New("failed to fetch Sesame Deployment pods")
 		}
 
 		updatedPods := 0
 		for _, pod := range pods.Items {
 			if len(pod.Spec.Containers) != 1 {
-				return false, errors.New("invalid Contour Deployment pod containers")
+				return false, errors.New("invalid Sesame Deployment pod containers")
 			}
-			if pod.Spec.Containers[0].Image != contourPodImage {
+			if pod.Spec.Containers[0].Image != SesamePodImage {
 				continue
 			}
 			for _, cond := range pod.Status.Conditions {
@@ -338,7 +338,7 @@ func (d *Deployment) WaitForContourDeploymentUpdated() error {
 				}
 			}
 		}
-		return updatedPods == int(*d.ContourDeployment.Spec.Replicas), nil
+		return updatedPods == int(*d.SesameDeployment.Spec.Replicas), nil
 	}
 	return wait.PollImmediate(time.Millisecond*50, time.Minute, updatedPods)
 }
@@ -407,19 +407,19 @@ func (d *Deployment) EnsureRateLimitResources(namespace string, configContents s
 
 	extSvc := d.RateLimitExtensionService.DeepCopy()
 	extSvc.Namespace = setNamespace
-	return d.ensureResource(extSvc, new(contour_api_v1alpha1.ExtensionService))
+	return d.ensureResource(extSvc, new(Sesame_api_v1alpha1.ExtensionService))
 }
 
 // Convenience method for deploying the pieces of the deployment needed for
-// testing Contour running locally, out of cluster.
+// testing Sesame running locally, out of cluster.
 // Includes:
 // - namespace
 // - Envoy service account
 // - CRDs
 // - Envoy service
 // - ConfigMap with Envoy bootstrap config
-// - Envoy DaemonSet modified for local Contour xDS server
-func (d *Deployment) EnsureResourcesForLocalContour() error {
+// - Envoy DaemonSet modified for local Sesame xDS server
+func (d *Deployment) EnsureResourcesForLocalSesame() error {
 	if err := d.EnsureNamespace(); err != nil {
 		return err
 	}
@@ -435,10 +435,10 @@ func (d *Deployment) EnsureResourcesForLocalContour() error {
 	if err := d.EnsureTLSCertDelegationCRD(); err != nil {
 		return err
 	}
-	if err := d.EnsureContourConfigurationCRD(); err != nil {
+	if err := d.EnsureSesameConfigurationCRD(); err != nil {
 		return err
 	}
-	if err := d.EnsureContourDeploymentCRD(); err != nil {
+	if err := d.EnsureSesameDeploymentCRD(); err != nil {
 		return err
 	}
 	if err := d.EnsureEnvoyService(); err != nil {
@@ -450,14 +450,14 @@ func (d *Deployment) EnsureResourcesForLocalContour() error {
 		return err
 	}
 
-	// Generate bootstrap config with Contour local address and plaintext
+	// Generate bootstrap config with Sesame local address and plaintext
 	// client config.
 	bootstrapCmd := exec.Command( // nolint:gosec
-		d.contourBin,
+		d.SesameBin,
 		"bootstrap",
 		bFile.Name(),
-		"--xds-address="+d.localContourHost,
-		"--xds-port="+d.localContourPort,
+		"--xds-address="+d.localSesameHost,
+		"--xds-port="+d.localSesamePort,
 		"--xds-resource-version=v3",
 		"--admin-address=/admin/admin.sock",
 	)
@@ -533,15 +533,15 @@ func (d *Deployment) EnsureResourcesForLocalContour() error {
 	return d.EnsureEnvoyDaemonSet()
 }
 
-// DeleteResourcesForLocalContour ensures deletion of all resources
+// DeleteResourcesForLocalSesame ensures deletion of all resources
 // created in the projectsesame namespace for running a local sesame.
 // This is done instead of deleting the entire namespace as a performance
 // optimization, because deleting non-empty namespaces can take up to a
 // couple minutes to complete.
-func (d *Deployment) DeleteResourcesForLocalContour() error {
+func (d *Deployment) DeleteResourcesForLocalSesame() error {
 	for _, r := range []client.Object{
 		d.EnvoyDaemonSet,
-		d.ContourConfigMap,
+		d.SesameConfigMap,
 		d.EnvoyService,
 		d.TLSCertDelegationCRD,
 		d.ExtensionServiceCRD,
@@ -557,44 +557,44 @@ func (d *Deployment) DeleteResourcesForLocalContour() error {
 }
 
 // Starts local sesame, applying arguments and marshaling config into config
-// file. Returns running Contour command and config file so we can clean them
+// file. Returns running Sesame command and config file so we can clean them
 // up.
-func (d *Deployment) StartLocalContour(config *config.Parameters, contourConfiguration *contour_api_v1alpha1.ContourConfiguration, additionalArgs ...string) (*gexec.Session, string, error) {
+func (d *Deployment) StartLocalSesame(config *config.Parameters, SesameConfiguration *Sesame_api_v1alpha1.SesameConfiguration, additionalArgs ...string) (*gexec.Session, string, error) {
 
 	var content []byte
 	var configReferenceName string
-	var contourServeArgs []string
+	var SesameServeArgs []string
 	var err error
 
 	// Look for the ENV variable to tell if this test run should use
 	// the SesameConfiguration file or the SesameConfiguration CRD.
-	if UsingContourConfigCRD() {
-		port, _ := strconv.Atoi(d.localContourPort)
+	if UsingSesameConfigCRD() {
+		port, _ := strconv.Atoi(d.localSesamePort)
 
-		contourConfiguration.Name = randomString(14)
+		SesameConfiguration.Name = randomString(14)
 
 		// Set the xds server to the defined testing port as well as enable insecure communication.
-		contourConfiguration.Spec.XDSServer = contour_api_v1alpha1.XDSServerConfig{
-			Type:    contour_api_v1alpha1.ContourServerType,
+		SesameConfiguration.Spec.XDSServer = Sesame_api_v1alpha1.XDSServerConfig{
+			Type:    Sesame_api_v1alpha1.SesameServerType,
 			Address: "0.0.0.0",
 			Port:    port,
-			TLS: &contour_api_v1alpha1.TLS{
+			TLS: &Sesame_api_v1alpha1.TLS{
 				Insecure: true,
 			},
 		}
 
-		if err := d.client.Create(context.TODO(), contourConfiguration); err != nil {
+		if err := d.client.Create(context.TODO(), SesameConfiguration); err != nil {
 			return nil, "", fmt.Errorf("could not create SesameConfiguration: %v", err)
 		}
 
-		contourServeArgs = append([]string{
+		SesameServeArgs = append([]string{
 			"serve",
 			"--kubeconfig=" + d.kubeConfig,
-			"--sesame-config-name=" + contourConfiguration.Name,
+			"--sesame-config-name=" + SesameConfiguration.Name,
 			"--disable-leader-election",
 		}, additionalArgs...)
 
-		configReferenceName = contourConfiguration.Name
+		configReferenceName = SesameConfiguration.Name
 	} else {
 
 		configFile, err := ioutil.TempFile("", "sesame-config-*.yaml")
@@ -611,10 +611,10 @@ func (d *Deployment) StartLocalContour(config *config.Parameters, contourConfigu
 			return nil, "", err
 		}
 
-		contourServeArgs = append([]string{
+		SesameServeArgs = append([]string{
 			"serve",
 			"--xds-address=0.0.0.0",
-			"--xds-port=" + d.localContourPort,
+			"--xds-port=" + d.localSesamePort,
 			"--insecure",
 			"--kubeconfig=" + d.kubeConfig,
 			"--config-path=" + configFile.Name(),
@@ -624,19 +624,19 @@ func (d *Deployment) StartLocalContour(config *config.Parameters, contourConfigu
 		configReferenceName = configFile.Name()
 	}
 
-	session, err := gexec.Start(exec.Command(d.contourBin, contourServeArgs...), d.cmdOutputWriter, d.cmdOutputWriter) // nolint:gosec
+	session, err := gexec.Start(exec.Command(d.SesameBin, SesameServeArgs...), d.cmdOutputWriter, d.cmdOutputWriter) // nolint:gosec
 	if err != nil {
 		return nil, "", err
 	}
 	return session, configReferenceName, nil
 }
 
-func (d *Deployment) StopLocalContour(contourCmd *gexec.Session, configFile string) error {
+func (d *Deployment) StopLocalSesame(SesameCmd *gexec.Session, configFile string) error {
 
 	// Look for the ENV variable to tell if this test run should use
 	// the SesameConfiguration file or the SesameConfiguration CRD.
-	if useContourConfiguration, variableFound := os.LookupEnv("USE_CONTOUR_CONFIGURATION_CRD"); variableFound && useContourConfiguration == "true" {
-		cc := &contour_api_v1alpha1.ContourConfiguration{
+	if useSesameConfiguration, variableFound := os.LookupEnv("USE_Sesame_CONFIGURATION_CRD"); variableFound && useSesameConfiguration == "true" {
+		cc := &Sesame_api_v1alpha1.SesameConfiguration{
 			ObjectMeta: metav1.ObjectMeta{
 				Name:      configFile,
 				Namespace: "projectsesame",
@@ -650,41 +650,41 @@ func (d *Deployment) StopLocalContour(contourCmd *gexec.Session, configFile stri
 
 	// Default timeout of 1s produces test flakes,
 	// a minute should be more than enough to avoid them.
-	contourCmd.Terminate().Wait(time.Minute)
+	SesameCmd.Terminate().Wait(time.Minute)
 	return os.RemoveAll(configFile)
 }
 
 // Convenience method for deploying the pieces of the deployment needed for
-// testing Contour running in-cluster.
+// testing Sesame running in-cluster.
 // Includes:
 // - namespace
-// - Contour service account
+// - Sesame service account
 // - Envoy service account
-// - Contour configmap
+// - Sesame configmap
 // - CRDs
 // - Certgen service account
-// - Contour role binding
+// - Sesame role binding
 // - Certgen role
 // - Certgen job
-// - Contour cluster role binding
-// - Contour cluster role
-// - Contour service
+// - Sesame cluster role binding
+// - Sesame cluster role
+// - Sesame service
 // - Envoy service
-// - Contour deployment (only started if bool passed in is true)
+// - Sesame deployment (only started if bool passed in is true)
 // - Envoy DaemonSet
-func (d *Deployment) EnsureResourcesForInclusterContour(startContourDeployment bool) error {
-	fmt.Fprintf(d.cmdOutputWriter, "Deploying Contour with image: %s\n", d.contourImage)
+func (d *Deployment) EnsureResourcesForInclusterSesame(startSesameDeployment bool) error {
+	fmt.Fprintf(d.cmdOutputWriter, "Deploying Sesame with image: %s\n", d.SesameImage)
 
 	if err := d.EnsureNamespace(); err != nil {
 		return err
 	}
-	if err := d.EnsureContourServiceAccount(); err != nil {
+	if err := d.EnsureSesameServiceAccount(); err != nil {
 		return err
 	}
 	if err := d.EnsureEnvoyServiceAccount(); err != nil {
 		return err
 	}
-	if err := d.EnsureContourConfigMap(); err != nil {
+	if err := d.EnsureSesameConfigMap(); err != nil {
 		return err
 	}
 	if err := d.EnsureExtensionServiceCRD(); err != nil {
@@ -696,16 +696,16 @@ func (d *Deployment) EnsureResourcesForInclusterContour(startContourDeployment b
 	if err := d.EnsureTLSCertDelegationCRD(); err != nil {
 		return err
 	}
-	if err := d.EnsureContourConfigurationCRD(); err != nil {
+	if err := d.EnsureSesameConfigurationCRD(); err != nil {
 		return err
 	}
-	if err := d.EnsureContourDeploymentCRD(); err != nil {
+	if err := d.EnsureSesameDeploymentCRD(); err != nil {
 		return err
 	}
 	if err := d.EnsureCertgenServiceAccount(); err != nil {
 		return err
 	}
-	if err := d.EnsureContourRoleBinding(); err != nil {
+	if err := d.EnsureSesameRoleBinding(); err != nil {
 		return err
 	}
 	if err := d.EnsureCertgenRole(); err != nil {
@@ -715,31 +715,31 @@ func (d *Deployment) EnsureResourcesForInclusterContour(startContourDeployment b
 	if l := len(d.CertgenJob.Spec.Template.Spec.Containers); l != 1 {
 		return fmt.Errorf("invalid certgen job containers, expected 1, got %d", l)
 	}
-	d.CertgenJob.Spec.Template.Spec.Containers[0].Image = d.contourImage
+	d.CertgenJob.Spec.Template.Spec.Containers[0].Image = d.SesameImage
 	d.CertgenJob.Spec.Template.Spec.Containers[0].ImagePullPolicy = v1.PullIfNotPresent
 	if err := d.EnsureCertgenJob(); err != nil {
 		return err
 	}
-	if err := d.EnsureContourClusterRoleBinding(); err != nil {
+	if err := d.EnsureSesameClusterRoleBinding(); err != nil {
 		return err
 	}
-	if err := d.EnsureContourClusterRole(); err != nil {
+	if err := d.EnsureSesameClusterRole(); err != nil {
 		return err
 	}
-	if err := d.EnsureContourService(); err != nil {
+	if err := d.EnsureSesameService(); err != nil {
 		return err
 	}
 	if err := d.EnsureEnvoyService(); err != nil {
 		return err
 	}
 	// Update container image.
-	if l := len(d.ContourDeployment.Spec.Template.Spec.Containers); l != 1 {
+	if l := len(d.SesameDeployment.Spec.Template.Spec.Containers); l != 1 {
 		return fmt.Errorf("invalid sesame deployment containers, expected 1, got %d", l)
 	}
-	d.ContourDeployment.Spec.Template.Spec.Containers[0].Image = d.contourImage
-	d.ContourDeployment.Spec.Template.Spec.Containers[0].ImagePullPolicy = v1.PullIfNotPresent
-	if startContourDeployment {
-		if err := d.EnsureContourDeployment(); err != nil {
+	d.SesameDeployment.Spec.Template.Spec.Containers[0].Image = d.SesameImage
+	d.SesameDeployment.Spec.Template.Spec.Containers[0].ImagePullPolicy = v1.PullIfNotPresent
+	if startSesameDeployment {
+		if err := d.EnsureSesameDeployment(); err != nil {
 			return err
 		}
 	}
@@ -747,24 +747,24 @@ func (d *Deployment) EnsureResourcesForInclusterContour(startContourDeployment b
 	if l := len(d.EnvoyDaemonSet.Spec.Template.Spec.InitContainers); l != 1 {
 		return fmt.Errorf("invalid envoy daemonset init containers, expected 1, got %d", l)
 	}
-	d.EnvoyDaemonSet.Spec.Template.Spec.InitContainers[0].Image = d.contourImage
+	d.EnvoyDaemonSet.Spec.Template.Spec.InitContainers[0].Image = d.SesameImage
 	d.EnvoyDaemonSet.Spec.Template.Spec.InitContainers[0].ImagePullPolicy = v1.PullIfNotPresent
 	if l := len(d.EnvoyDaemonSet.Spec.Template.Spec.Containers); l != 2 {
 		return fmt.Errorf("invalid envoy daemonset containers, expected 2, got %d", l)
 	}
-	d.EnvoyDaemonSet.Spec.Template.Spec.Containers[0].Image = d.contourImage
+	d.EnvoyDaemonSet.Spec.Template.Spec.Containers[0].Image = d.SesameImage
 	d.EnvoyDaemonSet.Spec.Template.Spec.Containers[0].ImagePullPolicy = v1.PullIfNotPresent
 	// Set shutdown check-delay to 0s to ensure cleanup is fast.
 	d.EnvoyDaemonSet.Spec.Template.Spec.Containers[0].Lifecycle.PreStop.Exec.Command = append(d.EnvoyDaemonSet.Spec.Template.Spec.Containers[0].Lifecycle.PreStop.Exec.Command, "--check-delay=0s")
 	return d.EnsureEnvoyDaemonSet()
 }
 
-// DeleteResourcesForInclusterContour ensures deletion of all resources
+// DeleteResourcesForInclusterSesame ensures deletion of all resources
 // created in the projectsesame namespace for running a sesame incluster.
 // This is done instead of deleting the entire namespace as a performance
 // optimization, because deleting non-empty namespaces can take up to a
 // couple minutes to complete.
-func (d *Deployment) DeleteResourcesForInclusterContour() error {
+func (d *Deployment) DeleteResourcesForInclusterSesame() error {
 	// Also need to delete leader election resources to ensure
 	// multiple test runs can be run cleanly.
 	leaderElectionConfigMap := &v1.ConfigMap{
@@ -782,23 +782,23 @@ func (d *Deployment) DeleteResourcesForInclusterContour() error {
 
 	for _, r := range []client.Object{
 		d.EnvoyDaemonSet,
-		d.ContourDeployment,
+		d.SesameDeployment,
 		leaderElectionLease,
 		leaderElectionConfigMap,
 		d.EnvoyService,
-		d.ContourService,
-		d.ContourClusterRole,
-		d.ContourClusterRoleBinding,
+		d.SesameService,
+		d.SesameClusterRole,
+		d.SesameClusterRoleBinding,
 		d.CertgenJob,
 		d.CertgenRole,
-		d.ContourRoleBinding,
+		d.SesameRoleBinding,
 		d.CertgenServiceAccount,
 		d.TLSCertDelegationCRD,
 		d.ExtensionServiceCRD,
 		d.HTTPProxyCRD,
-		d.ContourConfigMap,
+		d.SesameConfigMap,
 		d.EnvoyServiceAccount,
-		d.ContourServiceAccount,
+		d.SesameServiceAccount,
 	} {
 		if err := d.EnsureDeleted(r); err != nil {
 			return err
