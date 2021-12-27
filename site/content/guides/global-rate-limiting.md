@@ -3,12 +3,12 @@ title: Global Rate Limiting
 layout: page
 ---
 
-Starting in version 1.13, Contour supports [Envoy global rate limiting][1].
+Starting in version 1.13, Sesame supports [Envoy global rate limiting][1].
 In global rate limiting, Envoy communicates with an external Rate Limit Service (RLS) over gRPC to make rate limit decisions for each request.
 Envoy is configured to produce 1+ descriptors for incoming requests, containing things like the client IP, header values, and more.
 Envoy sends descriptors to the RLS, and the RLS returns a rate limiting decision to Envoy based on the descriptors and the RLS's configured rate limits.
 
-In this guide, we'll walk through deploying an RLS, configuring it in Contour, and configuring an `HTTPProxy` to use it for rate limiting.
+In this guide, we'll walk through deploying an RLS, configuring it in Sesame, and configuring an `HTTPProxy` to use it for rate limiting.
 
 **NOTE: you should not consider the RLS deployment in this guide to be production-ready.**
 The instructions and example YAML below are intended to be a demonstration of functionality only.
@@ -18,8 +18,8 @@ Each user will have their own unique production requirements for their RLS deplo
 
 This guide assumes that you have:
 
-- A local KinD cluster created using [the Contour guide][2].
-- Contour installed and running in the cluster using the [quick start][3].
+- A local KinD cluster created using [the Sesame guide][2].
+- Sesame installed and running in the cluster using the [quick start][3].
 
 ## Deploy an RLS
 
@@ -31,7 +31,7 @@ Per the project's README:
 > The service reads the configuration from disk via [runtime][10], composes a cache key, and talks to the Redis cache.
 > A decision is then returned to the caller.
 
-However, any service that implements the [RateLimitService gRPC interface][5] is supported by Contour/Envoy.
+However, any service that implements the [RateLimitService gRPC interface][5] is supported by Sesame/Envoy.
 
 Create a config map with [the ratelimit service configuration][6]:
 
@@ -43,7 +43,7 @@ metadata:
   namespace: projectsesame
 data:
   ratelimit-config.yaml: |
-    domain: contour
+    domain: Sesame
     descriptors:
       
       # requests with a descriptor of ["generic_key": "foo"]
@@ -163,9 +163,9 @@ ratelimit-658f4b8f6b-2hnrf   2/2     Running   0          12s
 
 Once the pod is `Running` with `2/2` containers ready, move onto the next step.
 
-## Configure the RLS with Contour
+## Configure the RLS with Sesame
 
-Create a Contour extension service for the RLS:
+Create a Sesame extension service for the RLS:
 
 ```yaml
 apiVersion: projectsesame.io/v1alpha1
@@ -185,7 +185,7 @@ spec:
     response: 100ms  
 ```
 
-Update the Contour config map to have the following RLS configuration:
+Update the Sesame config map to have the following RLS configuration:
 
 ```yaml
 apiVersion: v1
@@ -194,21 +194,21 @@ metadata:
   name: sesame
   namespace: projectsesame
 data:
-  contour.yaml: |
+  Sesame.yaml: |
     rateLimitService:
       # extensionService is the <namespace>/<name>
       # of the ExtensionService we created in the
       # previous step.
-      extensionService: projectcontour/ratelimit
+      extensionService: projectsesame/ratelimit
       # domain corresponds to the domain in the
-      # projectcontour/ratelimit-config config map.
-      domain: contour
+      # projectsesame/ratelimit-config config map.
+      domain: Sesame
       # failOpen is whether to allow requests through
       # if there's an error connecting to the RLS.
       failOpen: false
 ```
 
-Restart Contour to pick up the new config map:
+Restart Sesame to pick up the new config map:
 
 ```bash
 $ kubectl -n projectsesame rollout restart deploy/sesame
@@ -260,7 +260,7 @@ spec:
 
 This echo server will respond with a JSON object that reports information about the HTTP request it received, including the request headers.
 
-Once the application is running, we can expose it to Contour with a `HTTPProxy` resource:
+Once the application is running, we can expose it to Sesame with a `HTTPProxy` resource:
 
 ```yaml
 apiVersion: projectsesame.io/v1
@@ -286,8 +286,8 @@ spec:
 We can verify that the application is working by requesting any path:
 
 ```bash
-$ curl -k http://local.projectcontour.io/test/$((RANDOM))
-{"TestId":"","Path":"/test/22808","Host":"local.projectcontour.io","Method":"GET","Proto":"HTTP/1.1","Headers":{"Accept":["*/*"],"Content-Length":["0"],"User-Agent":["curl/7.75.0"],"X-Envoy-Expected-Rq-Timeout-Ms":["15000"],"X-Envoy-Internal":["true"],"X-Forwarded-For":["172.18.0.1"],"X-Forwarded-Proto":["http"],"X-Request-Id":["8ecb85e1-271b-44b4-9cf0-4859cbaed7a7"],"X-Request-Start":["t=1612903866.309"]}}
+$ curl -k http://local.projectsesame.io/test/$((RANDOM))
+{"TestId":"","Path":"/test/22808","Host":"local.projectsesame.io","Method":"GET","Proto":"HTTP/1.1","Headers":{"Accept":["*/*"],"Content-Length":["0"],"User-Agent":["curl/7.75.0"],"X-Envoy-Expected-Rq-Timeout-Ms":["15000"],"X-Envoy-Internal":["true"],"X-Forwarded-For":["172.18.0.1"],"X-Forwarded-Proto":["http"],"X-Request-Id":["8ecb85e1-271b-44b4-9cf0-4859cbaed7a7"],"X-Request-Start":["t=1612903866.309"]}}
 ```
 
 ## Add global rate limit policies
@@ -359,16 +359,16 @@ The second entry says that each unique remote address (client IP) should be allo
 All relevant rate limits are applied for each request, and requests that result in a `429 (Too Many Requests)` count against limits.
 
 So, we should be able to make:
-- a first request to `local.projectcontour.io/foo` that get a `200 (OK)` response
-- a second request to `local.projectcontour.io/foo` that gets a `429 (Too Many Requests)` response (due to the first rate limit)
-- a third request to `local.projectcontour.io/bar`that gets a `200 (OK)` response
-- a fourth request to `local.projectcontour.io/bar`that gets a `429 (Too Many Requests)` response (due to the second rate limit)
+- a first request to `local.projectsesame.io/foo` that get a `200 (OK)` response
+- a second request to `local.projectsesame.io/foo` that gets a `429 (Too Many Requests)` response (due to the first rate limit)
+- a third request to `local.projectsesame.io/bar`that gets a `200 (OK)` response
+- a fourth request to `local.projectsesame.io/bar`that gets a `429 (Too Many Requests)` response (due to the second rate limit)
 
 Let's try it out (remember, you'll need to make all of these requests within 60 seconds since the rate limits are per minute):
 
 Request #1:
 ```
-$ curl -I local.projectcontour.io/foo
+$ curl -I local.projectsesame.io/foo
 
 HTTP/1.1 200 OK
 content-type: application/json
@@ -382,7 +382,7 @@ server: envoy
 Request #2:
 
 ```
-$ curl -I local.projectcontour.io/foo
+$ curl -I local.projectsesame.io/foo
 
 HTTP/1.1 429 Too Many Requests
 x-envoy-ratelimited: true
@@ -394,7 +394,7 @@ transfer-encoding: chunked
 Request #3:
 
 ```
-$ curl -I local.projectcontour.io/bar
+$ curl -I local.projectsesame.io/bar
 
 HTTP/1.1 200 OK
 content-type: application/json
@@ -408,7 +408,7 @@ server: envoy
 Request #4:
 
 ```
-$ curl -I local.projectcontour.io/bar
+$ curl -I local.projectsesame.io/bar
 
 HTTP/1.1 429 Too Many Requests
 x-envoy-ratelimited: true
@@ -419,13 +419,13 @@ transfer-encoding: chunked
 
 ## Wrapping up
 
-For more information, see the [Contour rate limiting documentation][7] and the [API reference documentation][8].
+For more information, see the [Sesame rate limiting documentation][7] and the [API reference documentation][8].
 
-The YAML used in this guide is available [in the Contour repository][9].
+The YAML used in this guide is available [in the Sesame repository][9].
 
 [1]: https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/other_features/global_rate_limiting
 [2]: /docs/{{< param latest_version >}}/deploy-options/#kind
-[3]: https://projectcontour.io/getting-started/#option-1-quickstart
+[3]: https://projectsesame.io/getting-started/#option-1-quickstart
 [4]: https://github.com/envoyproxy/ratelimit
 [5]: https://www.envoyproxy.io/docs/envoy/latest/api-v3/service/ratelimit/v3/rls.proto
 [6]: https://github.com/envoyproxy/ratelimit#configuration

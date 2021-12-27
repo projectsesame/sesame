@@ -41,7 +41,7 @@ type grpcStream interface {
 // provided set of Resource objects. The returned Server implements the xDS
 // State of the World (SotW) variant.
 func NewSesameServer(log logrus.FieldLogger, resources ...xds.Resource) Server {
-	c := contourServer{
+	c := SesameServer{
 		FieldLogger: log,
 		resources:   map[string]xds.Resource{},
 	}
@@ -53,7 +53,7 @@ func NewSesameServer(log logrus.FieldLogger, resources ...xds.Resource) Server {
 	return &c
 }
 
-type contourServer struct {
+type SesameServer struct {
 	// Since we only implement the streaming state of the world
 	// protocol, embed the default null implementations to handle
 	// the unimplemented gRPC endpoints.
@@ -70,7 +70,7 @@ type contourServer struct {
 }
 
 // stream processes a stream of DiscoveryRequests.
-func (s *contourServer) stream(st grpcStream) error {
+func (s *SesameServer) stream(st grpcStream) error {
 	// Bump connection counter and set it as a field on the logger.
 	log := s.WithField("connection", s.connections.Next())
 
@@ -158,22 +158,22 @@ func (s *contourServer) stream(st grpcStream) error {
 	}
 }
 
-func (s *contourServer) StreamClusters(srv envoy_service_cluster_v3.ClusterDiscoveryService_StreamClustersServer) error {
+func (s *SesameServer) StreamClusters(srv envoy_service_cluster_v3.ClusterDiscoveryService_StreamClustersServer) error {
 	return s.stream(srv)
 }
 
-func (s *contourServer) StreamEndpoints(srv envoy_service_endpoint_v3.EndpointDiscoveryService_StreamEndpointsServer) error {
+func (s *SesameServer) StreamEndpoints(srv envoy_service_endpoint_v3.EndpointDiscoveryService_StreamEndpointsServer) error {
 	return s.stream(srv)
 }
 
-func (s *contourServer) StreamListeners(srv envoy_service_listener_v3.ListenerDiscoveryService_StreamListenersServer) error {
+func (s *SesameServer) StreamListeners(srv envoy_service_listener_v3.ListenerDiscoveryService_StreamListenersServer) error {
 	return s.stream(srv)
 }
 
-func (s *contourServer) StreamRoutes(srv envoy_service_route_v3.RouteDiscoveryService_StreamRoutesServer) error {
+func (s *SesameServer) StreamRoutes(srv envoy_service_route_v3.RouteDiscoveryService_StreamRoutesServer) error {
 	return s.stream(srv)
 }
 
-func (s *contourServer) StreamSecrets(srv envoy_service_secret_v3.SecretDiscoveryService_StreamSecretsServer) error {
+func (s *SesameServer) StreamSecrets(srv envoy_service_secret_v3.SecretDiscoveryService_StreamSecretsServer) error {
 	return s.stream(srv)
 }

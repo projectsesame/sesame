@@ -19,8 +19,8 @@ import (
 	envoy_listener_v3 "github.com/envoyproxy/go-control-plane/envoy/config/listener/v3"
 	envoy_route_v3 "github.com/envoyproxy/go-control-plane/envoy/config/route/v3"
 	envoy_discovery_v3 "github.com/envoyproxy/go-control-plane/envoy/service/discovery/v3"
-	contour_api_v1 "github.com/projectcontour/sesame/apis/projectsesame/v1"
-	envoy_v3 "github.com/projectcontour/sesame/internal/envoy/v3"
+	Sesame_api_v1 "github.com/projectsesame/sesame/apis/projectsesame/v1"
+	envoy_v3 "github.com/projectsesame/sesame/internal/envoy/v3"
 	"github.com/projectsesame/sesame/internal/featuretests"
 	"github.com/projectsesame/sesame/internal/fixture"
 	v1 "k8s.io/api/core/v1"
@@ -47,15 +47,15 @@ func TestTCPProxy(t *testing.T) {
 	rh.OnAdd(s1)
 	rh.OnAdd(svc)
 
-	hp1 := &contour_api_v1.HTTPProxy{
+	hp1 := &Sesame_api_v1.HTTPProxy{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "simple",
 			Namespace: s1.Namespace,
 		},
-		Spec: contour_api_v1.HTTPProxySpec{
-			VirtualHost: &contour_api_v1.VirtualHost{
+		Spec: Sesame_api_v1.HTTPProxySpec{
+			VirtualHost: &Sesame_api_v1.VirtualHost{
 				Fqdn: "kuard-tcp.example.com",
-				TLS: &contour_api_v1.TLS{
+				TLS: &Sesame_api_v1.TLS{
 					SecretName: s1.Name,
 				},
 			},
@@ -63,15 +63,15 @@ func TestTCPProxy(t *testing.T) {
 			// According to HTTPProxy documentation, routes should not be processed if HTTPProxy is in tcpproxy mode.
 			// Consider removing routes from this test case, and create separate tests for tcpproxies with routes.
 			// See also https://github.com/projectsesame/sesame/issues/3800
-			Routes: []contour_api_v1.Route{{
+			Routes: []Sesame_api_v1.Route{{
 				Conditions: matchconditions(prefixMatchCondition("/")),
-				Services: []contour_api_v1.Service{{
+				Services: []Sesame_api_v1.Service{{
 					Name: "wrong-backend",
 					Port: 80,
 				}},
 			}},
-			TCPProxy: &contour_api_v1.TCPProxy{
-				Services: []contour_api_v1.Service{{
+			TCPProxy: &Sesame_api_v1.TCPProxy{
+				Services: []Sesame_api_v1.Service{{
 					Name: svc.Name,
 					Port: 80,
 				}},
@@ -144,34 +144,34 @@ func TestTCPProxyDelegation(t *testing.T) {
 	rh.OnAdd(s1)
 	rh.OnAdd(svc)
 
-	hp1 := &contour_api_v1.HTTPProxy{
+	hp1 := &Sesame_api_v1.HTTPProxy{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "simple",
 			Namespace: svc.Namespace,
 		},
-		Spec: contour_api_v1.HTTPProxySpec{
-			TCPProxy: &contour_api_v1.TCPProxy{
-				Services: []contour_api_v1.Service{{
+		Spec: Sesame_api_v1.HTTPProxySpec{
+			TCPProxy: &Sesame_api_v1.TCPProxy{
+				Services: []Sesame_api_v1.Service{{
 					Name: svc.Name,
 					Port: 80,
 				}},
 			},
 		},
 	}
-	hp2 := &contour_api_v1.HTTPProxy{
+	hp2 := &Sesame_api_v1.HTTPProxy{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "parent",
 			Namespace: s1.Namespace,
 		},
-		Spec: contour_api_v1.HTTPProxySpec{
-			VirtualHost: &contour_api_v1.VirtualHost{
+		Spec: Sesame_api_v1.HTTPProxySpec{
+			VirtualHost: &Sesame_api_v1.VirtualHost{
 				Fqdn: "kuard-tcp.example.com",
-				TLS: &contour_api_v1.TLS{
+				TLS: &Sesame_api_v1.TLS{
 					SecretName: s1.Name,
 				},
 			},
-			TCPProxy: &contour_api_v1.TCPProxy{
-				Include: &contour_api_v1.TCPProxyInclude{
+			TCPProxy: &Sesame_api_v1.TCPProxy{
+				Include: &Sesame_api_v1.TCPProxyInclude{
 					Name:      hp1.Name,
 					Namespace: hp1.Namespace,
 				},
@@ -221,15 +221,15 @@ func TestTCPProxyTLSPassthrough(t *testing.T) {
 
 	rh.OnAdd(svc)
 
-	hp1 := &contour_api_v1.HTTPProxy{
+	hp1 := &Sesame_api_v1.HTTPProxy{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "simple",
 			Namespace: svc.Namespace,
 		},
-		Spec: contour_api_v1.HTTPProxySpec{
-			VirtualHost: &contour_api_v1.VirtualHost{
+		Spec: Sesame_api_v1.HTTPProxySpec{
+			VirtualHost: &Sesame_api_v1.VirtualHost{
 				Fqdn: "kuard-tcp.example.com",
-				TLS: &contour_api_v1.TLS{
+				TLS: &Sesame_api_v1.TLS{
 					Passthrough: true,
 				},
 			},
@@ -237,15 +237,15 @@ func TestTCPProxyTLSPassthrough(t *testing.T) {
 			// According to HTTPProxy documentation, routes should not be processed if HTTPProxy is in tcpproxy mode.
 			// Consider removing routes from this test case, and create separate tests for tcpproxies with routes.
 			// See also https://github.com/projectsesame/sesame/issues/3800
-			Routes: []contour_api_v1.Route{{
+			Routes: []Sesame_api_v1.Route{{
 				Conditions: matchconditions(prefixMatchCondition("/")),
-				Services: []contour_api_v1.Service{{
+				Services: []Sesame_api_v1.Service{{
 					Name: "wrong-backend",
 					Port: 80,
 				}},
 			}},
-			TCPProxy: &contour_api_v1.TCPProxy{
-				Services: []contour_api_v1.Service{{
+			TCPProxy: &Sesame_api_v1.TCPProxy{
+				Services: []Sesame_api_v1.Service{{
 					Name: svc.Name,
 					Port: 80,
 				}},
@@ -325,20 +325,20 @@ func TestTCPProxyTLSBackend(t *testing.T) {
 		Annotate("projectsesame.io/upstream-protocol.tls", "https,443").
 		WithPorts(v1.ServicePort{Name: "https", Port: 443, TargetPort: intstr.FromInt(6443)})
 
-	hp1 := &contour_api_v1.HTTPProxy{
+	hp1 := &Sesame_api_v1.HTTPProxy{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "kubernetesb",
 			Namespace: s1.Namespace,
 		},
-		Spec: contour_api_v1.HTTPProxySpec{
-			VirtualHost: &contour_api_v1.VirtualHost{
+		Spec: Sesame_api_v1.HTTPProxySpec{
+			VirtualHost: &Sesame_api_v1.VirtualHost{
 				Fqdn: "k8s.run.ubisoft.org",
-				TLS: &contour_api_v1.TLS{
+				TLS: &Sesame_api_v1.TLS{
 					SecretName: s1.Name,
 				},
 			},
-			TCPProxy: &contour_api_v1.TCPProxy{
-				Services: []contour_api_v1.Service{{
+			TCPProxy: &Sesame_api_v1.TCPProxy{
+				Services: []Sesame_api_v1.Service{{
 					Name: svc.Name,
 					Port: 443,
 				}},
@@ -406,27 +406,27 @@ func TestTCPProxyAndHTTPService(t *testing.T) {
 	svc := fixture.NewService("backend").
 		WithPorts(v1.ServicePort{Port: 80, TargetPort: intstr.FromInt(8080)})
 
-	hp1 := &contour_api_v1.HTTPProxy{
+	hp1 := &Sesame_api_v1.HTTPProxy{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "simple",
 			Namespace: svc.Namespace,
 		},
-		Spec: contour_api_v1.HTTPProxySpec{
-			VirtualHost: &contour_api_v1.VirtualHost{
+		Spec: Sesame_api_v1.HTTPProxySpec{
+			VirtualHost: &Sesame_api_v1.VirtualHost{
 				Fqdn: "kuard-tcp.example.com",
-				TLS: &contour_api_v1.TLS{
+				TLS: &Sesame_api_v1.TLS{
 					SecretName: s1.Name,
 				},
 			},
-			Routes: []contour_api_v1.Route{{
+			Routes: []Sesame_api_v1.Route{{
 				Conditions: matchconditions(prefixMatchCondition("/")),
-				Services: []contour_api_v1.Service{{
+				Services: []Sesame_api_v1.Service{{
 					Name: svc.Name,
 					Port: 80,
 				}},
 			}},
-			TCPProxy: &contour_api_v1.TCPProxy{
-				Services: []contour_api_v1.Service{{
+			TCPProxy: &Sesame_api_v1.TCPProxy{
+				Services: []Sesame_api_v1.Service{{
 					Name: svc.Name,
 					Port: 80,
 				}},
@@ -495,28 +495,28 @@ func TestTCPProxyAndHTTPServicePermitInsecure(t *testing.T) {
 	svc := fixture.NewService("backend").
 		WithPorts(v1.ServicePort{Port: 80, TargetPort: intstr.FromInt(8080)})
 
-	hp1 := &contour_api_v1.HTTPProxy{
+	hp1 := &Sesame_api_v1.HTTPProxy{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "simple",
 			Namespace: svc.Namespace,
 		},
-		Spec: contour_api_v1.HTTPProxySpec{
-			VirtualHost: &contour_api_v1.VirtualHost{
+		Spec: Sesame_api_v1.HTTPProxySpec{
+			VirtualHost: &Sesame_api_v1.VirtualHost{
 				Fqdn: "kuard-tcp.example.com",
-				TLS: &contour_api_v1.TLS{
+				TLS: &Sesame_api_v1.TLS{
 					SecretName: s1.Name,
 				},
 			},
-			Routes: []contour_api_v1.Route{{
+			Routes: []Sesame_api_v1.Route{{
 				Conditions:     matchconditions(prefixMatchCondition("/")),
 				PermitInsecure: true,
-				Services: []contour_api_v1.Service{{
+				Services: []Sesame_api_v1.Service{{
 					Name: svc.Name,
 					Port: 80,
 				}},
 			}},
-			TCPProxy: &contour_api_v1.TCPProxy{
-				Services: []contour_api_v1.Service{{
+			TCPProxy: &Sesame_api_v1.TCPProxy{
+				Services: []Sesame_api_v1.Service{{
 					Name: svc.Name,
 					Port: 80,
 				}},
@@ -580,27 +580,27 @@ func TestTCPProxyTLSPassthroughAndHTTPService(t *testing.T) {
 	svc := fixture.NewService("backend").
 		WithPorts(v1.ServicePort{Port: 80, TargetPort: intstr.FromInt(8080)})
 
-	hp1 := &contour_api_v1.HTTPProxy{
+	hp1 := &Sesame_api_v1.HTTPProxy{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "simple",
 			Namespace: svc.Namespace,
 		},
-		Spec: contour_api_v1.HTTPProxySpec{
-			VirtualHost: &contour_api_v1.VirtualHost{
+		Spec: Sesame_api_v1.HTTPProxySpec{
+			VirtualHost: &Sesame_api_v1.VirtualHost{
 				Fqdn: "kuard-tcp.example.com",
-				TLS: &contour_api_v1.TLS{
+				TLS: &Sesame_api_v1.TLS{
 					Passthrough: true,
 				},
 			},
-			Routes: []contour_api_v1.Route{{
+			Routes: []Sesame_api_v1.Route{{
 				Conditions: matchconditions(prefixMatchCondition("/")),
-				Services: []contour_api_v1.Service{{
+				Services: []Sesame_api_v1.Service{{
 					Name: svc.Name,
 					Port: 80,
 				}},
 			}},
-			TCPProxy: &contour_api_v1.TCPProxy{
-				Services: []contour_api_v1.Service{{
+			TCPProxy: &Sesame_api_v1.TCPProxy{
+				Services: []Sesame_api_v1.Service{{
 					Name: svc.Name,
 					Port: 80,
 				}},
@@ -666,28 +666,28 @@ func TestTCPProxyTLSPassthroughAndHTTPServicePermitInsecure(t *testing.T) {
 	svc := fixture.NewService("backend").
 		WithPorts(v1.ServicePort{Port: 80, TargetPort: intstr.FromInt(8080)})
 
-	hp1 := &contour_api_v1.HTTPProxy{
+	hp1 := &Sesame_api_v1.HTTPProxy{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "simple",
 			Namespace: svc.Namespace,
 		},
-		Spec: contour_api_v1.HTTPProxySpec{
-			VirtualHost: &contour_api_v1.VirtualHost{
+		Spec: Sesame_api_v1.HTTPProxySpec{
+			VirtualHost: &Sesame_api_v1.VirtualHost{
 				Fqdn: "kuard-tcp.example.com",
-				TLS: &contour_api_v1.TLS{
+				TLS: &Sesame_api_v1.TLS{
 					Passthrough: true,
 				},
 			},
-			Routes: []contour_api_v1.Route{{
+			Routes: []Sesame_api_v1.Route{{
 				Conditions:     matchconditions(prefixMatchCondition("/")),
 				PermitInsecure: true,
-				Services: []contour_api_v1.Service{{
+				Services: []Sesame_api_v1.Service{{
 					Name: svc.Name,
 					Port: 80,
 				}},
 			}},
-			TCPProxy: &contour_api_v1.TCPProxy{
-				Services: []contour_api_v1.Service{{
+			TCPProxy: &Sesame_api_v1.TCPProxy{
+				Services: []Sesame_api_v1.Service{{
 					Name: svc.Name,
 					Port: 80,
 				}},
@@ -766,25 +766,25 @@ func TestTCPProxyMissingTLS(t *testing.T) {
 	svc := fixture.NewService("backend").
 		WithPorts(v1.ServicePort{Port: 80, TargetPort: intstr.FromInt(8080)})
 
-	hp1 := &contour_api_v1.HTTPProxy{
+	hp1 := &Sesame_api_v1.HTTPProxy{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "simple",
 			Namespace: svc.Namespace,
 		},
-		Spec: contour_api_v1.HTTPProxySpec{
-			VirtualHost: &contour_api_v1.VirtualHost{
+		Spec: Sesame_api_v1.HTTPProxySpec{
+			VirtualHost: &Sesame_api_v1.VirtualHost{
 				Fqdn: "tcpproxy.example.com",
 				// missing TLS:
 			},
-			Routes: []contour_api_v1.Route{{
+			Routes: []Sesame_api_v1.Route{{
 				Conditions: matchconditions(prefixMatchCondition("/")),
-				Services: []contour_api_v1.Service{{
+				Services: []Sesame_api_v1.Service{{
 					Name: svc.Name,
 					Port: 80,
 				}},
 			}},
-			TCPProxy: &contour_api_v1.TCPProxy{
-				Services: []contour_api_v1.Service{{
+			TCPProxy: &Sesame_api_v1.TCPProxy{
+				Services: []Sesame_api_v1.Service{{
 					Name: svc.Name,
 					Port: 80,
 				}},
@@ -813,26 +813,26 @@ func TestTCPProxyMissingTLS(t *testing.T) {
 		TypeUrl: routeType,
 	})
 
-	hp2 := &contour_api_v1.HTTPProxy{
+	hp2 := &Sesame_api_v1.HTTPProxy{
 		ObjectMeta: hp1.ObjectMeta,
-		Spec: contour_api_v1.HTTPProxySpec{
-			VirtualHost: &contour_api_v1.VirtualHost{
+		Spec: Sesame_api_v1.HTTPProxySpec{
+			VirtualHost: &Sesame_api_v1.VirtualHost{
 				Fqdn: "tcpproxy.example.com",
-				TLS: &contour_api_v1.TLS{
+				TLS: &Sesame_api_v1.TLS{
 					// invalid, one of Passthrough or SecretName must be provided.
 					Passthrough: false,
 					SecretName:  "",
 				},
 			},
-			Routes: []contour_api_v1.Route{{
+			Routes: []Sesame_api_v1.Route{{
 				Conditions: matchconditions(prefixMatchCondition("/")),
-				Services: []contour_api_v1.Service{{
+				Services: []Sesame_api_v1.Service{{
 					Name: svc.Name,
 					Port: 80,
 				}},
 			}},
-			TCPProxy: &contour_api_v1.TCPProxy{
-				Services: []contour_api_v1.Service{{
+			TCPProxy: &Sesame_api_v1.TCPProxy{
+				Services: []Sesame_api_v1.Service{{
 					Name: svc.Name,
 					Port: 80,
 				}},
@@ -880,24 +880,24 @@ func TestTCPProxyInvalidLoadBalancerPolicy(t *testing.T) {
 	rh.OnAdd(s1)
 	rh.OnAdd(svc)
 
-	hp1 := &contour_api_v1.HTTPProxy{
+	hp1 := &Sesame_api_v1.HTTPProxy{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "simple",
 			Namespace: s1.Namespace,
 		},
-		Spec: contour_api_v1.HTTPProxySpec{
-			VirtualHost: &contour_api_v1.VirtualHost{
+		Spec: Sesame_api_v1.HTTPProxySpec{
+			VirtualHost: &Sesame_api_v1.VirtualHost{
 				Fqdn: "kuard-tcp.example.com",
-				TLS: &contour_api_v1.TLS{
+				TLS: &Sesame_api_v1.TLS{
 					SecretName: s1.Name,
 				},
 			},
-			TCPProxy: &contour_api_v1.TCPProxy{
-				Services: []contour_api_v1.Service{{
+			TCPProxy: &Sesame_api_v1.TCPProxy{
+				Services: []Sesame_api_v1.Service{{
 					Name: svc.Name,
 					Port: 80,
 				}},
-				LoadBalancerPolicy: &contour_api_v1.LoadBalancerPolicy{
+				LoadBalancerPolicy: &Sesame_api_v1.LoadBalancerPolicy{
 					Strategy: "Cookie",
 				},
 			},
@@ -918,24 +918,24 @@ func TestTCPProxyInvalidLoadBalancerPolicy(t *testing.T) {
 		TypeUrl: clusterType,
 	})
 
-	rh.OnUpdate(hp1, &contour_api_v1.HTTPProxy{
+	rh.OnUpdate(hp1, &Sesame_api_v1.HTTPProxy{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "simple",
 			Namespace: s1.Namespace,
 		},
-		Spec: contour_api_v1.HTTPProxySpec{
-			VirtualHost: &contour_api_v1.VirtualHost{
+		Spec: Sesame_api_v1.HTTPProxySpec{
+			VirtualHost: &Sesame_api_v1.VirtualHost{
 				Fqdn: "kuard-tcp.example.com",
-				TLS: &contour_api_v1.TLS{
+				TLS: &Sesame_api_v1.TLS{
 					SecretName: s1.Name,
 				},
 			},
-			TCPProxy: &contour_api_v1.TCPProxy{
-				Services: []contour_api_v1.Service{{
+			TCPProxy: &Sesame_api_v1.TCPProxy{
+				Services: []Sesame_api_v1.Service{{
 					Name: svc.Name,
 					Port: 80,
 				}},
-				LoadBalancerPolicy: &contour_api_v1.LoadBalancerPolicy{
+				LoadBalancerPolicy: &Sesame_api_v1.LoadBalancerPolicy{
 					Strategy: "RequestHash",
 				},
 			},

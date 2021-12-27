@@ -389,7 +389,7 @@ func TestRouteRoute(t *testing.T) {
 				Clusters: []*dag.Cluster{c2},
 				RequestHashPolicies: []dag.RequestHashPolicy{
 					{CookieHashOptions: &dag.CookieHashOptions{
-						CookieName: "X-Contour-Session-Affinity",
+						CookieName: "X-Sesame-Session-Affinity",
 						TTL:        time.Duration(0),
 						Path:       "/",
 					}},
@@ -403,7 +403,7 @@ func TestRouteRoute(t *testing.T) {
 					HashPolicy: []*envoy_route_v3.RouteAction_HashPolicy{{
 						PolicySpecifier: &envoy_route_v3.RouteAction_HashPolicy_Cookie_{
 							Cookie: &envoy_route_v3.RouteAction_HashPolicy_Cookie{
-								Name: "X-Contour-Session-Affinity",
+								Name: "X-Sesame-Session-Affinity",
 								Ttl:  protobuf.Duration(0),
 								Path: "/",
 							},
@@ -417,7 +417,7 @@ func TestRouteRoute(t *testing.T) {
 				Clusters: []*dag.Cluster{c2, c2},
 				RequestHashPolicies: []dag.RequestHashPolicy{
 					{CookieHashOptions: &dag.CookieHashOptions{
-						CookieName: "X-Contour-Session-Affinity",
+						CookieName: "X-Sesame-Session-Affinity",
 						TTL:        time.Duration(0),
 						Path:       "/",
 					}},
@@ -440,7 +440,7 @@ func TestRouteRoute(t *testing.T) {
 					HashPolicy: []*envoy_route_v3.RouteAction_HashPolicy{{
 						PolicySpecifier: &envoy_route_v3.RouteAction_HashPolicy_Cookie_{
 							Cookie: &envoy_route_v3.RouteAction_HashPolicy_Cookie{
-								Name: "X-Contour-Session-Affinity",
+								Name: "X-Sesame-Session-Affinity",
 								Ttl:  protobuf.Duration(0),
 								Path: "/",
 							},

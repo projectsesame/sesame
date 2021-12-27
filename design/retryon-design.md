@@ -9,11 +9,11 @@ This proposal seeks to add fields to the `RetryPolicy` that give the user the ab
 
 ## Background
 
-When Kubernetes registers and deregisters Pods to receive network traffic, it takes Contour a non-zero amount of time (less than a second) to update the upstreams in Envoy.
+When Kubernetes registers and deregisters Pods to receive network traffic, it takes Sesame a non-zero amount of time (less than a second) to update the upstreams in Envoy.
 For services with a high number of requests per second (RPS), this can result in a handful of 503s during this period.
 
 At present, users can specify a `retryPolicy` in their `HTTPProxy` that will retry all 5xx status codes.
-When configured properly (i.e. with an appropriate number of retries and time between retries) this mitigates the delay of Contour updating Envoy upstreams.
+When configured properly (i.e. with an appropriate number of retries and time between retries) this mitigates the delay of Sesame updating Envoy upstreams.
 However, retrying all 5xx is heavy handed when one only wants to retry upstream connection errors.
 
 One could simply add an option to the `retryPolicy` that tells Envoy to retry upstream connection errors, but this seems too specific to the problem described above.
@@ -39,7 +39,7 @@ It also tries to avoid exposing too broad a set of configuration options for ret
 This proposal would add two new fields to the `retryPolicy` -- `retryOn` and `retriableStatusCodes`.
 These fields would map to the `retry_on` and `retriable_status_codes` fields of the [Envoy v2 `route.RetryPolicy`](https://www.envoyproxy.io/docs/envoy/latest/api-v2/api/v2/route/route_components.proto#route-retrypolicy), respectively.
 
-Below is an example YAML of what this would look like, as an extension of the existing example of a `retryPolicy` from the [`HTTPProxy` reference](https://projectcontour.io/docs/main/httpproxy/#response-timeout):
+Below is an example YAML of what this would look like, as an extension of the existing example of a `retryPolicy` from the [`HTTPProxy` reference](https://projectsesame.io/docs/main/httpproxy/#response-timeout):
 
 ```yaml
 apiVersion: projectsesame.io/v1
@@ -150,12 +150,12 @@ Example:
 
 Arguments for this approach:
 
-- Contour can control the options that it will allow users to populate Envoy's `retry_on` field with
+- Sesame can control the options that it will allow users to populate Envoy's `retry_on` field with
 - It ensures that only valid values are allowed in Envoy's `retry_on` field
 
 Arguments against this approach:
 
-- Contour becomes responsible for keeping track of and maintaining every possible value for Envoy's `retry_on` field
+- Sesame becomes responsible for keeping track of and maintaining every possible value for Envoy's `retry_on` field
 - Seems too verbose compared to a list of strings, but this may be a subjective opinion
 
 ### Global retry policy for all proxies
@@ -163,7 +163,7 @@ Arguments against this approach:
 Instead of configuring retry policies per `HTTPProxy`, we could allow configuration of a global retry policy that applies to all proxies.
 This would solve the author's issue of mitigating upstream connect errors during rollouts without having to configure all `HTTPProxy` manifests with the same retry policy.
 
-If implemented, this global retry policy would live in Contour's [global configuration file](https://projectcontour.io/docs/main/configuration/) and likely resemble the same structure at the `retryPolicy` section of the `HTTPProxy` manifest.
+If implemented, this global retry policy would live in Sesame's [global configuration file](https://projectsesame.io/docs/main/configuration/) and likely resemble the same structure at the `retryPolicy` section of the `HTTPProxy` manifest.
 
 Taking this approach would require consideration around how retry policies defined in `HTTPProxy` would consolidate with a global retry policy:
 
@@ -193,7 +193,7 @@ You'll see this response flag show up for requests that were the result of a ret
 
 The new fields of the `retryPolicy` -- `retryOn` and `retriableStatusCodes` -- are both optional, so existing `HTTPProxy` manifests will be syntactically compatible.
 
-Furthermore, a nil or empty value for `retryOn` will result in a default value that is backwards compatible with Contour's existing logic: retrying all 5xx status codes.
+Furthermore, a nil or empty value for `retryOn` will result in a default value that is backwards compatible with Sesame's existing logic: retrying all 5xx status codes.
 
 ## Open Issues
 

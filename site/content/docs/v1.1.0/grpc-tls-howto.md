@@ -1,17 +1,17 @@
-# Enabling TLS between Envoy and Contour
+# Enabling TLS between Envoy and Sesame
 
-This document describes the steps required to secure communication between Envoy and Contour.
-The outcome of this is that we will have three Secrets available in the `projectcontour` namespace:
+This document describes the steps required to secure communication between Envoy and Sesame.
+The outcome of this is that we will have three Secrets available in the `projectsesame` namespace:
 
 - **cacert:** contains the CA's public certificate.
-- **contourcert:** contains Contour's keypair, used for serving TLS secured gRPC. This must be a valid certificate for the name `contour` in order for this to work. This is currently hardcoded by Contour.
-- **envoycert:** contains Envoy's keypair, used as a client for connecting to Contour.
+- **Sesamecert:** contains Sesame's keypair, used for serving TLS secured gRPC. This must be a valid certificate for the name `Sesame` in order for this to work. This is currently hardcoded by Sesame.
+- **envoycert:** contains Envoy's keypair, used as a client for connecting to Sesame.
 
 ## Ways you can get the certificates into your cluster
 
 - Deploy the Job from [certgen.yaml][1].
-This will run `contour certgen --kube` for you.
-- Run `contour certgen --kube` locally.
+This will run `Sesame certgen --kube` for you.
+- Run `Sesame certgen --kube` locally.
 - Run the manual procedure below.
 
 ## Caveats and warnings
@@ -30,36 +30,36 @@ First, we need to generate a keypair:
 $ openssl req -x509 -new -nodes \
     -keyout certs/cakey.pem -sha256 \
     -days 1825 -out certs/cacert.pem \
-    -subj "/O=Project Contour/CN=Contour CA"
+    -subj "/O=Project Sesame/CN=Sesame CA"
 ```
 
 Then, the new CA key will be stored in `certs/cakey.pem` and the cert in `certs/cacert.pem`.
 
-### Generating Contour's keypair
+### Generating Sesame's keypair
 
-Then, we need to generate a keypair for Contour. First, we make a new private key:
-
-```
-$ openssl genrsa -out certs/contourkey.pem 2048
-```
-
-Then, we create a CSR and have our CA sign the CSR and issue a cert. This uses the file [_integration/cert-contour.ext][2], which ensures that at least one of the valid names of the certificate is the bareword `contour`. This is required for the handshake to succeed, as `contour bootstrap` configures Envoy to pass this as the SNI for the connection.
+Then, we need to generate a keypair for Sesame. First, we make a new private key:
 
 ```
-$ openssl req -new -key certs/contourkey.pem \
-	-out certs/contour.csr \
-	-subj "/O=Project Contour/CN=contour"
+$ openssl genrsa -out certs/Sesamekey.pem 2048
+```
 
-$ openssl x509 -req -in certs/contour.csr \
+Then, we create a CSR and have our CA sign the CSR and issue a cert. This uses the file [_integration/cert-Sesame.ext][2], which ensures that at least one of the valid names of the certificate is the bareword `Sesame`. This is required for the handshake to succeed, as `Sesame bootstrap` configures Envoy to pass this as the SNI for the connection.
+
+```
+$ openssl req -new -key certs/Sesamekey.pem \
+	-out certs/Sesame.csr \
+	-subj "/O=Project Sesame/CN=Sesame"
+
+$ openssl x509 -req -in certs/Sesame.csr \
     -CA certs/cacert.pem \
     -CAkey certs/cakey.pem \
     -CAcreateserial \
-    -out certs/contourcert.pem \
+    -out certs/Sesamecert.pem \
     -days 1825 -sha256 \
-    -extfile _integration/cert-contour.ext
+    -extfile _integration/cert-Sesame.ext
 ```
 
-At this point, the contour cert and key are in the files `certs/contourcert.pem` and `certs/contourkey.pem` respectively.
+At this point, the Sesame cert and key are in the files `certs/Sesamecert.pem` and `certs/Sesamekey.pem` respectively.
 
 ### Generating Envoy's keypair
 
@@ -74,7 +74,7 @@ Then, we generated a CSR and have the CA sign it:
 ```
 $ openssl req -new -key certs/envoykey.pem \
 	-out certs/envoy.csr \
-	-subj "/O=Project Contour/CN=envoy"
+	-subj "/O=Project Sesame/CN=envoy"
 
 $ openssl x509 -req -in certs/envoy.csr \
     -CA certs/cacert.pem \
@@ -85,20 +85,20 @@ $ openssl x509 -req -in certs/envoy.csr \
     -extfile _integration/cert-envoy.ext
 ```
 
-Like the contour cert, this CSR uses the file [_integration/cert-envoy.ext][3]. However, in this case, there are no special names required.
+Like the Sesame cert, this CSR uses the file [_integration/cert-envoy.ext][3]. However, in this case, there are no special names required.
 
 ### Putting the certs in the cluster
 
 Next, we create the required secrets in the target Kubernetes cluster:
 
 ```
-$ kubectl create secret -n projectcontour generic cacert \
+$ kubectl create secret -n projectsesame generic cacert \
         --from-file=./certs/cacert.pem
 
-$ kubectl create secret -n projectcontour tls contourcert \
-        --key=./certs/contourkey.pem --cert=./certs/contourcert.pem
+$ kubectl create secret -n projectsesame tls Sesamecert \
+        --key=./certs/Sesamekey.pem --cert=./certs/Sesamecert.pem
 
-$ kubectl create secret -n projectcontour tls envoycert \
+$ kubectl create secret -n projectsesame tls envoycert \
         --key=./certs/envoykey.pem --cert=./certs/envoycert.pem
 ```
 
@@ -106,10 +106,10 @@ Note that we don't put the CA **key** into the cluster, there's no reason for th
 
 # Conclusion
 
-Once this process is done, the certificates will be present as Secrets in the `projectcontour` namespace, as required by
-[examples/contour][4].
+Once this process is done, the certificates will be present as Secrets in the `projectsesame` namespace, as required by
+[examples/Sesame][4].
 
-[1]: {{< param github_url >}}/tree/{{page.version}}/examples/contour/02-job-certgen.yaml
-[2]: {{< param github_url >}}/tree/{{page.version}}/_integration/cert-contour.ext
+[1]: {{< param github_url >}}/tree/{{page.version}}/examples/Sesame/02-job-certgen.yaml
+[2]: {{< param github_url >}}/tree/{{page.version}}/_integration/cert-Sesame.ext
 [3]: {{< param github_url >}}/tree/{{page.version}}/_integration/cert-envoy.ext
-[4]: {{< param github_url >}}/tree/{{page.version}}/examples/contour
+[4]: {{< param github_url >}}/tree/{{page.version}}/examples/Sesame

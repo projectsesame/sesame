@@ -3,12 +3,12 @@ title: Compatibility Matrix
 layout: page
 ---
 
-This page documents the compatibility matrix of versions of Contour, Envoy, Kubernetes, and the Contour Operator.
-These combinations of versions are specifically tested in CI and supported by the Contour maintainers.
+This page documents the compatibility matrix of versions of Sesame, Envoy, Kubernetes, and the Sesame Operator.
+These combinations of versions are specifically tested in CI and supported by the Sesame maintainers.
 
 ## Compatibility Matrix
 
-| Contour Version | Envoy Version        | Kubernetes Versions | Operator Version | Gateway API Version |
+| Sesame Version | Envoy Version        | Kubernetes Versions | Operator Version | Gateway API Version |
 | --------------- | :------------------- | ------------------- | ---------------- | --------------------|
 | main            | [1.20.1][14]         | 1.22, 1.21, 1.20    | [main][50]       | v1alpha2            |
 | 1.19.1          | [1.19.1][13]         | 1.22, 1.21, 1.20    | [1.19.1][65]       | v1alpha1            |
@@ -40,15 +40,15 @@ These combinations of versions are specifically tested in CI and supported by th
 
 ## Notes on Compatibility
 
-**As of Contour version 1.16.0, Contour only subscribes to Ingress v1 resources (and no longer falls back to Ingress v1beta1). The minimum compatible Kubernetes version for Contour 1.16.0 and above is Kubernetes 1.19.**
+**As of Sesame version 1.16.0, Sesame only subscribes to Ingress v1 resources (and no longer falls back to Ingress v1beta1). The minimum compatible Kubernetes version for Sesame 1.16.0 and above is Kubernetes 1.19.**
 
-Contour utilizes [client-go][98] to watch for resources in a Kubernetes cluster.
+Sesame utilizes [client-go][98] to watch for resources in a Kubernetes cluster.
 We depend on the latest version of the library and by extension only support the latest versions of Kubernetes.
-While the `client-go` [compatibility matrix][99] may list older versions of Kubernetes as being compatible and supported by upstream, the Contour project only tests a given version of Contour against the versions listed in the table above.
-Combinations not listed are not tested, guaranteed to work, or supported by the Contour maintainers.
+While the `client-go` [compatibility matrix][99] may list older versions of Kubernetes as being compatible and supported by upstream, the Sesame project only tests a given version of Sesame against the versions listed in the table above.
+Combinations not listed are not tested, guaranteed to work, or supported by the Sesame maintainers.
 
 ## Envoy Extensions
-Contour requires the following Envoy extensions.
+Sesame requires the following Envoy extensions.
 If you are using the image recommended in our [example deployment][1] no action is required.
 If you are providing your own Envoy it must be compiled with the following extensions:
 
@@ -93,7 +93,7 @@ If you are providing your own Envoy it must be compiled with the following exten
 __Note:__ This list of extensions was last verified to be complete with Envoy v1.16.1.
 
 
-[1]: {{< param github_url >}}/tree/{{< param latest_version >}}/examples/contour
+[1]: {{< param github_url >}}/tree/{{< param latest_version >}}/examples/Sesame
 
 [2]: https://www.envoyproxy.io/docs/envoy/latest/version_history/v1.15.1
 [3]: https://www.envoyproxy.io/docs/envoy/latest/version_history/v1.16.0

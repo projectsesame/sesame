@@ -18,7 +18,7 @@ import (
 	"net"
 	"strings"
 
-	contour_api_v1 "github.com/projectsesame/sesame/apis/projectsesame/v1"
+	Sesame_api_v1 "github.com/projectsesame/sesame/apis/projectsesame/v1"
 	"github.com/projectsesame/sesame/internal/k8s"
 	"github.com/sirupsen/logrus"
 	v1 "k8s.io/api/core/v1"
@@ -80,7 +80,7 @@ func (isw *loadBalancerStatusWriter) Start(ctx context.Context) error {
 	// address status. The cache should have already started
 	// informers, so new informers will auto-start.
 	resources := []client.Object{
-		&contour_api_v1.HTTPProxy{},
+		&Sesame_api_v1.HTTPProxy{},
 		&networking_v1.Ingress{},
 	}
 
@@ -123,7 +123,7 @@ func (isw *loadBalancerStatusWriter) Start(ctx context.Context) error {
 				}
 			}
 
-			var proxyList contour_api_v1.HTTPProxyList
+			var proxyList Sesame_api_v1.HTTPProxyList
 			if err := isw.cache.List(context.Background(), &proxyList); err != nil {
 				isw.log.WithError(err).WithField("kind", "HTTPProxy").Error("failed to list objects")
 			} else {

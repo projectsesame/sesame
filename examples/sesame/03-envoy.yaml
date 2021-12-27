@@ -51,7 +51,7 @@ spec:
       - args:
         - -c
         - /config/envoy.json
-        - --service-cluster $(CONTOUR_NAMESPACE)
+        - --service-cluster $(Sesame_NAMESPACE)
         - --service-node $(ENVOY_POD_NAME)
         - --log-level info
         command:
@@ -60,7 +60,7 @@ spec:
         imagePullPolicy: IfNotPresent
         name: envoy
         env:
-        - name: CONTOUR_NAMESPACE
+        - name: Sesame_NAMESPACE
           valueFrom:
             fieldRef:
               apiVersion: v1
@@ -123,7 +123,7 @@ spec:
           mountPath: /certs
           readOnly: true
         env:
-        - name: CONTOUR_NAMESPACE
+        - name: Sesame_NAMESPACE
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace

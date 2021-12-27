@@ -4,7 +4,7 @@ This document proposes a way to enable CORS (Cross-origin resource sharing) poli
 
 ## Goals
 
-- To allow configuration of CORS related policies, letting Contour process cross domain requests and add all the needed response headers.
+- To allow configuration of CORS related policies, letting Sesame process cross domain requests and add all the needed response headers.
 
 ## Background
 
@@ -55,11 +55,11 @@ In response to a preflight request, the server sends a response with the followi
 
 When the browser gets the preflight response, it checks if the origin is allowed and if the HTTP method and headers of the main request are in the list returned by the server. If so, it sends the main request, which will be a regular cross-origin request, it will include the `Origin` header and the response will contain `Access-Control-Allow-Origin` once again.
 
-This proposal introduces a way to set all the CORS related configuration in Contour, letting Envoy do all the heavy work.
+This proposal introduces a way to set all the CORS related configuration in Sesame, letting Envoy do all the heavy work.
 
 ## High-Level Design
 
-Envoy supports [CORS via a filter](https://www.envoyproxy.io/docs/envoy/latest/configuration/http/http_filters/cors_filter.html) and it can be configured [using the API](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/route/v3/route_components.proto#envoy-v3-api-msg-config-route-v3-corspolicy). The changes proposed in this document will allow the configuration of CORS policies in Contour.
+Envoy supports [CORS via a filter](https://www.envoyproxy.io/docs/envoy/latest/configuration/http/http_filters/cors_filter.html) and it can be configured [using the API](https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/route/v3/route_components.proto#envoy-v3-api-msg-config-route-v3-corspolicy). The changes proposed in this document will allow the configuration of CORS policies in Sesame.
 
 At a high level the proposed changes will imply:
 - Adding new fields at virtual host level to configure the CORS policy in the YAML.
@@ -155,7 +155,7 @@ type VirtualHost struct {
 ```
 
 ### Enabling the CORS filter in Envoy
-In order to enable the CORS filter in Envoy we will update `contour/internal/envoy/route.go` and map the values from DAG's route to [protobuf](https://www.envoyproxy.io/docs/envoy/latest/api-v2/api/v2/route/route.proto.html?highlight=shadow#route-corspolicy).
+In order to enable the CORS filter in Envoy we will update `Sesame/internal/envoy/route.go` and map the values from DAG's route to [protobuf](https://www.envoyproxy.io/docs/envoy/latest/api-v2/api/v2/route/route.proto.html?highlight=shadow#route-corspolicy).
 
 ## Alternatives Considered
 

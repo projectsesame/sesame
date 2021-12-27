@@ -1,6 +1,6 @@
 #! /usr/bin/env bash
 
-# Copyright Project Contour Authors
+# Copyright Project Sesame Authors
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you may
 # not use this file except in compliance with the License.  You may obtain
@@ -24,15 +24,15 @@ readonly REPO=$(cd ${HERE}/../.. && pwd)
 readonly KUBECTL=${KUBECTL:-kubectl}
 readonly SONOBUOY=${SONOBUOY:-sonobuoy}
 
-readonly INGRESS_CLASS=${INGRESS_CLASS:-contour}
+readonly INGRESS_CLASS=${INGRESS_CLASS:-Sesame}
 # Latest images can be found here: https://console.cloud.google.com/gcr/images/k8s-staging-ingressconformance/GLOBAL/ingress-controller-conformance
 readonly INGRESS_CONFORMANCE_IMAGE=${INGRESS_CONFORMANCE_IMAGE:-gcr.io/k8s-staging-ingressconformance/ingress-controller-conformance@sha256:148a649b7d009e8544e2631950b0c05a41cf9a50ede39e20b76bdaaf2ffb873b}
 
 # Set the Ingress Status Address so conformance test pods are reachable in tests
 # This multiline sed command is for compatibility across MacOS and GNU sed
-${KUBECTL} apply -f <(sed 's/imagePullPolicy: Always/imagePullPolicy: IfNotPresent/g' ${REPO}/examples/contour/03-contour.yaml | sed 's/\s*- serve/&\
+${KUBECTL} apply -f <(sed 's/imagePullPolicy: Always/imagePullPolicy: IfNotPresent/g' ${REPO}/examples/Sesame/03-Sesame.yaml | sed 's/\s*- serve/&\
         - --ingress-status-address=envoy.projectsesame/')
-${KUBECTL} rollout status -n projectsesame deployment contour
+${KUBECTL} rollout status -n projectsesame deployment Sesame
 
 ${SONOBUOY} run \
     --skip-preflight \

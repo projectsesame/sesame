@@ -1,6 +1,6 @@
 baseURL: "https://projectsesame.io/"
 languageCode: "en-us"
-title: "Contour"
+title: "Sesame"
 theme: "sesame"
 outputs:
   home: ["HTML", "REDIRECTS"]

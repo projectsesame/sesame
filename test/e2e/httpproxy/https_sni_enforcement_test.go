@@ -20,7 +20,7 @@ import (
 	"crypto/tls"
 
 	. "github.com/onsi/ginkgo"
-	contourv1 "github.com/projectcontour/sesame/apis/projectsesame/v1"
+	Sesamev1 "github.com/projectsesame/sesame/apis/projectsesame/v1"
 	"github.com/projectsesame/sesame/test/e2e"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -34,21 +34,21 @@ func testHTTPSSNIEnforcement(namespace string) {
 		f.Fixtures.Echo.Deploy(namespace, "echo-one")
 		f.Certs.CreateSelfSignedCert(namespace, "echo-one-cert", "echo-one", "sni-enforcement-echo-one.projectsesame.io")
 
-		echoOneProxy := &contourv1.HTTPProxy{
+		echoOneProxy := &Sesamev1.HTTPProxy{
 			ObjectMeta: metav1.ObjectMeta{
 				Namespace: namespace,
 				Name:      "echo-one",
 			},
-			Spec: contourv1.HTTPProxySpec{
-				VirtualHost: &contourv1.VirtualHost{
+			Spec: Sesamev1.HTTPProxySpec{
+				VirtualHost: &Sesamev1.VirtualHost{
 					Fqdn: "sni-enforcement-echo-one.projectsesame.io",
-					TLS: &contourv1.TLS{
+					TLS: &Sesamev1.TLS{
 						SecretName: "echo-one",
 					},
 				},
-				Routes: []contourv1.Route{
+				Routes: []Sesamev1.Route{
 					{
-						Services: []contourv1.Service{
+						Services: []Sesamev1.Service{
 							{
 								Name: "echo-one",
 								Port: 80,
@@ -74,21 +74,21 @@ func testHTTPSSNIEnforcement(namespace string) {
 		f.Fixtures.Echo.Deploy(namespace, "echo-two")
 		f.Certs.CreateSelfSignedCert(namespace, "echo-two-cert", "echo-two", "sni-enforcement-echo-two.projectsesame.io")
 
-		echoTwoProxy := &contourv1.HTTPProxy{
+		echoTwoProxy := &Sesamev1.HTTPProxy{
 			ObjectMeta: metav1.ObjectMeta{
 				Namespace: namespace,
 				Name:      "echo-two",
 			},
-			Spec: contourv1.HTTPProxySpec{
-				VirtualHost: &contourv1.VirtualHost{
+			Spec: Sesamev1.HTTPProxySpec{
+				VirtualHost: &Sesamev1.VirtualHost{
 					Fqdn: "sni-enforcement-echo-two.projectsesame.io",
-					TLS: &contourv1.TLS{
+					TLS: &Sesamev1.TLS{
 						SecretName: "echo-two",
 					},
 				},
-				Routes: []contourv1.Route{
+				Routes: []Sesamev1.Route{
 					{
-						Services: []contourv1.Service{
+						Services: []Sesamev1.Service{
 							{
 								Name: "echo-two",
 								Port: 80,

@@ -1,20 +1,20 @@
-# Contour Configuration CRD
+# Sesame Configuration CRD
 
-Currently, Contour gets its configuration from two different places, one is the configuration file represented as a Kubernetes configmap.
-The other are flags which are passed to Contour.
+Currently, Sesame gets its configuration from two different places, one is the configuration file represented as a Kubernetes configmap.
+The other are flags which are passed to Sesame.
 
-Contour's configmap configuration file has grown to the point where moving to a CRD will enable a better user experience as well as allowing Contour to react to changes in its configuration faster.
+Sesame's configmap configuration file has grown to the point where moving to a CRD will enable a better user experience as well as allowing Sesame to react to changes in its configuration faster.
 
-This design proposes two new CRDs, one that represents a `ContourConfiguration` (Short name `ContourConfig`) and another which represents a `ContourDeployment`, both which are namespaced.
-The Contour configuration mirrors how the configmap functions today. 
-A Contour Deployment is managed by a controller (aka Operator) which uses the details of the CRD spec to deploy a fully managed instance of Contour inside a cluster.
+This design proposes two new CRDs, one that represents a `SesameConfiguration` (Short name `SesameConfig`) and another which represents a `SesameDeployment`, both which are namespaced.
+The Sesame configuration mirrors how the configmap functions today. 
+A Sesame Deployment is managed by a controller (aka Operator) which uses the details of the CRD spec to deploy a fully managed instance of Sesame inside a cluster.
 
 ## Benefits
 - Eliminates the need to translate from a CRD to a configmap (Like the Operator does today)
-- Allows for a place to surface information about configuration errors - the CRD status, in addition to the Contour log files
-- Allows the Operator workflow to match a non-operator workflow (i.e. you start with a Contour configuration CRD)
+- Allows for a place to surface information about configuration errors - the CRD status, in addition to the Sesame log files
+- Allows the Operator workflow to match a non-operator workflow (i.e. you start with a Sesame configuration CRD)
 - Provides better validation to avoid errors in the configuration file
-- Dynamic restarting of Contour when configuration changes
+- Dynamic restarting of Sesame when configuration changes
 
 ## New CRD Spec
 
@@ -25,7 +25,7 @@ The contents of current configuration file has grown over time and some fields n
 
 ```yaml
 apiVersion: projectsesame.io/v1alpha1
-kind: ContourConfiguration
+kind: SesameConfiguration
 metadata:
   name: sesame
 spec:
@@ -137,21 +137,21 @@ status:
 
 ## Converting from Configmap
 
-Contour will provide a way internally to move to the new CRD and not require users to manually migrate to the new CRD format.
-Contour will provide a new command or external tool (similar to ir2proxy) which will migrate between the specs accordingly. 
+Sesame will provide a way internally to move to the new CRD and not require users to manually migrate to the new CRD format.
+Sesame will provide a new command or external tool (similar to ir2proxy) which will migrate between the specs accordingly. 
 
-## Contour Deployment
+## Sesame Deployment
 
-A managed version of Contour was made available with the `Contour Operator`.
-Since Contour will manage Envoy instances, the Operator will now manage instances of Contour.
-The details of how an instance of Contour should be deployed within a cluster will be defined in the second CRD named `ContourDeployment`. 
-The `spec.confguration` of this object will be the same struct defined in the `ContourConfiguration`. 
+A managed version of Sesame was made available with the `Sesame Operator`.
+Since Sesame will manage Envoy instances, the Operator will now manage instances of Sesame.
+The details of how an instance of Sesame should be deployed within a cluster will be defined in the second CRD named `SesameDeployment`. 
+The `spec.confguration` of this object will be the same struct defined in the `SesameConfiguration`. 
 
 A controller will watch for these objects to be created and take action on them accordingly to make desired state in the cluster match the configuration on the spec. 
 
 ```yaml
 apiVersion: projectsesame.io/v1alpha1
-kind: ContourDeployment
+kind: SesameDeployment
 metadata:
   name: sesame
 spec:
@@ -166,33 +166,33 @@ status:
 
 ## Processing Logic
 
-Contour will require a new flag (`--contour-config`), which will allow for customizing the name of the `ContourConfiguration` CRD that is it to use.
-It will default to one named `contour`, but could be overridden if desired.
-The ContourConfiguration referenced must also be in the same namespace as Contour is running, it's not valid to reference a configuration from another namespace.
-The current flag `--config-path`/`-c` will continue to point to the Configmap file, but over time could eventually be deprecated and the short code `-c` be used for the CRD location (i.e. `--contour-config`) for simplicity.
-The Contour configuration CRD will still remain optional.
-In its absence, Contour will operate with reasonable defaults.
-Where Contour settings can also be specified with command-line flags, the command-line value takes precedence over the configuration file.
+Sesame will require a new flag (`--Sesame-config`), which will allow for customizing the name of the `SesameConfiguration` CRD that is it to use.
+It will default to one named `Sesame`, but could be overridden if desired.
+The SesameConfiguration referenced must also be in the same namespace as Sesame is running, it's not valid to reference a configuration from another namespace.
+The current flag `--config-path`/`-c` will continue to point to the Configmap file, but over time could eventually be deprecated and the short code `-c` be used for the CRD location (i.e. `--Sesame-config`) for simplicity.
+The Sesame configuration CRD will still remain optional.
+In its absence, Sesame will operate with reasonable defaults.
+Where Sesame settings can also be specified with command-line flags, the command-line value takes precedence over the configuration file.
 
-On startup, Contour will look for a `ContourConfiguration` CRD named `contour` or using the value of the flag `--contour-config` in the same namespace which Contour is running in, Contour won't support referencing from a different namespace.
-If the `ContourConfiguration` CRD is not found Contour will start up with reasonable defaults.
+On startup, Sesame will look for a `SesameConfiguration` CRD named `Sesame` or using the value of the flag `--Sesame-config` in the same namespace which Sesame is running in, Sesame won't support referencing from a different namespace.
+If the `SesameConfiguration` CRD is not found Sesame will start up with reasonable defaults.
 
-Contour will set status on the object informing the user if there are any errors or issues with the config file or that is all fine and processing correctly.
-If the configuration file is not valid, Contour will not start up its controllers, and will fail its readiness probe.
-Once the configuration is valid again, Contour will start its controllers with the valid configuration.
+Sesame will set status on the object informing the user if there are any errors or issues with the config file or that is all fine and processing correctly.
+If the configuration file is not valid, Sesame will not start up its controllers, and will fail its readiness probe.
+Once the configuration is valid again, Sesame will start its controllers with the valid configuration.
 
-Once Contour begins using a Configuration CRD, it will add a finalizer to it such that if that resource is going to get deleted, Contour is aware of it.
-Should the Configuration CRD be deleted while it is in use, Contour will default back to reasonable defaults and log the issue.
+Once Sesame begins using a Configuration CRD, it will add a finalizer to it such that if that resource is going to get deleted, Sesame is aware of it.
+Should the Configuration CRD be deleted while it is in use, Sesame will default back to reasonable defaults and log the issue.
 
 When config in the CRD changes we will gracefully stop the dependent ingress/gateway controllers and restart them with new config, or dynamically update some in-memory data that the controllers use.
-Contour will first validate the new Configuration, ff that new change set results in the object being invalid, Contour will stop its Controller and will become not ready, and not serve any xDS traffic.
-As soon as the configuration does become valid, Contour will start up its controllers and begin processing as normal.
+Sesame will first validate the new Configuration, ff that new change set results in the object being invalid, Sesame will stop its Controller and will become not ready, and not serve any xDS traffic.
+As soon as the configuration does become valid, Sesame will start up its controllers and begin processing as normal.
 
 ### Initial Implementation
 
-Contour will initially start implementation by restarting the Contour pod and allowing Kubernetes to restart itself when the config file changes.
-Should the configuration be invalid, Contour will start up, set status on the ContourConfig CRD and then crash.
-Kubernetes will crash-loop until the configuration is valid, however, due to the nature of the exponential backoff, updates to the Configuration CRD will not be realized until the next restart loop, or Contour is restarted manually. 
+Sesame will initially start implementation by restarting the Sesame pod and allowing Kubernetes to restart itself when the config file changes.
+Should the configuration be invalid, Sesame will start up, set status on the SesameConfig CRD and then crash.
+Kubernetes will crash-loop until the configuration is valid, however, due to the nature of the exponential backoff, updates to the Configuration CRD will not be realized until the next restart loop, or Sesame is restarted manually. 
 
 ## Versioning
 

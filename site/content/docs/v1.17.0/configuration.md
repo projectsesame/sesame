@@ -1,4 +1,4 @@
-# Contour Configuration Reference
+# Sesame Configuration Reference
 
 - [Serve Flags](#serve-flags)
 - [Configuration File](#configuration-file)
@@ -7,14 +7,14 @@
 
 ## Overview
 
-There are various ways to configure Contour, flags, the configuration file, as well as environment variables.
-Contour has a precedence of configuration for contour serve, meaning anything configured in the config file is overridden by environment vars which are overridden by cli flags.
+There are various ways to configure Sesame, flags, the configuration file, as well as environment variables.
+Sesame has a precedence of configuration for Sesame serve, meaning anything configured in the config file is overridden by environment vars which are overridden by cli flags.
 
 ## Serve Flags
 
-The `contour serve` command is the main command which is used to watch for Kubernetes resource and process them into Envoy configuration which is then streamed to any Envoy via its xDS gRPC connection.
-There are a number of flags that can be passed to this command which further configures how Contour operates. 
-Many of these flags are mirrored in the [Contour Configuration File](#configuration-file).
+The `Sesame serve` command is the main command which is used to watch for Kubernetes resource and process them into Envoy configuration which is then streamed to any Envoy via its xDS gRPC connection.
+There are a number of flags that can be passed to this command which further configures how Sesame operates. 
+Many of these flags are mirrored in the [Sesame Configuration File](#configuration-file).
 
 | Flag Name         | Description        |
 |-------------------|--------------------|
@@ -31,12 +31,12 @@ Many of these flags are mirrored in the [Contour Configuration File](#configurat
 | `--http-port=<port>`  |    Port the metrics HTTP endpoint will bind to. |
 | `--health-address=<ipaddr>` |   Address the health HTTP endpoint will bind to |
 | `--health-port=<port>` | Port the health HTTP endpoint will bind to |
-| `--contour-cafile=</path/to/file\|CONTOUR_CERT_FILE>` | CA bundle file name for serving gRPC with TLS |
-| `--contour-cert-file=</path/to/file\|CONTOUR_CERT_FILE>`  | Contour certificate file name for serving gRPC over TLS |
-| `--contour-key-file=</path/to/file\|CONTOUR_KEY_FILE>` | Contour key file name for serving gRPC over TLS |
+| `--Sesame-cafile=</path/to/file\|Sesame_CERT_FILE>` | CA bundle file name for serving gRPC with TLS |
+| `--Sesame-cert-file=</path/to/file\|Sesame_CERT_FILE>`  | Sesame certificate file name for serving gRPC over TLS |
+| `--Sesame-key-file=</path/to/file\|Sesame_KEY_FILE>` | Sesame key file name for serving gRPC over TLS |
 | `--insecure`  |               Allow serving without TLS secured gRPC |
-| `--root-namespaces=<ns,ns>` | Restrict contour to searching these namespaces for root ingress routes |
-| `--ingress-class-name=<name>` | Contour IngressClass name |
+| `--root-namespaces=<ns,ns>` | Restrict Sesame to searching these namespaces for root ingress routes |
+| `--ingress-class-name=<name>` | Sesame IngressClass name |
 | `--ingress-status-address=<address>`  | Address to set in Ingress object status |
 | `--envoy-http-access-log=</path/to/file>`  | Envoy HTTP access log |
 | `--envoy-https-access-log=</path/to/file>`  | Envoy HTTPS access log |
@@ -54,26 +54,26 @@ Many of these flags are mirrored in the [Contour Configuration File](#configurat
 
 ## Configuration File
 
-A configuration file can be passed to the `--config-path` argument of the `contour serve` command to specify additional configuration to Contour.
-In most deployments, this file is passed to Contour via a ConfigMap which is mounted as a volume to the Contour pod.
+A configuration file can be passed to the `--config-path` argument of the `Sesame serve` command to specify additional configuration to Sesame.
+In most deployments, this file is passed to Sesame via a ConfigMap which is mounted as a volume to the Sesame pod.
 
-The Contour configuration file is optional.
-In its absence, Contour will operate with reasonable defaults.
-Where Contour settings can also be specified with command-line flags, the command-line value takes precedence over the configuration file.
+The Sesame configuration file is optional.
+In its absence, Sesame will operate with reasonable defaults.
+Where Sesame settings can also be specified with command-line flags, the command-line value takes precedence over the configuration file.
 
 | Field Name | Type | Default | Description |
 |------------|------|---------|-------------|
 | accesslog-format | string | `envoy` | This key sets the global [access log format][2] for Envoy. Valid options are `envoy` or `json`. |
 | debug | boolean | `false` | Enables debug logging. |
-| default-http-versions | string array | <code style="white-space:nowrap">HTTP/1.1</code> <br> <code style="white-space:nowrap">HTTP/2</code> | This array specifies the HTTP versions that Contour should program Envoy to serve. HTTP versions are specified as strings of the form "HTTP/x", where "x" represents the version number. |
-| disableAllowChunkedLength | boolean | `false` | If this field is true, Contour will disable the RFC-compliant Envoy behavior to strip the `Content-Length` header if `Transfer-Encoding: chunked` is also set. This is an emergency off-switch to revert back to Envoy's default behavior in case of failures. |
-| disablePermitInsecure | boolean | `false` | If this field is true, Contour will ignore `PermitInsecure` field in HTTPProxy documents. |
+| default-http-versions | string array | <code style="white-space:nowrap">HTTP/1.1</code> <br> <code style="white-space:nowrap">HTTP/2</code> | This array specifies the HTTP versions that Sesame should program Envoy to serve. HTTP versions are specified as strings of the form "HTTP/x", where "x" represents the version number. |
+| disableAllowChunkedLength | boolean | `false` | If this field is true, Sesame will disable the RFC-compliant Envoy behavior to strip the `Content-Length` header if `Transfer-Encoding: chunked` is also set. This is an emergency off-switch to revert back to Envoy's default behavior in case of failures. |
+| disablePermitInsecure | boolean | `false` | If this field is true, Sesame will ignore `PermitInsecure` field in HTTPProxy documents. |
 | envoy-service-name | string | `envoy` | This sets the service name that will be inspected for address details to be applied to Ingress objects. |
-| envoy-service-namespace | string | `projectcontour` | This sets the namespace of the service that will be inspected for address details to be applied to Ingress objects. If the `CONTOUR_NAMESPACE` environment variable is present, Contour will populate this field with its value. |
-| ingress-status-address | string | None | If present, this specifies the address that will be copied into the Ingress status for each Ingress that Contour manages. It is exclusive with `envoy-service-name` and `envoy-service-namespace`.|
-| incluster | boolean | `false` | This field specifies that Contour is running in a Kubernetes cluster and should use the in-cluster client access configuration.  |
+| envoy-service-namespace | string | `projectsesame` | This sets the namespace of the service that will be inspected for address details to be applied to Ingress objects. If the `Sesame_NAMESPACE` environment variable is present, Sesame will populate this field with its value. |
+| ingress-status-address | string | None | If present, this specifies the address that will be copied into the Ingress status for each Ingress that Sesame manages. It is exclusive with `envoy-service-name` and `envoy-service-namespace`.|
+| incluster | boolean | `false` | This field specifies that Sesame is running in a Kubernetes cluster and should use the in-cluster client access configuration.  |
 | json-fields | string array | [fields][5]| This is the list the field names to include in the JSON [access log format][2]. |
-| kubeconfig | string | `$HOME/.kube/config` | Path to a Kubernetes [kubeconfig file][3] for when Contour is executed outside a cluster. |
+| kubeconfig | string | `$HOME/.kube/config` | Path to a Kubernetes [kubeconfig file][3] for when Sesame is executed outside a cluster. |
 | leaderelection | leaderelection | | The [leader election configuration](#leader-election-configuration). |
 | policy | PolicyConfig | | The default [policy configuration](#policy-configuration). |
 | tls | TLS | | The default [TLS configuration](#tls-configuration). |
@@ -81,14 +81,14 @@ Where Contour settings can also be specified with command-line flags, the comman
 | cluster | ClusterConfig | | The [cluster configuration](#cluster-configuration). |
 | network | NetworkConfig | | The [network configuration](#network-configuration). |
 | listener | ListenerConfig | | The [listener configuration](#listener-configuration). |
-| server | ServerConfig |  | The [server configuration](#server-configuration) for `contour serve` command. |
+| server | ServerConfig |  | The [server configuration](#server-configuration) for `Sesame serve` command. |
 | gateway | GatewayConfig |  | The [gateway-api Gateway configuration](#gateway-configuration). |
 | rateLimitService | RateLimitServiceConfig | | The [rate limit service configuration](#rate-limit-service-configuration). |
 
 ### TLS Configuration
 
 The TLS configuration block can be used to configure default values for how
-Contour should provision TLS hosts.
+Sesame should provision TLS hosts.
 
 | Field Name | Type| Default  | Description |
 |------------|-----|----------|-------------|
@@ -114,21 +114,21 @@ Contour should provision TLS hosts.
 
 ### Leader Election Configuration
 
-The leader election configuration block configures how a deployment with more than one Contour pod elects a leader.
-The Contour leader is responsible for updating the status field on Ingress and HTTPProxy documents.
+The leader election configuration block configures how a deployment with more than one Sesame pod elects a leader.
+The Sesame leader is responsible for updating the status field on Ingress and HTTPProxy documents.
 In the vast majority of deployments, only the `configmap-name` and `configmap-namespace` fields should require any configuration.
 
 | Field Name | Type | Default | Description |
 |------------|------|---------|-------------|
-| configmap-name | string | `leader-elect` | The name of the ConfigMap that Contour leader election will lease. |
-| configmap-namespace | string | `projectcontour` | The namespace of the ConfigMap that Contour leader election will lease. If the `CONTOUR_NAMESPACE` environment variable is present, Contour will populate this field with its value. |
+| configmap-name | string | `leader-elect` | The name of the ConfigMap that Sesame leader election will lease. |
+| configmap-namespace | string | `projectsesame` | The namespace of the ConfigMap that Sesame leader election will lease. If the `Sesame_NAMESPACE` environment variable is present, Sesame will populate this field with its value. |
 | lease-duration | [duration][4] | `15s` | The duration of the leadership lease. |
 | renew-deadline | [duration][4] | `10s` | The length of time that the leader will retry refreshing leadership before giving up. |
-| retry-period | [duration][4] | `2s` | The interval at which Contour will attempt to the acquire leadership lease. |
+| retry-period | [duration][4] | `2s` | The interval at which Sesame will attempt to the acquire leadership lease. |
 
 ### Timeout Configuration
 
-The timeout configuration block can be used to configure various timeouts for the proxies. All fields are optional; Contour/Envoy defaults apply if a field is not specified.
+The timeout configuration block can be used to configure various timeouts for the proxies. All fields are optional; Sesame/Envoy defaults apply if a field is not specified.
 
 | Field Name | Type| Default  | Description |
 |------------|-----|----------|-------------|
@@ -139,7 +139,7 @@ The timeout configuration block can be used to configure various timeouts for th
 | delayed-close-timeout | string | `1s`* | *Note: this is an advanced setting that should not normally need to be tuned.* <br /><br /> This field defines how long envoy will wait, once connection close processing has been initiated, for the downstream peer to close the connection before Envoy closes the socket associated with the connection. Setting this timeout to 'infinity' will disable it.  See [the Envoy documentation][13] for more information. |
 | connection-shutdown-grace-period | string | `5s`* | This field defines how long the proxy will wait between sending an initial GOAWAY frame and a second, final GOAWAY frame when terminating an HTTP/2 connection. During this grace period, the proxy will continue to respond to new streams. After the final GOAWAY frame has been sent, the proxy will refuse new streams. Must be a [valid Go duration string][4]. See [the Envoy documentation][11] for more information. |
 
-_This is Envoy's default setting value and is not explicitly configured by Contour._
+_This is Envoy's default setting value and is not explicitly configured by Sesame._
 
 ### Cluster Configuration
 
@@ -167,21 +167,21 @@ The listener configuration block can be used to configure various parameters for
 
 ### Server Configuration
 
-The server configuration block can be used to configure various settings for the `contour serve` command.
+The server configuration block can be used to configure various settings for the `Sesame serve` command.
 
 | Field Name | Type| Default  | Description |
 |------------|-----|----------|-------------|
-| xds-server-type | string | contour | This field specifies the xDS Server to use. Options are `contour` or `envoy`.  |
+| xds-server-type | string | Sesame | This field specifies the xDS Server to use. Options are `Sesame` or `envoy`.  |
 
 ### Gateway Configuration
 
-The gateway configuration block is used to configure which gateway-api Gateway Contour should configure:
+The gateway configuration block is used to configure which gateway-api Gateway Sesame should configure:
 
 | Field Name | Type| Default  | Description |
 |------------|-----|----------|-------------|
-| controllerName | string |  | Gateway Class controller name (i.e. projectcontour.io/projectcontour/contour).  |
-| name (Deprecated) | string | contour | DEPRECATED: This field specifies the name of a Gateway.  |
-| namespace (Deprecated) | string | projectcontour | DEPRECATED: This field specifies the namespace of a Gateway.  |
+| controllerName | string |  | Gateway Class controller name (i.e. projectsesame.io/projectsesame/Sesame).  |
+| name (Deprecated) | string | Sesame | DEPRECATED: This field specifies the name of a Gateway.  |
+| namespace (Deprecated) | string | projectsesame | DEPRECATED: This field specifies the namespace of a Gateway.  |
 
 ### Policy Configuration
 
@@ -215,7 +215,7 @@ The rate limit service configuration block is used to configure an optional glob
 | Field Name | Type| Default  | Description |
 |------------|-----|----------|-------------|
 | extensionService | string | <none> | This field identifies the extension service defining the rate limit service, formatted as <namespace>/<name>.  |
-| domain | string | contour | This field defines the rate limit domain value to pass to the rate limit service. Acts as a container for a set of rate limit definitions within the RLS.  |
+| domain | string | Sesame | This field defines the rate limit domain value to pass to the rate limit service. Acts as a container for a set of rate limit definitions within the RLS.  |
 | failOpen | bool | false | This field defines whether to allow requests to proceed when the rate limit service fails to respond with a valid rate limit decision within the timeout defined on the extension service.  |
 | enableXRateLimitHeaders | bool | false | This field defines whether to include the X-RateLimit headers X-RateLimit-Limit, X-RateLimit-Remaining, and X-RateLimit-Reset (as defined by the IETF Internet-Draft https://tools.ietf.org/id/draft-polli-ratelimit-headers-03.html), on responses to clients when the Rate Limit Service is consulted for a request. |
 
@@ -230,19 +230,19 @@ metadata:
   name: sesame
   namespace: projectsesame
 data:
-  contour.yaml: |
+  Sesame.yaml: |
     #
     # server:
-    #   determine which XDS Server implementation to utilize in Contour.
-    #   xds-server-type: contour
+    #   determine which XDS Server implementation to utilize in Sesame.
+    #   xds-server-type: Sesame
     #
-    # specify the gateway-api Gateway Contour should configure
+    # specify the gateway-api Gateway Sesame should configure
     # gateway:
-    #   controllerName: projectcontour.io/projectcontour/contour
-    #   name: contour
-    #   namespace: projectcontour
+    #   controllerName: projectsesame.io/projectsesame/Sesame
+    #   name: Sesame
+    #   namespace: projectsesame
     #
-    # should contour expect to be running inside a k8s cluster
+    # should Sesame expect to be running inside a k8s cluster
     # incluster: true
     #
     # path to kubeconfig (if not running inside a k8s cluster)
@@ -254,7 +254,7 @@ data:
     # Disable HTTPProxy permitInsecure field
     disablePermitInsecure: false
     tls:
-    # minimum TLS version that Contour will negotiate
+    # minimum TLS version that Sesame will negotiate
     # minimum-protocol-version: "1.2"
     # TLS ciphers to be supported by Envoy TLS listeners when negotiating
     # TLS 1.2.
@@ -268,14 +268,14 @@ data:
     # SNI defined for a vhost.
       fallback-certificate:
     #   name: fallback-secret-name
-    #   namespace: projectcontour
+    #   namespace: projectsesame
       envoy-client-certificate:
     #   name: envoy-client-cert-secret-name
-    #   namespace: projectcontour
+    #   namespace: projectsesame
     # The following config shows the defaults for the leader election.
     # leaderelection:
     #   configmap-name: leader-elect
-    #   configmap-namespace: projectcontour
+    #   configmap-namespace: projectsesame
     ### Logging options
     # Default setting
     accesslog-format: envoy
@@ -335,11 +335,11 @@ data:
     # rateLimitService:
     #   Identifies the extension service defining the rate limit service,
     #   formatted as <namespace>/<name>.
-    #   extensionService: projectcontour/ratelimit
+    #   extensionService: projectsesame/ratelimit
     #   Defines the rate limit domain to pass to the rate limit service.
     #   Acts as a container for a set of rate limit definitions within
     #   the RLS.
-    #   domain: contour
+    #   domain: Sesame
     #   Defines whether to allow requests to proceed when the rate limit
     #   service fails to respond with a valid rate limit decision within
     #   the timeout defined on the extension service.
@@ -359,7 +359,7 @@ data:
     #       # example: the hostname of the Envoy instance that proxied the request
     #       X-Envoy-Hostname: %HOSTNAME%
     #       # example: add a l5d-dst-override header to instruct Linkerd what service the request is destined for
-    #       l5d-dst-override: %CONTOUR_SERVICE_NAME%.%CONTOUR_NAMESPACE%.svc.cluster.local:%CONTOUR_SERVICE_PORT%
+    #       l5d-dst-override: %Sesame_SERVICE_NAME%.%Sesame_NAMESPACE%.svc.cluster.local:%Sesame_SERVICE_PORT%
     #   # default headers to set on all responses (unless set/removed on the HTTPProxy object itself)
     #   response-headers:
     #     set:
@@ -368,56 +368,56 @@ data:
     #
 ```
 
-_Note:_ The default example `contour` includes this [file][1] for easy deployment of Contour.
+_Note:_ The default example `Sesame` includes this [file][1] for easy deployment of Sesame.
 
 ## Environment Variables
 
-### CONTOUR_NAMESPACE
+### Sesame_NAMESPACE
 
-If present, the value of the `CONTOUR_NAMESPACE` environment variable is used as:
+If present, the value of the `Sesame_NAMESPACE` environment variable is used as:
 
-1. The value for the `contour bootstrap --namespace` flag unless otherwise specified.
-1. The value for the `contour certgen --namespace` flag unless otherwise specified.
-1. The value for the `contour serve --envoy-service-namespace` flag unless otherwise specified.
-1. The value for the `leaderelection.configmap-namespace` config file setting for `contour serve` unless otherwise specified.
+1. The value for the `Sesame bootstrap --namespace` flag unless otherwise specified.
+1. The value for the `Sesame certgen --namespace` flag unless otherwise specified.
+1. The value for the `Sesame serve --envoy-service-namespace` flag unless otherwise specified.
+1. The value for the `leaderelection.configmap-namespace` config file setting for `Sesame serve` unless otherwise specified.
 
-The `CONTOUR_NAMESPACE` environment variable is set via the [Downward API][6] in the Contour [example manifests][7].
+The `Sesame_NAMESPACE` environment variable is set via the [Downward API][6] in the Sesame [example manifests][7].
 
 ## Bootstrap Config File
 
-The bootstrap configuration file is generated by an initContainer in the Envoy daemonset which runs the `contour bootstrap` command to generate the file.
-This configuration file configures the Envoy container to connect to Contour and receive configuration via xDS.
+The bootstrap configuration file is generated by an initContainer in the Envoy daemonset which runs the `Sesame bootstrap` command to generate the file.
+This configuration file configures the Envoy container to connect to Sesame and receive configuration via xDS.
 
-The next section outlines all the available flags that can be passed to the `contour bootstrap` command which are used to customize
+The next section outlines all the available flags that can be passed to the `Sesame bootstrap` command which are used to customize
 the configuration file to match the environment in which Envoy is deployed. 
 
 ### Flags
 
-There are flags that can be passed to `contour bootstrap` that help configure how Envoy
-connects to Contour:
+There are flags that can be passed to `Sesame bootstrap` that help configure how Envoy
+connects to Sesame:
 
 | Flag | Default  | Description |
 |------------|----------|-------------|
 | <nobr>--resources-dir</nobr> | "" | Directory where resource files will be written.  |
 | <nobr>--admin-address</nobr> | 127.0.0.1 | Address the Envoy admin webpage will listen on.  |
 | <nobr>--admin-port</nobr> | 9001 | Port the Envoy admin webpage will listen on.  |
-| <nobr>--xds-address</nobr> | 127.0.0.1 | Address to connect to Contour xDS server on.  |
-| <nobr>--xds-port</nobr> | 8001 | Port to connect to Contour xDS server on. |
+| <nobr>--xds-address</nobr> | 127.0.0.1 | Address to connect to Sesame xDS server on.  |
+| <nobr>--xds-port</nobr> | 8001 | Port to connect to Sesame xDS server on. |
 | <nobr>--envoy-cafile</nobr> | "" | CA filename for Envoy secure xDS gRPC communication.  |
 | <nobr>--envoy-cert-file</nobr> | "" | Client certificate filename for Envoy secure xDS gRPC communication.  |
 | <nobr>--envoy-key-file</nobr> | "" | Client key filename for Envoy secure xDS gRPC communication.  |
-| <nobr>--namespace</nobr> | projectcontour | Namespace the Envoy container will run, also configured via ENV variable "CONTOUR_NAMESPACE". Namespace is used as part of the metric names on static resources defined in the bootstrap configuration file.    |
+| <nobr>--namespace</nobr> | projectsesame | Namespace the Envoy container will run, also configured via ENV variable "Sesame_NAMESPACE". Namespace is used as part of the metric names on static resources defined in the bootstrap configuration file.    |
 | <nobr>--xds-resource-version</nobr> | v3 | Currently, the only valid xDS API resource version is `v3`.  |
-| <nobr>--dns-lookup-family</nobr> | auto | Defines what DNS Resolution Policy to use for Envoy -> Contour cluster name lookup. Either v4, v6 or auto.  |
+| <nobr>--dns-lookup-family</nobr> | auto | Defines what DNS Resolution Policy to use for Envoy -> Sesame cluster name lookup. Either v4, v6 or auto.  |
 
 
-[1]: {{< param github_url>}}/tree/{{< param version >}}/examples/contour/01-contour-config.yaml
+[1]: {{< param github_url>}}/tree/{{< param version >}}/examples/Sesame/01-Sesame-config.yaml
 [2]: /guides/structured-logs
 [3]: https://kubernetes.io/docs/concepts/configuration/organize-cluster-access-kubeconfig/
 [4]: https://golang.org/pkg/time/#ParseDuration
 [5]: https://godoc.org/github.com/projectsesame/sesame/internal/envoy#DefaultFields
 [6]: https://kubernetes.io/docs/tasks/inject-data-application/environment-variable-expose-pod-information/
-[7]: {{< param github_url>}}/tree/{{< param version >}}/examples/contour
+[7]: {{< param github_url>}}/tree/{{< param version >}}/examples/Sesame
 [8]: https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/core/v3/protocol.proto#envoy-v3-api-field-config-core-v3-httpprotocoloptions-idle-timeout
 [9]: https://www.envoyproxy.io/docs/envoy/latest/api-v3/extensions/filters/network/http_connection_manager/v3/http_connection_manager.proto#envoy-v3-api-field-extensions-filters-network-http-connection-manager-v3-httpconnectionmanager-stream-idle-timeout
 [10]: https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/core/v3/protocol.proto#envoy-v3-api-field-config-core-v3-httpprotocoloptions-max-connection-duration

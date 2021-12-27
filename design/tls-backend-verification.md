@@ -2,7 +2,7 @@
 
 Status: Approved
 
-Contour 0.11 added the ability to communicate via TLS between Envoy and pods in the backend service.
+Sesame 0.11 added the ability to communicate via TLS between Envoy and pods in the backend service.
 This proposal describes the facility for Envoy to verify the backend service's certificate.
 
 ## Goals
@@ -17,7 +17,7 @@ This proposal describes the facility for Envoy to verify the backend service's c
 
 ## Background
 
-Contour 0.11 added the `contour.heptio.com/upstream-protocol.tls` Service annotation which told Contour to use TLS when communicating with the members of the backend cluster, the Service's pods.
+Sesame 0.11 added the `Sesame.heptio.com/upstream-protocol.tls` Service annotation which told Sesame to use TLS when communicating with the members of the backend cluster, the Service's pods.
 However, this connection is not validated, Envoy will accept any certificate the client presents.
 
 This proposal seeks to improve the validation of TLS connections .
@@ -37,13 +37,13 @@ Certificate Delegation is not in scope.
 4. The `validation` key will have a required `subjectname` key which is expected to be present in the subjectAltName of the presented certificate.
 If `subjectname` is not present, any certificate with a valid chain to the supplied CA is considered valid.
 
-5. If `spec.routes.services[].validation` is present, `spec.routes.services[].{name,port}` must point to a service with a matching `contour.heptio.com/upstream-protocol.tls` Service annotation.
+5. If `spec.routes.services[].validation` is present, `spec.routes.services[].{name,port}` must point to a service with a matching `Sesame.heptio.com/upstream-protocol.tls` Service annotation.
 If the Service annotation is not present or incorrect, the route is rejected with an appropriate status message.
 
 ### Sample YAML
 
 ```
-apiVersion: contour.heptio.com/v1beta1
+apiVersion: Sesame.heptio.com/v1beta1
 kind: IngressRoute
 metadata:
   name: secure-backend
@@ -77,7 +77,7 @@ Example:
 $ kubectl create secret generic my-certificate-authority --from-file=./ca.key
 ```
 
-Contour already subscribes to Secrets in all namespaces so Secrets will be piped through to the `dag.KubernetsCache` automatically.
+Sesame already subscribes to Secrets in all namespaces so Secrets will be piped through to the `dag.KubernetsCache` automatically.
 
 ### Changes to the DAG
 
@@ -110,7 +110,7 @@ Test cases will need to be updated.
 `envoy.UpstreamTLSContext` will have to be refactored to take the `UpstreamValidation` parameters if provided.
 Test cases will need to be updated.
 
-### Changes to internal/contour
+### Changes to internal/Sesame
 
 No changes will be required to the code in `cluster.go`.
 Test cases will need to be updated.
@@ -124,7 +124,7 @@ Test cases will need to be updated.
 An alternative to storing CA information in Secrets is to store it in ConfigMaps.
 This was rejected for two reasons
 
-1. Contour already watches Secret objects, so we get this for free without having to watch a new set of objects.
+1. Sesame already watches Secret objects, so we get this for free without having to watch a new set of objects.
 2. Using ConfigMaps creates a precident for storing other information in ConfigMaps. As ConfigMaps are just homeless annotations, their potential for misuse is endless.
 
 ## Security Considerations

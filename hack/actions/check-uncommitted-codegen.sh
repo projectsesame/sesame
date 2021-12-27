@@ -13,7 +13,7 @@ declare -r -a TARGETS=(
 	${REPO}/apis
 	${REPO}/site/content/guides/metrics
 	${REPO}/examples/render
-	${REPO}/examples/contour
+	${REPO}/examples/sesame
 	${REPO}/examples/gateway
 	${REPO}/site/content/docs/main/config/api-reference.html
 	${mock_dirs}

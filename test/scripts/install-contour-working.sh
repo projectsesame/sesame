@@ -1,6 +1,6 @@
 #! /usr/bin/env bash
 
-# Copyright Project Contour Authors
+# Copyright Project Sesame Authors
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you may
 # not use this file except in compliance with the License.  You may obtain
@@ -18,7 +18,7 @@ set -o pipefail
 set -o errexit
 set -o nounset
 
-# install-sesame-working.sh: Install Contour from the working repo.
+# install-sesame-working.sh: Install Sesame from the working repo.
 
 readonly KIND=${KIND:-kind}
 readonly KUBECTL=${KUBECTL:-kubectl}
@@ -53,14 +53,14 @@ run::sed() {
     esac
 }
 
-# Build the current version of Contour.
+# Build the current version of Sesame.
 VERSION="v$$"
 make -C ${REPO} container IMAGE=ghcr.io/projectsesame/sesame VERSION=${VERSION}
 
-# Push the Contour build image into the cluster.
+# Push the Sesame build image into the cluster.
 kind::cluster::load::docker ghcr.io/projectsesame/sesame:${VERSION}
 
-# Install Contour
+# Install Sesame
 ${KUBECTL} apply -f ${REPO}/examples/sesame/00-common.yaml
 ${KUBECTL} apply -f ${REPO}/examples/sesame/01-crds.yaml
 ${KUBECTL} apply -f ${REPO}/examples/sesame/02-rbac.yaml
@@ -79,32 +79,32 @@ for file in ${REPO}/examples/sesame/02-job-certgen.yaml ${REPO}/examples/sesame/
   # Set the image tag to $VERSION to unambiguously use the image
   # we built above.
   run::sed \
-    "-es|image: ghcr.io/projectcontour/contour:.*$|image: ghcr.io/projectcontour/contour:${VERSION}|" \
+    "-es|image: ghcr.io/projectsesame/Sesame:.*$|image: ghcr.io/projectsesame/Sesame:${VERSION}|" \
     "$file"
 
   ${KUBECTL} apply -f "$file"
 done
 
-# The Contour pod won't schedule until this ConfigMap is created, since it's mounted as a volume.
-# This is ok to create the config after the Contour deployment.
+# The Sesame pod won't schedule until this ConfigMap is created, since it's mounted as a volume.
+# This is ok to create the config after the Sesame deployment.
 ${KUBECTL} apply -f - <<EOF
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: contour
-  namespace: projectcontour
+  name: Sesame
+  namespace: projectsesame
 data:
-  contour.yaml: |
+  Sesame.yaml: |
     gateway:
-      controllerName: projectcontour.io/ingress-controller
+      controllerName: projectsesame.io/ingress-controller
     rateLimitService:
-      extensionService: projectcontour/ratelimit
-      domain: contour
+      extensionService: projectsesame/ratelimit
+      domain: Sesame
       failOpen: false
     tls:
       fallback-certificate:
         name: fallback-cert
-        namespace: projectcontour
+        namespace: projectsesame
 EOF
 
 # Install fallback cert
@@ -123,10 +123,10 @@ apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: fallback-cert
-  namespace: projectcontour
+  namespace: projectsesame
 spec:
   dnsNames:
-  - fallback.projectcontour.io
+  - fallback.projectsesame.io
   secretName: fallback-cert
   issuerRef:
     name: selfsigned
@@ -134,11 +134,11 @@ spec:
 EOF
 
 ${KUBECTL} apply -f - <<EOF
-apiVersion: projectcontour.io/v1
+apiVersion: projectsesame.io/v1
 kind: TLSCertificateDelegation
 metadata:
   name: fallback-cert
-  namespace: projectcontour
+  namespace: projectsesame
 spec:
   delegations:
   - secretName: fallback-cert
@@ -156,10 +156,10 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: ratelimit-config
-  namespace: projectcontour
+  namespace: projectsesame
 data:
   ratelimit-config.yaml: |
-    domain: contour
+    domain: Sesame
     descriptors:
       - key: generic_key
         value: vhostlimit
@@ -187,6 +187,6 @@ EOF
 ${KUBECTL} apply -f ${REPO}/examples/ratelimit/02-ratelimit.yaml
 ${KUBECTL} apply -f ${REPO}/examples/ratelimit/03-ratelimit-extsvc.yaml
 
-# Wait for Contour and Envoy to report "Ready" status.
+# Wait for Sesame and Envoy to report "Ready" status.
 ${KUBECTL} wait --timeout="${WAITTIME}" -n projectsesame -l app=sesame deployments --for=condition=Available
 ${KUBECTL} wait --timeout="${WAITTIME}" -n projectsesame -l app=envoy pods --for=condition=Ready

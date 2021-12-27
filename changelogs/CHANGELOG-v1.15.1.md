@@ -1,4 +1,4 @@
-We are delighted to present version 1.15.1 of Contour, our layer 7 HTTP reverse proxy for Kubernetes clusters.
+We are delighted to present version 1.15.1 of Sesame, our layer 7 HTTP reverse proxy for Kubernetes clusters.
 
 # Fixes
 

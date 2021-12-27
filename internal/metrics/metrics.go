@@ -11,7 +11,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Package metrics provides Prometheus metrics for Contour.
+// Package metrics provides Prometheus metrics for Sesame.
 package metrics
 
 import (
@@ -57,18 +57,18 @@ type Meta struct {
 }
 
 const (
-	BuildInfoGauge = "contour_build_info"
+	BuildInfoGauge = "Sesame_build_info"
 
-	HTTPProxyTotalGauge     = "contour_httpproxy"
-	HTTPProxyRootTotalGauge = "contour_httpproxy_root"
-	HTTPProxyInvalidGauge   = "contour_httpproxy_invalid"
-	HTTPProxyValidGauge     = "contour_httpproxy_valid"
-	HTTPProxyOrphanedGauge  = "contour_httpproxy_orphaned"
+	HTTPProxyTotalGauge     = "Sesame_httpproxy"
+	HTTPProxyRootTotalGauge = "Sesame_httpproxy_root"
+	HTTPProxyInvalidGauge   = "Sesame_httpproxy_invalid"
+	HTTPProxyValidGauge     = "Sesame_httpproxy_valid"
+	HTTPProxyOrphanedGauge  = "Sesame_httpproxy_orphaned"
 
-	DAGRebuildGauge             = "contour_dagrebuild_timestamp"
-	DAGRebuildTotal             = "contour_dagrebuild_total"
-	cacheHandlerOnUpdateSummary = "contour_cachehandler_onupdate_duration_seconds"
-	eventHandlerOperations      = "contour_eventhandler_operation_total"
+	DAGRebuildGauge             = "Sesame_dagrebuild_timestamp"
+	DAGRebuildTotal             = "Sesame_dagrebuild_total"
+	cacheHandlerOnUpdateSummary = "Sesame_cachehandler_onupdate_duration_seconds"
+	eventHandlerOperations      = "Sesame_eventhandler_operation_total"
 )
 
 // NewMetrics creates a new set of metrics and registers them with
@@ -82,7 +82,7 @@ func NewMetrics(registry *prometheus.Registry) *Metrics {
 		buildInfoGauge: prometheus.NewGaugeVec(
 			prometheus.GaugeOpts{
 				Name: BuildInfoGauge,
-				Help: "Build information for Contour. Labels include the branch and git SHA that Contour was built from, and the Contour version.",
+				Help: "Build information for Sesame. Labels include the branch and git SHA that Sesame was built from, and the Sesame version.",
 			},
 			[]string{"branch", "revision", "version"},
 		),
@@ -143,7 +143,7 @@ func NewMetrics(registry *prometheus.Registry) *Metrics {
 		EventHandlerOperations: prometheus.NewCounterVec(
 			prometheus.CounterOpts{
 				Name: eventHandlerOperations,
-				Help: "Total number of Kubernetes object changes Contour has received by operation and object kind.",
+				Help: "Total number of Kubernetes object changes Sesame has received by operation and object kind.",
 			},
 			[]string{"op", "kind"},
 		),

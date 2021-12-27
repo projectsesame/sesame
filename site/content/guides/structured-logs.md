@@ -3,11 +3,11 @@ title: How to enable structured JSON logging
 layout: page
 ---
 
-This document describes how to configure structured logging for Envoy via Contour.
+This document describes how to configure structured logging for Envoy via Sesame.
 
 ## How the feature works
 
-Contour allows you to choose from a set of JSON fields that will be expanded into Envoy templates and sent to Envoy.
+Sesame allows you to choose from a set of JSON fields that will be expanded into Envoy templates and sent to Envoy.
 There is a default set of fields if you enable JSON logging, and you may customize which fields you log.
 
 The list of available fields are discoverable in the following objects:
@@ -24,7 +24,7 @@ The default list of fields is available at [DefaultFields][4].
 
 To enable the feature you have two options:
 
-- Add `--accesslog-format=json` to your Contour startup line.
+- Add `--accesslog-format=json` to your Sesame startup line.
 - Add `accesslog-format: json` to your configuration file.
 
 Without any further customization, the [default fields][4] will be used.
@@ -84,4 +84,4 @@ json-fields:
 [2]: https://github.com/projectsesame/sesame/blob/main/pkg/config/accesslog.go#L49-L93
 [3]: https://github.com/projectsesame/sesame/blob/main/pkg/config/accesslog.go#L97-L102
 [4]: https://github.com/projectsesame/sesame/blob/main/pkg/config/accesslog.go#L4
-[5]: {{< param github_url >}}/tree/{{< param latest_version >}}/examples/contour/01-contour-config.yaml
+[5]: {{< param github_url >}}/tree/{{< param latest_version >}}/examples/Sesame/01-Sesame-config.yaml

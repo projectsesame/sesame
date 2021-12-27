@@ -1,12 +1,12 @@
 ---
-title: Deploying HTTPS services with Contour and cert-manager
+title: Deploying HTTPS services with Sesame and cert-manager
 layout: page
 ---
 
 This tutorial shows you how to securely deploy an HTTPS web application on a Kubernetes cluster, using:
 
 - Kubernetes
-- Contour, as the Ingress controller
+- Sesame, as the Ingress controller
 - [JetStack's cert-manager][1] to provision TLS certificates from [the Let's Encrypt project][6]
 
 ## Prerequisites
@@ -23,15 +23,15 @@ This tutorial shows you how to securely deploy an HTTPS web application on a Kub
 
 This tutorial walks you through deploying:
 
-1. [Contour][0]
+1. [Sesame][0]
 2. [Jetstack cert-manager][1]
 3. A sample web application using HTTPProxy
 
 **NOTE:** If you encounter failures related to permissions, make sure the user you are operating as has administrator permissions.
 
-After you've been through the steps the first time, you don't need to repeat deploying Contour and cert-manager for subsequent application deployments. Instead, you can skip to step 3.
+After you've been through the steps the first time, you don't need to repeat deploying Sesame and cert-manager for subsequent application deployments. Instead, you can skip to step 3.
 
-## 1. Deploy Contour
+## 1. Deploy Sesame
 
 Run:
 
@@ -39,7 +39,7 @@ Run:
 $ kubectl apply -f {{< param base_url >}}/quickstart/sesame.yaml
 ```
 
-to set up Contour as a deployment in its own namespace, `projectcontour`, and tell the cloud provider to provision an external IP that is forwarded to the Contour pods.
+to set up Sesame as a deployment in its own namespace, `projectsesame`, and tell the cloud provider to provision an external IP that is forwarded to the Sesame pods.
 
 Check the progress of the deployment with this command:
 
@@ -52,11 +52,11 @@ sesame-certgen-v1.19.0-5xthf   0/1     Completed   0          39s
 envoy-hqbkm                     2/2     Running     0          39s
 ```
 
-After all the `contour` & `envoy` pods reach `Running` status and fully `Ready`, move on to the next step.
+After all the `Sesame` & `envoy` pods reach `Running` status and fully `Ready`, move on to the next step.
 
 ### Access your cluster
 
-Retrieve the external address of the load balancer assigned to Contour's Envoys by your cloud provider:
+Retrieve the external address of the load balancer assigned to Sesame's Envoys by your cloud provider:
 
 ```bash
 $ kubectl get -n projectsesame service envoy -o wide
@@ -82,12 +82,12 @@ a4d1766f6ce1611e7b27f023b7e83d33–1465548734.ap-southeast-2.elb.amazonaws.com h
 a4d1766f6ce1611e7b27f023b7e83d33–1465548734.ap-southeast-2.elb.amazonaws.com has address 52.64.233.204
 ```
 
-In your own data center, you need to arrange for traffic from a public IP address to be forwarded to the cluster IP of the Contour service. This is beyond the scope of the tutorial.
+In your own data center, you need to arrange for traffic from a public IP address to be forwarded to the cluster IP of the Sesame service. This is beyond the scope of the tutorial.
 
 ### Testing connectivity
 
-You must deploy at least one Ingress object before Contour can configure Envoy to serve traffic.
-Note that as a security feature, Contour does not configure Envoy to expose a port to the internet unless there's a reason it should.
+You must deploy at least one Ingress object before Sesame can configure Envoy to serve traffic.
+Note that as a security feature, Sesame does not configure Envoy to expose a port to the internet unless there's a reason it should.
 For this tutorial we deploy a version of Kenneth Reitz's [httpbin.org service][3].
 
 To deploy httpbin to your cluster, run this command:
@@ -158,7 +158,7 @@ replicaset.apps/cert-manager-webhook-645b8bdb7       1         1         1      
 cert-manager supports two different CRDs for configuration, an `Issuer`, which is scoped to a single namespace,
 and a `ClusterIssuer`, which is cluster-wide.
 
-For Contour to be able to serve HTTPS traffic for an Ingress in any namespace, use `ClusterIssuer`.
+For Sesame to be able to serve HTTPS traffic for an Ingress in any namespace, use `ClusterIssuer`.
 Create a file called `letsencrypt-staging.yaml` with the following contents:
 
 ```yaml
@@ -277,7 +277,7 @@ NAME      TYPE        CLUSTER-IP    EXTERNAL-IP   PORT(S)     AGE
 httpbin   ClusterIP   10.48.6.155   <none>        8080/TCP   57m
 ```
 
-Expose the Service to the world with Contour and an Ingress object. Create a file called `ingress.yaml` with
+Expose the Service to the world with Sesame and an Ingress object. Create a file called `ingress.yaml` with
 the following contents:
 
 ```yaml
@@ -301,8 +301,8 @@ spec:
 
 The host name, `httpbin.davecheney.com` is a `CNAME` to the `gke.davecheney.com` record that was created in the first section, and must be created in the same place as the `gke.davecheney.com` record was.
 That is, in your cloud provider.
-This lets requests to `httpbin.davecheney.com` resolve to the external IP address of the Contour service.
-They are then forwarded to the Contour pods running in the cluster:
+This lets requests to `httpbin.davecheney.com` resolve to the external IP address of the Sesame service.
+They are then forwarded to the Sesame pods running in the cluster:
 
 ```bash
 $ host httpbin.davecheney.com
@@ -350,8 +350,8 @@ We need to add the following annotations:
 
 - `cert-manager.io/cluster-issuer: letsencrypt-staging`: tells cert-manager to use the `letsencrypt-staging` cluster issuer you just created.
 - `kubernetes.io/tls-acme: "true"`: Tells cert-manager to do ACME TLS (what Let's Encrypt uses).
-- `ingress.kubernetes.io/force-ssl-redirect: "true"`: tells Contour to redirect HTTP requests to the HTTPS site.
-- `kubernetes.io/ingress.class: contour`: Tells Contour that it should handle this Ingress object.
+- `ingress.kubernetes.io/force-ssl-redirect: "true"`: tells Sesame to redirect HTTP requests to the HTTPS site.
+- `kubernetes.io/ingress.class: Sesame`: Tells Sesame that it should handle this Ingress object.
 
 Using `kubectl edit ingress httpbin`:
 
@@ -566,7 +566,7 @@ spec:
       port: 8080
 ```
 
-This object will be marked as Invalid by Contour, since the TLS secret doesn't exist yet.
+This object will be marked as Invalid by Sesame, since the TLS secret doesn't exist yet.
 Once that's done, create the Certificate object:
 
 ```yaml
@@ -593,7 +593,7 @@ httpbinproxy   True    httpbinproxy   letsencrypt-prod   Certificate is up to da
 ```
 
 Once cert-manager has fulfilled the HTTP01 challenge, you will have a `httpbinproxy` secret, that will contain the keypair.
-Contour will detect that the Secret exists and generate the HTTPProxy config.
+Sesame will detect that the Secret exists and generate the HTTPProxy config.
 
 After that, you should be able to curl the new site:
 
@@ -616,7 +616,7 @@ $ curl https://httpbinproxy.davecheney.com/get
 
 ## Wrapping up
 
-Now that you've deployed your first HTTPS site using Contour and Let's Encrypt, deploying additional TLS enabled services is much simpler.
+Now that you've deployed your first HTTPS site using Sesame and Let's Encrypt, deploying additional TLS enabled services is much simpler.
 Remember that for each HTTPS website you deploy, cert-manager will create a Certificate CRD that provides the domain name and the name of the target Secret.
 The TLS functionality will be enabled when the HTTPProxy contains the `tls:` stanza, and the referenced secret contains a valid keypair.
 
@@ -624,7 +624,7 @@ See the [cert-manager docs][12] for more information.
 
 ## Bonus points
 
-For bonus points, you can use a feature of Contour to automatically upgrade any HTTP request to the corresponding HTTPS site so you are no longer serving any traffic over insecure HTTP.
+For bonus points, you can use a feature of Sesame to automatically upgrade any HTTP request to the corresponding HTTPS site so you are no longer serving any traffic over insecure HTTP.
 
 To enable the automatic redirect from HTTP to HTTPS, add this annotation to your Ingress object.
 

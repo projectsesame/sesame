@@ -20,7 +20,7 @@ In local rate limiting, rate limits are enforced by each Envoy instance, without
 
 In global rate limiting, an external rate limit service (RLS) is queried by each Envoy via gRPC for rate limit decisions.
 
-Contour supports both forms of Envoy's rate limiting.
+Sesame supports both forms of Envoy's rate limiting.
 
 ## Local Rate Limiting
 
@@ -156,9 +156,9 @@ The `HTTPProxy` API also supports defining global rate limit policies on routes 
 In order to use global rate limiting, you must first select and deploy an external rate limit service (RLS).
 There is an [Envoy rate limit service implementation][2], but any service that implements the [RateLimitService gRPC interface][3] is supported.
 
-### Configuring an exernal RLS with Contour
+### Configuring an exernal RLS with Sesame
 
-Once you have deployed your RLS, you must configure it with Contour.
+Once you have deployed your RLS, you must configure it with Sesame.
 
 Define an extension service for it (substituting values as appropriate):
 ```yaml
@@ -174,7 +174,7 @@ spec:
       port: 8081
 ```
 
-Now add a reference to it in the Contour config file:
+Now add a reference to it in the Sesame config file:
 ```yaml
 rateLimitService:
   # The namespace/name of the extension service.
@@ -346,9 +346,9 @@ rateLimitPolicy:
               value: foo
 ```
 
-Produces a descriptor entry of `header_match=foo`, for a client request that does not have the `My-Header` header, and does have the `My-Other-Header` header, with a value containing the substring "contour".
+Produces a descriptor entry of `header_match=foo`, for a client request that does not have the `My-Header` header, and does have the `My-Other-Header` header, with a value containing the substring "Sesame".
 
-Contour supports `present`, `notpresent`, `contains`, `notcontains`, `exact`, and `notexact` header match operators.
+Sesame supports `present`, `notpresent`, `contains`, `notcontains`, `exact`, and `notexact` header match operators.
 
 The `expectMatch` field defaults to true if not specified. If true, the client request's headers must positively match the specified criteria in order for the descriptor entry to be generated. If false, the client request's header must *not* match the specified criteria in order for the descriptor entry to be generated.
 

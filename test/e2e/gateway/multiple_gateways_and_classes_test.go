@@ -23,7 +23,7 @@ import (
 
 	. "github.com/onsi/ginkgo"
 	"github.com/onsi/gomega/gexec"
-	contour_api_v1alpha1 "github.com/projectcontour/sesame/apis/projectsesame/v1alpha1"
+	Sesame_api_v1alpha1 "github.com/projectsesame/sesame/apis/projectsesame/v1alpha1"
 	"github.com/projectsesame/sesame/internal/gatewayapi"
 	"github.com/projectsesame/sesame/internal/k8s"
 	"github.com/projectsesame/sesame/pkg/config"
@@ -36,43 +36,43 @@ import (
 // Tests in this block set up/tear down their own GatewayClasses and Gateways.
 var _ = Describe("GatewayClass/Gateway admission tests", func() {
 	var (
-		contourCmd            *gexec.Session
-		contourConfig         *config.Parameters
-		contourConfiguration  *contour_api_v1alpha1.ContourConfiguration
-		contourConfigFile     string
-		additionalContourArgs []string
-		controllerName        string
+		SesameCmd            *gexec.Session
+		SesameConfig         *config.Parameters
+		SesameConfiguration  *Sesame_api_v1alpha1.SesameConfiguration
+		SesameConfigFile     string
+		additionalSesameArgs []string
+		controllerName       string
 	)
 
 	BeforeEach(func() {
 		controllerName = fmt.Sprintf("projectsesame.io/projectsesame/sesame-%d", getRandomNumber())
 
-		// Contour config file contents, can be modified in nested
+		// Sesame config file contents, can be modified in nested
 		// BeforeEach.
-		contourConfig = &config.Parameters{
+		SesameConfig = &config.Parameters{
 			GatewayConfig: &config.GatewayParameters{
 				ControllerName: controllerName,
 			},
 		}
 
 		// Update sesame configuration to point to specified gateway.
-		contourConfiguration = e2e.DefaultContourConfiguration()
-		contourConfiguration.Spec.Gateway = &contour_api_v1alpha1.GatewayConfig{
+		SesameConfiguration = e2e.DefaultSesameConfiguration()
+		SesameConfiguration.Spec.Gateway = &Sesame_api_v1alpha1.GatewayConfig{
 			ControllerName: controllerName,
 		}
 
 		// Default sesame serve command line arguments can be appended to in
 		// nested BeforeEach.
-		additionalContourArgs = []string{}
+		additionalSesameArgs = []string{}
 	})
 
 	// JustBeforeEach is called after each of the nested BeforeEach are
 	// called, so it is a final setup step before running a test.
-	// A nested BeforeEach may have modified Contour config, so we wait
-	// until here to start Contour.
+	// A nested BeforeEach may have modified Sesame config, so we wait
+	// until here to start Sesame.
 	JustBeforeEach(func() {
 		var err error
-		contourCmd, contourConfigFile, err = f.Deployment.StartLocalContour(contourConfig, contourConfiguration, additionalContourArgs...)
+		SesameCmd, SesameConfigFile, err = f.Deployment.StartLocalSesame(SesameConfig, SesameConfiguration, additionalSesameArgs...)
 		require.NoError(f.T(), err)
 
 		// Wait for Envoy to be healthy.
@@ -81,7 +81,7 @@ var _ = Describe("GatewayClass/Gateway admission tests", func() {
 
 	AfterEach(func() {
 		require.NoError(f.T(), f.Client.DeleteAllOf(context.Background(), &gatewayapi_v1alpha2.GatewayClass{}))
-		require.NoError(f.T(), f.Deployment.StopLocalContour(contourCmd, contourConfigFile))
+		require.NoError(f.T(), f.Deployment.StopLocalSesame(SesameCmd, SesameConfigFile))
 	})
 
 	f.NamespacedTest("gateway-multiple-gatewayclasses", func(namespace string) {

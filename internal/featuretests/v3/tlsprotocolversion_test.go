@@ -19,9 +19,9 @@ import (
 	envoy_listener_v3 "github.com/envoyproxy/go-control-plane/envoy/config/listener/v3"
 	envoy_tls_v3 "github.com/envoyproxy/go-control-plane/envoy/extensions/transport_sockets/tls/v3"
 	envoy_discovery_v3 "github.com/envoyproxy/go-control-plane/envoy/service/discovery/v3"
-	contour_api_v1 "github.com/projectcontour/sesame/apis/projectsesame/v1"
-	envoy_v3 "github.com/projectcontour/sesame/internal/envoy/v3"
+	Sesame_api_v1 "github.com/projectsesame/sesame/apis/projectsesame/v1"
 	"github.com/projectsesame/sesame/internal/dag"
+	envoy_v3 "github.com/projectsesame/sesame/internal/envoy/v3"
 	"github.com/projectsesame/sesame/internal/featuretests"
 	"github.com/projectsesame/sesame/internal/fixture"
 	v1 "k8s.io/api/core/v1"
@@ -147,22 +147,22 @@ func TestTLSMinimumProtocolVersion(t *testing.T) {
 
 	rh.OnDelete(i2)
 
-	hp1 := &contour_api_v1.HTTPProxy{
+	hp1 := &Sesame_api_v1.HTTPProxy{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "simple",
 			Namespace: s1.Namespace,
 		},
-		Spec: contour_api_v1.HTTPProxySpec{
-			VirtualHost: &contour_api_v1.VirtualHost{
+		Spec: Sesame_api_v1.HTTPProxySpec{
+			VirtualHost: &Sesame_api_v1.VirtualHost{
 				Fqdn: "kuard.example.com",
-				TLS: &contour_api_v1.TLS{
+				TLS: &Sesame_api_v1.TLS{
 					SecretName:             sec1.Namespace + "/" + sec1.Name,
 					MinimumProtocolVersion: "1.3",
 				},
 			},
-			Routes: []contour_api_v1.Route{{
+			Routes: []Sesame_api_v1.Route{{
 				Conditions: matchconditions(prefixMatchCondition("/")),
-				Services: []contour_api_v1.Service{{
+				Services: []Sesame_api_v1.Service{{
 					Name: s1.Name,
 					Port: 80,
 				}},

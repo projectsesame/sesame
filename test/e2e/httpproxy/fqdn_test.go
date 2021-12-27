@@ -18,7 +18,7 @@ package httpproxy
 
 import (
 	. "github.com/onsi/ginkgo"
-	contourv1 "github.com/projectcontour/sesame/apis/projectsesame/v1"
+	Sesamev1 "github.com/projectsesame/sesame/apis/projectsesame/v1"
 	"github.com/projectsesame/sesame/test/e2e"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -29,17 +29,17 @@ func testWildcardFQDN(namespace string) {
 	Specify("invalid wildcard fqdn", func() {
 		t := f.T()
 
-		p := &contourv1.HTTPProxy{
+		p := &Sesamev1.HTTPProxy{
 			ObjectMeta: metav1.ObjectMeta{
 				Namespace: namespace,
 				Name:      "wildcard-subdomain",
 			},
-			Spec: contourv1.HTTPProxySpec{
-				VirtualHost: &contourv1.VirtualHost{
+			Spec: Sesamev1.HTTPProxySpec{
+				VirtualHost: &Sesamev1.VirtualHost{
 					Fqdn: "*",
 				},
-				Routes: []contourv1.Route{{
-					Services: []contourv1.Service{{
+				Routes: []Sesamev1.Route{{
+					Services: []Sesamev1.Service{{
 						Name: "ingress-conformance-echo",
 						Port: 80,
 					}},
@@ -63,17 +63,17 @@ func testWildcardSubdomainFQDN(namespace string) {
 		f.Fixtures.Echo.Deploy(namespace, "domainio")
 		f.Fixtures.Echo.Deploy(namespace, "bardomainio")
 
-		proxyWildcard := &contourv1.HTTPProxy{
+		proxyWildcard := &Sesamev1.HTTPProxy{
 			ObjectMeta: metav1.ObjectMeta{
 				Namespace: namespace,
 				Name:      "wildcard",
 			},
-			Spec: contourv1.HTTPProxySpec{
-				VirtualHost: &contourv1.VirtualHost{
+			Spec: Sesamev1.HTTPProxySpec{
+				VirtualHost: &Sesamev1.VirtualHost{
 					Fqdn: "*.domain.io",
 				},
-				Routes: []contourv1.Route{{
-					Services: []contourv1.Service{
+				Routes: []Sesamev1.Route{{
+					Services: []Sesamev1.Service{
 						{
 							Name: "wildcarddomainio",
 							Port: 80,
@@ -82,17 +82,17 @@ func testWildcardSubdomainFQDN(namespace string) {
 				}},
 			},
 		}
-		proxyFullFQDN := &contourv1.HTTPProxy{
+		proxyFullFQDN := &Sesamev1.HTTPProxy{
 			ObjectMeta: metav1.ObjectMeta{
 				Namespace: namespace,
 				Name:      "full-fqdn",
 			},
-			Spec: contourv1.HTTPProxySpec{
-				VirtualHost: &contourv1.VirtualHost{
+			Spec: Sesamev1.HTTPProxySpec{
+				VirtualHost: &Sesamev1.VirtualHost{
 					Fqdn: "domain.io",
 				},
-				Routes: []contourv1.Route{{
-					Services: []contourv1.Service{
+				Routes: []Sesamev1.Route{{
+					Services: []Sesamev1.Service{
 						{
 							Name: "domainio",
 							Port: 80,
@@ -101,17 +101,17 @@ func testWildcardSubdomainFQDN(namespace string) {
 				}},
 			},
 		}
-		proxyFullFQDNSubdomain := &contourv1.HTTPProxy{
+		proxyFullFQDNSubdomain := &Sesamev1.HTTPProxy{
 			ObjectMeta: metav1.ObjectMeta{
 				Namespace: namespace,
 				Name:      "fqdn-subdomain",
 			},
-			Spec: contourv1.HTTPProxySpec{
-				VirtualHost: &contourv1.VirtualHost{
+			Spec: Sesamev1.HTTPProxySpec{
+				VirtualHost: &Sesamev1.VirtualHost{
 					Fqdn: "bar.domain.io",
 				},
-				Routes: []contourv1.Route{{
-					Services: []contourv1.Service{
+				Routes: []Sesamev1.Route{{
+					Services: []Sesamev1.Service{
 						{
 							Name: "bardomainio",
 							Port: 80,

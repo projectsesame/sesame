@@ -14,11 +14,11 @@ Allow for the HTTPProxy to encode all of the additional configuration needed to 
 
 ## Background
 
-Today, Contour requires K8s Services to be annotated with additional protocol metadata encoded in annotations to use more than `http1`.  This presents a problem for controllers looking to emit HTTPProxy resources which don't own the K8s services being targeted because it involves manipulating resources they don't control.  The motivating issue (https://github.com/projectsesame/sesame/issues/1962) also calls out the use of annotations as somewhat anithetical to some of the underlying motivations for HTTPProxy in the first place!
+Today, Sesame requires K8s Services to be annotated with additional protocol metadata encoded in annotations to use more than `http1`.  This presents a problem for controllers looking to emit HTTPProxy resources which don't own the K8s services being targeted because it involves manipulating resources they don't control.  The motivating issue (https://github.com/projectsesame/sesame/issues/1962) also calls out the use of annotations as somewhat anithetical to some of the underlying motivations for HTTPProxy in the first place!
 
 ## High-Level Design
 
-Add a single new field to `Service` that encodes the protocol data that must currently be extracted from the annotation `projectcontour.io/upstream-protocol.{protocol}`.  From #1962:
+Add a single new field to `Service` that encodes the protocol data that must currently be extracted from the annotation `projectsesame.io/upstream-protocol.{protocol}`.  From #1962:
 
 ```yaml
 spec:
@@ -44,7 +44,7 @@ logic in `envoy.Cluster` can simply key off of the `Protocol` field of the
 
 ## Alternatives Considered
 
-Require downstream consumers to annotate K8s Services with Contour annotations (and every other provider they might integrate with).
+Require downstream consumers to annotate K8s Services with Sesame annotations (and every other provider they might integrate with).
 
 Adopt a port-naming convention like the one defined by [Istio](https://istio.io/docs/ops/configuration/traffic-management/protocol-selection/).
 

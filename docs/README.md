@@ -7,4 +7,4 @@ Specifically;
 * Versioned release documetaion has moved to [projectsesame.io/docs](https://projectsesame.io/docs)
 * Project related and non-versioned documentation has moved to [projectsesame.io/resources](https://projectsesame.io/resources/) 
 
-For more about how we're thinking of Contour's future, check out [the design docs](../design/).
+For more about how we're thinking of Sesame's future, check out [the design docs](../design/).

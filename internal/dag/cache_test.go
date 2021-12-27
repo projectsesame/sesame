@@ -651,7 +651,7 @@ func TestKubernetesCacheInsert(t *testing.T) {
 					Name:      "kuard",
 					Namespace: "default",
 					Annotations: map[string]string{
-						"projectcontours.io/ingress.class": ingressclass.DefaultClassName,
+						"projectsesames.io/ingress.class": ingressclass.DefaultClassName,
 					},
 				},
 			},

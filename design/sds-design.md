@@ -1,13 +1,13 @@
-# Support Secret Discovery Service on Contour
+# Support Secret Discovery Service on Sesame
 
 _Status_: Approved
 
-This document outlines what changes are needed on Contour to support SDS. [0]
+This document outlines what changes are needed on Sesame to support SDS. [0]
 
 ## Goals
 
 - Implement SDS server as a gRPS service
-- Support contour cli for SDS
+- Support Sesame cli for SDS
 
 ## Non-goals
 
@@ -15,15 +15,15 @@ This document outlines what changes are needed on Contour to support SDS. [0]
 
 ## Background
 
-Currently, contour supports fetching TLS cert/keys from k8s secrets and populates the values for DownstreamTlsContext in LDS & UpstreamTlsContext in CDS.
-Now that Envoy 1.8 and later releases support Secret Discovery Service (SDS) to fetch secrets remotely, we want to add support in Contour to parse SDS secret config and stream secrets using SDS GRPc service.
+Currently, Sesame supports fetching TLS cert/keys from k8s secrets and populates the values for DownstreamTlsContext in LDS & UpstreamTlsContext in CDS.
+Now that Envoy 1.8 and later releases support Secret Discovery Service (SDS) to fetch secrets remotely, we want to add support in Sesame to parse SDS secret config and stream secrets using SDS GRPc service.
 Please refer to [1] to understand more on how SDS works on Envoy.
 
 ## High level design
 
 - Create GRPC server for SDS
-- Create SecretCache to be used by Contour Internally to identify any changes.
-- Support contour cli for SDS
+- Create SecretCache to be used by Sesame Internally to identify any changes.
+- Support Sesame cli for SDS
 
 ## Detailed design
 
@@ -32,18 +32,18 @@ Please refer to [1] to understand more on how SDS works on Envoy.
 Create new resource SDS of `Cache` Interface type which implements the SDS v2 gRPS API.
 Create new xdsHandler of secret type. Register & Implement FetchSecrets() & StreamSecrets().
 
-### Create SecretCache to be used by Contour Internally
-In /internal/contour create secret.go with SecretCache struct
+### Create SecretCache to be used by Sesame Internally
+In /internal/Sesame create secret.go with SecretCache struct
 Implement Register(), Update() and notify()
 Create secretVisitor and implement visit() and visitSecrets() to produce a map with v2.secrets
 
-### Support contour cli for SDS
+### Support Sesame cli for SDS
 
 In order to facilitate debugging and to find out exactly the data that is being sent to Envoy,
-will add support to contour cli sub command. This cmd shd be used stream changes to the SDS api endpoint
+will add support to Sesame cli sub command. This cmd shd be used stream changes to the SDS api endpoint
 to the terminal.
 
-`kubectl -n projectcontour exec $CONTOUR_POD -c contour contour cli sds`
+`kubectl -n projectsesame exec $Sesame_POD -c Sesame Sesame cli sds`
 
 
 [0]: https://github.com/projectsesame/sesame/issues/898

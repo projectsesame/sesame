@@ -1,22 +1,22 @@
 ---
-title: Using Gatekeeper as a validating admission controller with Contour
+title: Using Gatekeeper as a validating admission controller with Sesame
 layout: page
 ---
 
-This tutorial demonstrates how to use [Gatekeeper](https://github.com/open-policy-agent/gatekeeper) as a validating admission controller for Contour.
+This tutorial demonstrates how to use [Gatekeeper](https://github.com/open-policy-agent/gatekeeper) as a validating admission controller for Sesame.
 
 Gatekeeper is a project that enables users to define flexible policies for Kubernetes resources using [Open Policy Agent (OPA)](https://www.openpolicyagent.org/) that are enforced when those resources are created/updated via the Kubernetes API.
 
-The benefits of using Gatekeeper with Contour are:
+The benefits of using Gatekeeper with Sesame are:
 - Immediate feedback for the user when they try to create an `HTTPProxy` with an invalid spec. Instead of having to check the `HTTPProxy`'s status after creation for a possible error message, the create is rejected and the user is immediately provided with a reason for the rejection.
-- User-defined policies for `HTTPProxy` specs. For example, the Contour admin can define policies to enforce maximum limits on timeouts and retries, disallow certain FQDNs, etc.
+- User-defined policies for `HTTPProxy` specs. For example, the Sesame admin can define policies to enforce maximum limits on timeouts and retries, disallow certain FQDNs, etc.
 
 ## Prerequisites
 
 - A Kubernetes cluster with a minimum version of 1.14 (to enable webhook timeouts for Gatekeeper).
 - Cluster-admin permissions
 
-## Deploy Contour
+## Deploy Sesame
 
 Run:
 
@@ -24,9 +24,9 @@ Run:
 $ kubectl apply -f {{< param base_url >}}/quickstart/sesame.yaml
 ```
 
-This creates a `projectcontour` namespace and sets up Contour as a deployment and Envoy as a daemonset, with communication between them secured by mutual TLS.
+This creates a `projectsesame` namespace and sets up Sesame as a deployment and Envoy as a daemonset, with communication between them secured by mutual TLS.
 
-Check the status of the Contour pods with this command:
+Check the status of the Sesame pods with this command:
 
 ```bash
 $ kubectl -n projectsesame get pods -l app=sesame
@@ -110,7 +110,7 @@ In that case, you'll need to edit the existing resource to add `HTTPProxy` to th
 ### Configure HTTPProxy validations
 
 The first constraint template and constraint that we'll define are what we'll refer to as a **validation**.
-These are rules for `HTTPProxy` specs that Contour universally requires to be true.
+These are rules for `HTTPProxy` specs that Sesame universally requires to be true.
 In this example, we'll define a constraint template and constraint to enforce that all `HTTPProxies` must have a unique FQDN.
 
 Create a file called `unique-fqdn-template.yml` containing the following YAML:
@@ -135,7 +135,7 @@ spec:
 
         violation[{"msg": msg, "other": sprintf("%v/%v", [other.metadata.namespace, other.metadata.name])}] {
           got := input.review.object.spec.virtualhost.fqdn
-          other := data.inventory.namespace[_]["projectcontour.io/v1"]["HTTPProxy"][_]
+          other := data.inventory.namespace[_]["projectsesame.io/v1"]["HTTPProxy"][_]
           other.spec.virtualhost.fqdn = got
 
           not same(other, input.review.object)
@@ -218,17 +218,17 @@ $ kubectl apply -f httpproxies.yml
 
 You should see something like:
 ```
-httpproxy.projectcontour.io/demo created
+httpproxy.projectsesame.io/demo created
 Error from server ([denied by httpproxy-unique-fqdn] HTTPProxy must have a unique FQDN): error when creating "httpproxies.yml": admission webhook "validation.gatekeeper.sh" denied the request: [denied by httpproxy-unique-fqdn] HTTPProxy must have a unique FQDN
 ```
 
-The first `HTTPProxy` was created successfully, because there was not already an existing proxy with the `demo.projectcontour.io` FQDN.
+The first `HTTPProxy` was created successfully, because there was not already an existing proxy with the `demo.projectsesame.io` FQDN.
 However, when the second `HTTPProxy` was submitted, Gatekeeper rejected its creation because it used the same FQDN as the first one.
 
 ### Configure HTTPProxy policies
 
 The next constraint template and constraint that we'll create are what we refer to as a **policy**.
-These are rules for `HTTPProxy` specs that an individual Contour administrator may want to enforce for their cluster, but that are not explicitly required by Contour itself.
+These are rules for `HTTPProxy` specs that an individual Sesame administrator may want to enforce for their cluster, but that are not explicitly required by Sesame itself.
 In this example, we'll define a constraint template and constraint to enforce that all `HTTPProxies` can be configured with at most five retries for any route.
 
 Create a file called `retry-count-range-template.yml` containing the following YAML:
@@ -368,7 +368,7 @@ $ kubectl apply -f httpproxy-retries.yml
 
 Now the `HTTPProxy` creates successfully*.
 
-_* Note that the HTTPProxy is still marked invalid by Contour after creation because the service `s1` does not exist, but that's outside the scope of this guide._
+_* Note that the HTTPProxy is still marked invalid by Sesame after creation because the service `s1` does not exist, but that's outside the scope of this guide._
 
 Finally, create a file called `httpproxy-retries-default.yml` containing the following YAML:
 
@@ -443,9 +443,9 @@ However, our `HTTPProxy` remains in the cluster and can continue to route reques
 
 ## Next steps
 
-Contour has a [growing library](https://github.com/projectsesame/sesame/tree/main/examples/gatekeeper) of Gatekeeper constraint templates and constraints, for both **validations** and **policies**.
+Sesame has a [growing library](https://github.com/projectsesame/sesame/tree/main/examples/gatekeeper) of Gatekeeper constraint templates and constraints, for both **validations** and **policies**.
 
-If you're using Gatekeeper, we recommend that you apply all of the **validations** we've defined, since these rules are already being checked internally by Contour and reported as status errors/invalid proxies.
+If you're using Gatekeeper, we recommend that you apply all of the **validations** we've defined, since these rules are already being checked internally by Sesame and reported as status errors/invalid proxies.
 Using the Gatekeeper constraints will only improve the user experience since users will get earlier feedback if their proxies are invalid.
 The **validations** can be found in `examples/gatekeeper/validations`.
 
@@ -454,4 +454,4 @@ You should take more of a pick-and-choose approach to our sample **policies**, s
 Feel free to use any/all/none of them, and augment them with your own policies if applicable.
 The sample **policies** can be found in `examples/gatekeeper/policies`.
 
-And of course, if you do develop any new constraints that you think may be useful for the broader Contour community, we welcome contributions!
+And of course, if you do develop any new constraints that you think may be useful for the broader Sesame community, we welcome contributions!

@@ -1,6 +1,6 @@
 metadata:
-  name: Contour
-  description: "Contour is a Kubernetes ingress controller using Envoy proxy."
+  name: Sesame
+  description: "Sesame is a Kubernetes ingress controller using Envoy proxy."
   website: "https://projectsesame.io"
   repository: "https://github.com/projectsesame/sesame"
 versions:
@@ -14,7 +14,7 @@ versions:
         - "1.20"
       gateway-api:
         - v1alpha2
-      contour-operator: main
+      Sesame-operator: main
   - version: v1.19.1
     supported: "true"
     dependencies:
@@ -25,7 +25,7 @@ versions:
         - "1.20"
       gateway-api:
         - v1alpha1
-      contour-operator: v1.19.1
+      Sesame-operator: v1.19.1
   - version: v1.19.0
     supported: "false"
     dependencies:
@@ -36,7 +36,7 @@ versions:
         - "1.20"
       gateway-api:
         - v1alpha1
-      contour-operator: main
+      Sesame-operator: main
   - version: v1.18.3
     supported: "false"
     dependencies:
@@ -47,7 +47,7 @@ versions:
         - "1.19"
       gateway-api:
         - v1alpha1
-      contour-operator: v1.18.3
+      Sesame-operator: v1.18.3
   - version: v1.18.2
     supported: "false"
     dependencies:
@@ -58,7 +58,7 @@ versions:
         - "1.19"
       gateway-api:
         - v1alpha1
-      contour-operator: v1.18.2
+      Sesame-operator: v1.18.2
   - version: v1.18.1
     supported: "false"
     dependencies:
@@ -69,7 +69,7 @@ versions:
         - "1.19"
       gateway-api:
         - v1alpha1
-      contour-operator: v1.18.1
+      Sesame-operator: v1.18.1
   - version: v1.18.0
     supported: "false"
     dependencies:
@@ -80,7 +80,7 @@ versions:
         - "1.19"
       gateway-api:
         - v1alpha1
-      contour-operator: v1.18.0
+      Sesame-operator: v1.18.0
   - version: v1.17.2
     supported: "false"
     dependencies:
@@ -91,7 +91,7 @@ versions:
         - "1.19"
       gateway-api:
         - v1alpha1
-      contour-operator: NA
+      Sesame-operator: NA
   - version: v1.17.1
     supported: "false"
     dependencies:
@@ -102,7 +102,7 @@ versions:
         - "1.19"
       gateway-api:
         - v1alpha1
-      contour-operator: NA
+      Sesame-operator: NA
   - version: v1.17.0
     supported: "false"
     dependencies:
@@ -113,7 +113,7 @@ versions:
         - "1.19"
       gateway-api:
         - v1alpha1
-      contour-operator: v1.17.0
+      Sesame-operator: v1.17.0
   - version: v1.16.1
     supported: "false"
     dependencies:
@@ -124,7 +124,7 @@ versions:
         - "1.19"
       gateway-api:
         - v1alpha1
-      contour-operator: NA
+      Sesame-operator: NA
   - version: v1.16.0
     supported: "false"
     dependencies:
@@ -135,7 +135,7 @@ versions:
         - "1.19"
       gateway-api:
         - v1alpha1
-      contour-operator: v1.16.0
+      Sesame-operator: v1.16.0
   - version: v1.15.2
     supported: "false"
     dependencies:
@@ -146,7 +146,7 @@ versions:
         - "1.19"
       gateway-api:
         - v1alpha1
-      contour-operator: NA
+      Sesame-operator: NA
   - version: v1.15.1
     supported: "false"
     dependencies:
@@ -157,7 +157,7 @@ versions:
         - "1.19"
       gateway-api:
         - v1alpha1
-      contour-operator: v1.15.1
+      Sesame-operator: v1.15.1
   - version: v1.15.0
     supported: "false"
     dependencies:
@@ -168,7 +168,7 @@ versions:
         - "1.19"
       gateway-api:
         - v1alpha1
-      contour-operator: v1.15.0
+      Sesame-operator: v1.15.0
   - version: v1.14.2
     supported: "false"
     dependencies:
@@ -179,7 +179,7 @@ versions:
         - "1.18"
       gateway-api:
         - v1alpha1
-      contour-operator: NA
+      Sesame-operator: NA
   - version: 1.14.1
     supported: "false"
     dependencies:
@@ -190,7 +190,7 @@ versions:
         - "1.18"
       gateway-api:
         - v1alpha1
-      contour-operator: v1.14.1
+      Sesame-operator: v1.14.1
   - version: v1.14.0
     supported: "false"
     dependencies:
@@ -201,7 +201,7 @@ versions:
         - "1.18"
       gateway-api:
         - v1alpha1
-      contour-operator: v1.14.0
+      Sesame-operator: v1.14.0
   - version: 1.13.1
     supported: "false"
     dependencies:
@@ -212,7 +212,7 @@ versions:
         - "1.18"
       gateway-api:
         - v1alpha1
-      contour-operator: v1.13.1
+      Sesame-operator: v1.13.1
   - version: v1.13.0
     supported: "false"
     dependencies:
@@ -223,7 +223,7 @@ versions:
         - "1.18"
       gateway-api:
         - v1alpha1
-      contour-operator: v1.13.0
+      Sesame-operator: v1.13.0
   - version: v1.12.0
     supported: "false"
     dependencies:
@@ -234,7 +234,7 @@ versions:
         - "1.17"
       gateway-api:
         - NA
-      contour-operator: v1.12.0
+      Sesame-operator: v1.12.0
   - version: v1.11.0
     supported: "false"
     dependencies:
@@ -245,7 +245,7 @@ versions:
         - "1.17"
       gateway-api:
         - NA
-      contour-operator: v1.11.0
+      Sesame-operator: v1.11.0
   - version: v1.10.1
     supported: "false"
     dependencies:
@@ -256,7 +256,7 @@ versions:
         - "1.17"
       gateway-api:
         - NA
-      contour-operator: NA
+      Sesame-operator: NA
   - version: v1.10.0
     supported: "false"
     dependencies:
@@ -267,7 +267,7 @@ versions:
         - "1.17"
       gateway-api:
         - NA
-      contour-operator: NA
+      Sesame-operator: NA
   - version: v1.9.0
     supported: "false"
     dependencies:
@@ -278,5 +278,5 @@ versions:
         - "1.16"
       gateway-api:
         - NA
-      contour-operator: NA
+      Sesame-operator: NA
 

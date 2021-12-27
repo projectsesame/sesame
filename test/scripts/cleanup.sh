@@ -1,6 +1,6 @@
 #! /usr/bin/env bash
 
-# Copyright Project Contour Authors
+# Copyright Project Sesame Authors
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you may
 # not use this file except in compliance with the License.  You may obtain
@@ -19,7 +19,7 @@ set -o errexit
 set -o nounset
 
 readonly KIND=${KIND:-kind}
-readonly CLUSTERNAME=${CLUSTERNAME:-contour-e2e}
+readonly CLUSTERNAME=${CLUSTERNAME:-Sesame-e2e}
 
 kind::cluster::delete() {
     ${KIND} delete cluster --name "${CLUSTERNAME}"

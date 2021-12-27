@@ -23,33 +23,33 @@ import (
 	http "github.com/envoyproxy/go-control-plane/envoy/extensions/filters/network/http_connection_manager/v3"
 	envoy_discovery_v3 "github.com/envoyproxy/go-control-plane/envoy/service/discovery/v3"
 	"github.com/envoyproxy/go-control-plane/pkg/wellknown"
-	contour_api_v1 "github.com/projectcontour/sesame/apis/projectsesame/v1"
-	envoy_v3 "github.com/projectcontour/sesame/internal/envoy/v3"
-	xdscache_v3 "github.com/projectcontour/sesame/internal/xdscache/v3"
+	Sesame_api_v1 "github.com/projectsesame/sesame/apis/projectsesame/v1"
 	"github.com/projectsesame/sesame/internal/dag"
+	envoy_v3 "github.com/projectsesame/sesame/internal/envoy/v3"
 	"github.com/projectsesame/sesame/internal/featuretests"
 	"github.com/projectsesame/sesame/internal/fixture"
 	"github.com/projectsesame/sesame/internal/k8s"
 	"github.com/projectsesame/sesame/internal/protobuf"
+	xdscache_v3 "github.com/projectsesame/sesame/internal/xdscache/v3"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/client-go/tools/cache"
 )
 
-func globalRateLimitFilterExists(t *testing.T, rh cache.ResourceEventHandler, c *Contour) {
-	p := &contour_api_v1.HTTPProxy{
+func globalRateLimitFilterExists(t *testing.T, rh cache.ResourceEventHandler, c *Sesame) {
+	p := &Sesame_api_v1.HTTPProxy{
 		ObjectMeta: metav1.ObjectMeta{
 			Namespace: "default",
 			Name:      "proxy1",
 		},
-		Spec: contour_api_v1.HTTPProxySpec{
-			VirtualHost: &contour_api_v1.VirtualHost{
+		Spec: Sesame_api_v1.HTTPProxySpec{
+			VirtualHost: &Sesame_api_v1.VirtualHost{
 				Fqdn: "foo.com",
 			},
-			Routes: []contour_api_v1.Route{
+			Routes: []Sesame_api_v1.Route{
 				{
-					Services: []contour_api_v1.Service{
+					Services: []Sesame_api_v1.Service{
 						{
 							Name: "s1",
 							Port: 80,
@@ -101,19 +101,19 @@ func globalRateLimitFilterExists(t *testing.T, rh cache.ResourceEventHandler, c 
 	}).Status(p).IsValid()
 }
 
-func globalRateLimitNoRateLimitsDefined(t *testing.T, rh cache.ResourceEventHandler, c *Contour, tls tlsConfig) {
-	p := &contour_api_v1.HTTPProxy{
+func globalRateLimitNoRateLimitsDefined(t *testing.T, rh cache.ResourceEventHandler, c *Sesame, tls tlsConfig) {
+	p := &Sesame_api_v1.HTTPProxy{
 		ObjectMeta: metav1.ObjectMeta{
 			Namespace: "default",
 			Name:      "proxy1",
 		},
-		Spec: contour_api_v1.HTTPProxySpec{
-			VirtualHost: &contour_api_v1.VirtualHost{
+		Spec: Sesame_api_v1.HTTPProxySpec{
+			VirtualHost: &Sesame_api_v1.VirtualHost{
 				Fqdn: "foo.com",
 			},
-			Routes: []contour_api_v1.Route{
+			Routes: []Sesame_api_v1.Route{
 				{
-					Services: []contour_api_v1.Service{
+					Services: []Sesame_api_v1.Service{
 						{
 							Name: "s1",
 							Port: 80,
@@ -125,7 +125,7 @@ func globalRateLimitNoRateLimitsDefined(t *testing.T, rh cache.ResourceEventHand
 	}
 
 	if tls.enabled {
-		p.Spec.VirtualHost.TLS = &contour_api_v1.TLS{
+		p.Spec.VirtualHost.TLS = &Sesame_api_v1.TLS{
 			SecretName:                "tls-cert",
 			EnableFallbackCertificate: tls.fallbackEnabled,
 		}
@@ -185,25 +185,25 @@ func globalRateLimitNoRateLimitsDefined(t *testing.T, rh cache.ResourceEventHand
 
 }
 
-func globalRateLimitVhostRateLimitDefined(t *testing.T, rh cache.ResourceEventHandler, c *Contour, tls tlsConfig) {
-	p := &contour_api_v1.HTTPProxy{
+func globalRateLimitVhostRateLimitDefined(t *testing.T, rh cache.ResourceEventHandler, c *Sesame, tls tlsConfig) {
+	p := &Sesame_api_v1.HTTPProxy{
 		ObjectMeta: metav1.ObjectMeta{
 			Namespace: "default",
 			Name:      "proxy1",
 		},
-		Spec: contour_api_v1.HTTPProxySpec{
-			VirtualHost: &contour_api_v1.VirtualHost{
+		Spec: Sesame_api_v1.HTTPProxySpec{
+			VirtualHost: &Sesame_api_v1.VirtualHost{
 				Fqdn: "foo.com",
-				RateLimitPolicy: &contour_api_v1.RateLimitPolicy{
-					Global: &contour_api_v1.GlobalRateLimitPolicy{
-						Descriptors: []contour_api_v1.RateLimitDescriptor{
+				RateLimitPolicy: &Sesame_api_v1.RateLimitPolicy{
+					Global: &Sesame_api_v1.GlobalRateLimitPolicy{
+						Descriptors: []Sesame_api_v1.RateLimitDescriptor{
 							{
-								Entries: []contour_api_v1.RateLimitDescriptorEntry{
+								Entries: []Sesame_api_v1.RateLimitDescriptorEntry{
 									{
-										RemoteAddress: &contour_api_v1.RemoteAddressDescriptor{},
+										RemoteAddress: &Sesame_api_v1.RemoteAddressDescriptor{},
 									},
 									{
-										GenericKey: &contour_api_v1.GenericKeyDescriptor{Value: "generic-key-value"},
+										GenericKey: &Sesame_api_v1.GenericKeyDescriptor{Value: "generic-key-value"},
 									},
 								},
 							},
@@ -211,9 +211,9 @@ func globalRateLimitVhostRateLimitDefined(t *testing.T, rh cache.ResourceEventHa
 					},
 				},
 			},
-			Routes: []contour_api_v1.Route{
+			Routes: []Sesame_api_v1.Route{
 				{
-					Services: []contour_api_v1.Service{
+					Services: []Sesame_api_v1.Service{
 						{
 							Name: "s1",
 							Port: 80,
@@ -225,7 +225,7 @@ func globalRateLimitVhostRateLimitDefined(t *testing.T, rh cache.ResourceEventHa
 	}
 
 	if tls.enabled {
-		p.Spec.VirtualHost.TLS = &contour_api_v1.TLS{
+		p.Spec.VirtualHost.TLS = &Sesame_api_v1.TLS{
 			SecretName:                "tls-cert",
 			EnableFallbackCertificate: tls.fallbackEnabled,
 		}
@@ -277,34 +277,34 @@ func globalRateLimitVhostRateLimitDefined(t *testing.T, rh cache.ResourceEventHa
 	}
 }
 
-func globalRateLimitRouteRateLimitDefined(t *testing.T, rh cache.ResourceEventHandler, c *Contour, tls tlsConfig) {
-	p := &contour_api_v1.HTTPProxy{
+func globalRateLimitRouteRateLimitDefined(t *testing.T, rh cache.ResourceEventHandler, c *Sesame, tls tlsConfig) {
+	p := &Sesame_api_v1.HTTPProxy{
 		ObjectMeta: metav1.ObjectMeta{
 			Namespace: "default",
 			Name:      "proxy1",
 		},
-		Spec: contour_api_v1.HTTPProxySpec{
-			VirtualHost: &contour_api_v1.VirtualHost{
+		Spec: Sesame_api_v1.HTTPProxySpec{
+			VirtualHost: &Sesame_api_v1.VirtualHost{
 				Fqdn: "foo.com",
 			},
-			Routes: []contour_api_v1.Route{
+			Routes: []Sesame_api_v1.Route{
 				{
-					Services: []contour_api_v1.Service{
+					Services: []Sesame_api_v1.Service{
 						{
 							Name: "s1",
 							Port: 80,
 						},
 					},
-					RateLimitPolicy: &contour_api_v1.RateLimitPolicy{
-						Global: &contour_api_v1.GlobalRateLimitPolicy{
-							Descriptors: []contour_api_v1.RateLimitDescriptor{
+					RateLimitPolicy: &Sesame_api_v1.RateLimitPolicy{
+						Global: &Sesame_api_v1.GlobalRateLimitPolicy{
+							Descriptors: []Sesame_api_v1.RateLimitDescriptor{
 								{
-									Entries: []contour_api_v1.RateLimitDescriptorEntry{
+									Entries: []Sesame_api_v1.RateLimitDescriptorEntry{
 										{
-											RemoteAddress: &contour_api_v1.RemoteAddressDescriptor{},
+											RemoteAddress: &Sesame_api_v1.RemoteAddressDescriptor{},
 										},
 										{
-											GenericKey: &contour_api_v1.GenericKeyDescriptor{Value: "generic-key-value"},
+											GenericKey: &Sesame_api_v1.GenericKeyDescriptor{Value: "generic-key-value"},
 										},
 									},
 								},
@@ -317,7 +317,7 @@ func globalRateLimitRouteRateLimitDefined(t *testing.T, rh cache.ResourceEventHa
 	}
 
 	if tls.enabled {
-		p.Spec.VirtualHost.TLS = &contour_api_v1.TLS{
+		p.Spec.VirtualHost.TLS = &Sesame_api_v1.TLS{
 			SecretName:                "tls-cert",
 			EnableFallbackCertificate: tls.fallbackEnabled,
 		}
@@ -370,25 +370,25 @@ func globalRateLimitRouteRateLimitDefined(t *testing.T, rh cache.ResourceEventHa
 	}
 }
 
-func globalRateLimitVhostAndRouteRateLimitDefined(t *testing.T, rh cache.ResourceEventHandler, c *Contour, tls tlsConfig) {
-	p := &contour_api_v1.HTTPProxy{
+func globalRateLimitVhostAndRouteRateLimitDefined(t *testing.T, rh cache.ResourceEventHandler, c *Sesame, tls tlsConfig) {
+	p := &Sesame_api_v1.HTTPProxy{
 		ObjectMeta: metav1.ObjectMeta{
 			Namespace: "default",
 			Name:      "proxy1",
 		},
-		Spec: contour_api_v1.HTTPProxySpec{
-			VirtualHost: &contour_api_v1.VirtualHost{
+		Spec: Sesame_api_v1.HTTPProxySpec{
+			VirtualHost: &Sesame_api_v1.VirtualHost{
 				Fqdn: "foo.com",
-				RateLimitPolicy: &contour_api_v1.RateLimitPolicy{
-					Global: &contour_api_v1.GlobalRateLimitPolicy{
-						Descriptors: []contour_api_v1.RateLimitDescriptor{
+				RateLimitPolicy: &Sesame_api_v1.RateLimitPolicy{
+					Global: &Sesame_api_v1.GlobalRateLimitPolicy{
+						Descriptors: []Sesame_api_v1.RateLimitDescriptor{
 							{
-								Entries: []contour_api_v1.RateLimitDescriptorEntry{
+								Entries: []Sesame_api_v1.RateLimitDescriptorEntry{
 									{
-										RemoteAddress: &contour_api_v1.RemoteAddressDescriptor{},
+										RemoteAddress: &Sesame_api_v1.RemoteAddressDescriptor{},
 									},
 									{
-										GenericKey: &contour_api_v1.GenericKeyDescriptor{Value: "generic-key-value-vhost"},
+										GenericKey: &Sesame_api_v1.GenericKeyDescriptor{Value: "generic-key-value-vhost"},
 									},
 								},
 							},
@@ -396,24 +396,24 @@ func globalRateLimitVhostAndRouteRateLimitDefined(t *testing.T, rh cache.Resourc
 					},
 				},
 			},
-			Routes: []contour_api_v1.Route{
+			Routes: []Sesame_api_v1.Route{
 				{
-					Services: []contour_api_v1.Service{
+					Services: []Sesame_api_v1.Service{
 						{
 							Name: "s1",
 							Port: 80,
 						},
 					},
-					RateLimitPolicy: &contour_api_v1.RateLimitPolicy{
-						Global: &contour_api_v1.GlobalRateLimitPolicy{
-							Descriptors: []contour_api_v1.RateLimitDescriptor{
+					RateLimitPolicy: &Sesame_api_v1.RateLimitPolicy{
+						Global: &Sesame_api_v1.GlobalRateLimitPolicy{
+							Descriptors: []Sesame_api_v1.RateLimitDescriptor{
 								{
-									Entries: []contour_api_v1.RateLimitDescriptorEntry{
+									Entries: []Sesame_api_v1.RateLimitDescriptorEntry{
 										{
-											RemoteAddress: &contour_api_v1.RemoteAddressDescriptor{},
+											RemoteAddress: &Sesame_api_v1.RemoteAddressDescriptor{},
 										},
 										{
-											GenericKey: &contour_api_v1.GenericKeyDescriptor{Value: "generic-key-value"},
+											GenericKey: &Sesame_api_v1.GenericKeyDescriptor{Value: "generic-key-value"},
 										},
 									},
 								},
@@ -426,7 +426,7 @@ func globalRateLimitVhostAndRouteRateLimitDefined(t *testing.T, rh cache.Resourc
 	}
 
 	if tls.enabled {
-		p.Spec.VirtualHost.TLS = &contour_api_v1.TLS{
+		p.Spec.VirtualHost.TLS = &Sesame_api_v1.TLS{
 			SecretName:                "tls-cert",
 			EnableFallbackCertificate: tls.fallbackEnabled,
 		}
@@ -495,46 +495,46 @@ func globalRateLimitVhostAndRouteRateLimitDefined(t *testing.T, rh cache.Resourc
 	}
 }
 
-func globalRateLimitMultipleDescriptorsAndEntries(t *testing.T, rh cache.ResourceEventHandler, c *Contour) {
-	p := &contour_api_v1.HTTPProxy{
+func globalRateLimitMultipleDescriptorsAndEntries(t *testing.T, rh cache.ResourceEventHandler, c *Sesame) {
+	p := &Sesame_api_v1.HTTPProxy{
 		ObjectMeta: metav1.ObjectMeta{
 			Namespace: "default",
 			Name:      "proxy1",
 		},
-		Spec: contour_api_v1.HTTPProxySpec{
-			VirtualHost: &contour_api_v1.VirtualHost{
+		Spec: Sesame_api_v1.HTTPProxySpec{
+			VirtualHost: &Sesame_api_v1.VirtualHost{
 				Fqdn: "foo.com",
 			},
-			Routes: []contour_api_v1.Route{
+			Routes: []Sesame_api_v1.Route{
 				{
-					Services: []contour_api_v1.Service{
+					Services: []Sesame_api_v1.Service{
 						{
 							Name: "s1",
 							Port: 80,
 						},
 					},
-					RateLimitPolicy: &contour_api_v1.RateLimitPolicy{
-						Global: &contour_api_v1.GlobalRateLimitPolicy{
-							Descriptors: []contour_api_v1.RateLimitDescriptor{
+					RateLimitPolicy: &Sesame_api_v1.RateLimitPolicy{
+						Global: &Sesame_api_v1.GlobalRateLimitPolicy{
+							Descriptors: []Sesame_api_v1.RateLimitDescriptor{
 								// first descriptor
 								{
-									Entries: []contour_api_v1.RateLimitDescriptorEntry{
+									Entries: []Sesame_api_v1.RateLimitDescriptorEntry{
 										{
-											RemoteAddress: &contour_api_v1.RemoteAddressDescriptor{},
+											RemoteAddress: &Sesame_api_v1.RemoteAddressDescriptor{},
 										},
 										{
-											GenericKey: &contour_api_v1.GenericKeyDescriptor{Value: "generic-key-value"},
+											GenericKey: &Sesame_api_v1.GenericKeyDescriptor{Value: "generic-key-value"},
 										},
 									},
 								},
 								// second descriptor
 								{
-									Entries: []contour_api_v1.RateLimitDescriptorEntry{
+									Entries: []Sesame_api_v1.RateLimitDescriptorEntry{
 										{
-											RequestHeader: &contour_api_v1.RequestHeaderDescriptor{HeaderName: "X-Contour", DescriptorKey: "header-descriptor"},
+											RequestHeader: &Sesame_api_v1.RequestHeaderDescriptor{HeaderName: "X-Sesame", DescriptorKey: "header-descriptor"},
 										},
 										{
-											GenericKey: &contour_api_v1.GenericKeyDescriptor{Key: "generic-key-key", Value: "generic-key-value-2"},
+											GenericKey: &Sesame_api_v1.GenericKeyDescriptor{Key: "generic-key-key", Value: "generic-key-value-2"},
 										},
 									},
 								},
@@ -572,7 +572,7 @@ func globalRateLimitMultipleDescriptorsAndEntries(t *testing.T, rh cache.Resourc
 						{
 							ActionSpecifier: &envoy_route_v3.RateLimit_Action_RequestHeaders_{
 								RequestHeaders: &envoy_route_v3.RateLimit_Action_RequestHeaders{
-									HeaderName:    "X-Contour",
+									HeaderName:    "X-Sesame",
 									DescriptorKey: "header-descriptor",
 								},
 							},
@@ -609,48 +609,48 @@ func TestGlobalRateLimiting(t *testing.T) {
 		fallbackEnabled = tlsConfig{enabled: true, fallbackEnabled: true}
 	)
 
-	subtests := map[string]func(*testing.T, cache.ResourceEventHandler, *Contour){
+	subtests := map[string]func(*testing.T, cache.ResourceEventHandler, *Sesame){
 		"GlobalRateLimitFilterExists": globalRateLimitFilterExists,
 
 		// test cases for insecure/non-TLS vhosts
-		"NoRateLimitsDefined": func(t *testing.T, rh cache.ResourceEventHandler, c *Contour) {
+		"NoRateLimitsDefined": func(t *testing.T, rh cache.ResourceEventHandler, c *Sesame) {
 			globalRateLimitNoRateLimitsDefined(t, rh, c, tlsDisabled)
 		},
-		"VirtualHostRateLimitDefined": func(t *testing.T, rh cache.ResourceEventHandler, c *Contour) {
+		"VirtualHostRateLimitDefined": func(t *testing.T, rh cache.ResourceEventHandler, c *Sesame) {
 			globalRateLimitVhostRateLimitDefined(t, rh, c, tlsDisabled)
 		},
-		"RouteRateLimitDefined": func(t *testing.T, rh cache.ResourceEventHandler, c *Contour) {
+		"RouteRateLimitDefined": func(t *testing.T, rh cache.ResourceEventHandler, c *Sesame) {
 			globalRateLimitRouteRateLimitDefined(t, rh, c, tlsDisabled)
 		},
-		"VirtualHostAndRouteRateLimitsDefined": func(t *testing.T, rh cache.ResourceEventHandler, c *Contour) {
+		"VirtualHostAndRouteRateLimitsDefined": func(t *testing.T, rh cache.ResourceEventHandler, c *Sesame) {
 			globalRateLimitVhostAndRouteRateLimitDefined(t, rh, c, tlsDisabled)
 		},
 
 		// test cases for secure/TLS vhosts
-		"TLSNoRateLimitsDefined": func(t *testing.T, rh cache.ResourceEventHandler, c *Contour) {
+		"TLSNoRateLimitsDefined": func(t *testing.T, rh cache.ResourceEventHandler, c *Sesame) {
 			globalRateLimitNoRateLimitsDefined(t, rh, c, tlsEnabled)
 		},
-		"TLSVirtualHostRateLimitDefined": func(t *testing.T, rh cache.ResourceEventHandler, c *Contour) {
+		"TLSVirtualHostRateLimitDefined": func(t *testing.T, rh cache.ResourceEventHandler, c *Sesame) {
 			globalRateLimitVhostRateLimitDefined(t, rh, c, tlsEnabled)
 		},
-		"TLSRouteRateLimitDefined": func(t *testing.T, rh cache.ResourceEventHandler, c *Contour) {
+		"TLSRouteRateLimitDefined": func(t *testing.T, rh cache.ResourceEventHandler, c *Sesame) {
 			globalRateLimitRouteRateLimitDefined(t, rh, c, tlsEnabled)
 		},
-		"TLSVirtualHostAndRouteRateLimitsDefined": func(t *testing.T, rh cache.ResourceEventHandler, c *Contour) {
+		"TLSVirtualHostAndRouteRateLimitsDefined": func(t *testing.T, rh cache.ResourceEventHandler, c *Sesame) {
 			globalRateLimitVhostAndRouteRateLimitDefined(t, rh, c, tlsEnabled)
 		},
 
 		// test cases for secure/TLS vhosts with fallback cert enabled
-		"FallbackNoRateLimitsDefined": func(t *testing.T, rh cache.ResourceEventHandler, c *Contour) {
+		"FallbackNoRateLimitsDefined": func(t *testing.T, rh cache.ResourceEventHandler, c *Sesame) {
 			globalRateLimitNoRateLimitsDefined(t, rh, c, fallbackEnabled)
 		},
-		"FallbackVirtualHostRateLimitDefined": func(t *testing.T, rh cache.ResourceEventHandler, c *Contour) {
+		"FallbackVirtualHostRateLimitDefined": func(t *testing.T, rh cache.ResourceEventHandler, c *Sesame) {
 			globalRateLimitVhostRateLimitDefined(t, rh, c, fallbackEnabled)
 		},
-		"FallbackRouteRateLimitDefined": func(t *testing.T, rh cache.ResourceEventHandler, c *Contour) {
+		"FallbackRouteRateLimitDefined": func(t *testing.T, rh cache.ResourceEventHandler, c *Sesame) {
 			globalRateLimitRouteRateLimitDefined(t, rh, c, fallbackEnabled)
 		},
-		"FallbackVirtualHostAndRouteRateLimitsDefined": func(t *testing.T, rh cache.ResourceEventHandler, c *Contour) {
+		"FallbackVirtualHostAndRouteRateLimitsDefined": func(t *testing.T, rh cache.ResourceEventHandler, c *Sesame) {
 			globalRateLimitVhostAndRouteRateLimitDefined(t, rh, c, fallbackEnabled)
 		},
 

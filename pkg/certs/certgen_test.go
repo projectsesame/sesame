@@ -75,10 +75,10 @@ func TestGenerateCerts(t *testing.T) {
 
 	run(t, "custom service names", testcase{
 		config: &Configuration{
-			SesameServiceName: "customcontour",
+			SesameServiceName: "customSesame",
 			EnvoyServiceName:  "customenvoy",
 		},
-		wantSesameDNSName: "customcontour",
+		wantSesameDNSName: "customSesame",
 		wantEnvoyDNSName:  "customenvoy",
 		wantError:         nil,
 	})
@@ -122,7 +122,7 @@ func TestGeneratedCertsValid(t *testing.T) {
 	cacert, cakey, err := newCA("sesame", expiry)
 	require.NoErrorf(t, err, "Failed to generate CA cert")
 
-	contourcert, _, err := newCert(cacert, cakey, expiry, "sesame", "projectsesame", "cluster.local")
+	Sesamecert, _, err := newCert(cacert, cakey, expiry, "sesame", "projectsesame", "cluster.local")
 	require.NoErrorf(t, err, "Failed to generate Sesame cert")
 
 	roots := x509.NewCertPool()
@@ -137,7 +137,7 @@ func TestGeneratedCertsValid(t *testing.T) {
 		dnsname string
 	}{
 		"sesame cert": {
-			cert:    contourcert,
+			cert:    Sesamecert,
 			dnsname: "sesame",
 		},
 		"envoy cert": {

@@ -3,31 +3,31 @@
 Status: Accepted
 
 ## Abstract
-This document hopes to describe the API changes needed to support header hash policy based load balancing in Contour.
-The proposed design should be flexible and extensible enough to enable adding additional hash policy configuration in Contour's load balancing API.
+This document hopes to describe the API changes needed to support header hash policy based load balancing in Sesame.
+The proposed design should be flexible and extensible enough to enable adding additional hash policy configuration in Sesame's load balancing API.
 
 ## Background
-Contour currently supports configuring different [load balancing policies](https://projectcontour.io/docs/v1.11.0/config/api/#projectcontour.io/v1.LoadBalancerPolicy) for balancing traffic between the various members of a cluster.
+Sesame currently supports configuring different [load balancing policies](https://projectsesame.io/docs/v1.11.0/config/api/#projectsesame.io/v1.LoadBalancerPolicy) for balancing traffic between the various members of a cluster.
 Load balancing requests can be used to distribute requests evenly across instances of a service, segment certain types of requests to be processed by a subset of service instances, or even target specific instances to handle a sequence of client requests in a stateful application.
-In Contour, traffic to be load balanced may be targeted at an upstream service as configured by a [`Route`](https://projectcontour.io/docs/v1.11.0/config/api/#projectcontour.io/v1.Route) or [`TCPRoute`](https://projectcontour.io/docs/v1.11.0/config/api/#projectcontour.io/v1.TCPProxy) on an `HTTPProxy` or a gRPC [`ExtensionService`](https://projectcontour.io/docs/v1.11.0/config/api/#projectcontour.io/v1alpha1.ExtensionServiceSpec) cluster used for advanced Envoy configuration.
-This design will be primarily focused on the additional load balancing capabilities Contour can provide using request property hashing, specifically targeting improvements for load balancing client HTTP requests to backend services rather than improving the load balancing experience to an `ExtensionService` or `TCPRoute`.
+In Sesame, traffic to be load balanced may be targeted at an upstream service as configured by a [`Route`](https://projectsesame.io/docs/v1.11.0/config/api/#projectsesame.io/v1.Route) or [`TCPRoute`](https://projectsesame.io/docs/v1.11.0/config/api/#projectsesame.io/v1.TCPProxy) on an `HTTPProxy` or a gRPC [`ExtensionService`](https://projectsesame.io/docs/v1.11.0/config/api/#projectsesame.io/v1alpha1.ExtensionServiceSpec) cluster used for advanced Envoy configuration.
+This design will be primarily focused on the additional load balancing capabilities Sesame can provide using request property hashing, specifically targeting improvements for load balancing client HTTP requests to backend services rather than improving the load balancing experience to an `ExtensionService` or `TCPRoute`.
 
-Contour takes advantage of the load balancing features Envoy provides to offer a few different out of the box load balancing strategies that can be chosen from.
+Sesame takes advantage of the load balancing features Envoy provides to offer a few different out of the box load balancing strategies that can be chosen from.
 The [`Random` load balancing strategy](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/load_balancing/load_balancers#random) configures Envoy to select a random available host.
 [`RoundRobin` load balancing](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/load_balancing/load_balancers#weighted-round-robin) ensures upstream hosts are selected in round-robin order, with endpoint weight taken into account.
 The [`WeightedLeastRequest` option](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/load_balancing/load_balancers#weighted-least-request) uses different algorithms to route requests to upstream hosts based on the relative weights and the number of active requests to that instance.
 Envoy also provides a [ring hash](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/load_balancing/load_balancers#ring-hash) load balancing policy which hashes some property of a request in order to select an upstream host.
 Envoy produces a consistent hash based on an [attribute of a request](https://www.envoyproxy.io/docs/envoy/v1.17.0/api-v3/config/route/v3/route_components.proto#config-route-v3-routeaction-hashpolicy) to allow clients to effectively select a consistent backend instance requests will be sent to.
-Contour currently only exposes the [cookie value](https://www.envoyproxy.io/docs/envoy/v1.17.0/api-v3/config/route/v3/route_components.proto#config-route-v3-routeaction-hashpolicy-cookie) based flavor as the `Cookie` load balancing strategy in order to give an out of the box experience that provides the ability to implement [session affinity](session-affinity.md) to a particular upstream host.
+Sesame currently only exposes the [cookie value](https://www.envoyproxy.io/docs/envoy/v1.17.0/api-v3/config/route/v3/route_components.proto#config-route-v3-routeaction-hashpolicy-cookie) based flavor as the `Cookie` load balancing strategy in order to give an out of the box experience that provides the ability to implement [session affinity](session-affinity.md) to a particular upstream host.
 
-In order to cater to more advanced load balancing use cases or offer more granular control, Contour can provide additional mechanisms for configuring Envoy's load balancing hash policy.
+In order to cater to more advanced load balancing use cases or offer more granular control, Sesame can provide additional mechanisms for configuring Envoy's load balancing hash policy.
 Specifically, [hashing HTTP request headers](https://github.com/projectsesame/sesame/issues/3099) can help to route client requests to a service instance, a feature that may be useful for stateful applications being transformed to run in Kubernetes or monolithic applications in the process of being split into microservices.
 A client may send a consistent identifier in a header value in order to specify the same upstream service instance should handle all requests with that specific value.
 In addition, [supporting multiple hash policies](https://github.com/projectsesame/sesame/issues/3044) can give even more flexibility.
 If a particular load balancing attribute is not available on a request, users can specify fallback policies on additional attributes to still segment traffic between backends, rather than having Envoy continue on to route requests using the round-robin or random mechanisms.
 
 ## Goals
-- Contour should offer the ability to load balance requests based on HTTP user specified request headers
+- Sesame should offer the ability to load balance requests based on HTTP user specified request headers
 - The design should offer the ability to configure multiple hash policies (of which specific new types may be implemented separately from this design)
 
 ## Non Goals
@@ -43,7 +43,7 @@ Initially, we will only support the option to configure hashing of HTTP request 
 
 ### Changes to `LoadBalancerPolicy`
 The `Strategy` field of the `LoadBalancerPolicy` object will support a new value, `RequestHash` which will denote that request attributes will be hashed by Envoy to make a decision about an upstream cluster instance to route a request to.
-If the `RequestHash` strategy is chosen, Contour will inspect the new `RequestHashPolicies` list field of the `LoadBalancerPolicy` object to build the Envoy hash policy configuration.
+If the `RequestHash` strategy is chosen, Sesame will inspect the new `RequestHashPolicies` list field of the `LoadBalancerPolicy` object to build the Envoy hash policy configuration.
 
 ```
 type LoadBalancerPolicy struct {
@@ -95,13 +95,13 @@ In addition, it will allow us to use `kubebuilder` annotations for validation an
 An example of how this feature would be used to hash on a specific header value follows below:
 
 ```
-apiVersion: projectcontour.io/v1
+apiVersion: projectsesame.io/v1
 kind: HTTPProxy
 metadata:
   name: example
 spec:
   virtualhost:
-    fqdn: example.projectcontour.io
+    fqdn: example.projectsesame.io
   routes:
   - services:
     - name: example-app
@@ -121,7 +121,7 @@ Consistent values in this header would lead to Envoy routing to the same backend
 If the header is present, Envoy will *not* move on to attempting to hash the `User-Agent` header value.
 
 ### Handling Invalid Strategy Choice
-As per the documentation of the [`LoadBalancerPolicy` field on the `ExtensionService` object](https://projectcontour.io/docs/v1.11.0/config/api/#projectcontour.io/v1alpha1.ExtensionService), the `Cookie` load balancing strategy is invalid for use with the `ExtensionService`.
+As per the documentation of the [`LoadBalancerPolicy` field on the `ExtensionService` object](https://projectsesame.io/docs/v1.11.0/config/api/#projectsesame.io/v1alpha1.ExtensionService), the `Cookie` load balancing strategy is invalid for use with the `ExtensionService`.
 Currently, that restriction does not seem to be enforced (or on the `TCPRoute` object either, for which the `Cookie` strategy is not compatible).
 This design proposes that we start to enforce these strategy restrictions and also restrict the new `RequestHash` strategy to only valid on `Route` objects.
 If specified on `ExtensionService` or `TCPRoute` objects, it will be overridden to the default `RoundRobin` strategy and a warning condition will be added to the status of the object.
@@ -142,13 +142,13 @@ type RequestHashPolicy struct {
 
 `RequestHashPolicy` contains a field `RequestAttribute` specifying which type of request attribute it is targeting.
 If `RequestAttribute` is empty or an unknown value, this hash policy entry will be ignored and a warning set on the containing resource.
-Initially, only `Header` will be supported as a value for `RequestAttribute` though in the future, Contour may support the `Cookie` attribute, or others that Envoy makes configurable.
+Initially, only `Header` will be supported as a value for `RequestAttribute` though in the future, Sesame may support the `Cookie` attribute, or others that Envoy makes configurable.
 `HashOptions` is a generic `map[string]string` field that may contain options specific to the requested attribute.
 Depending on the `RequestAttribute`, some fields of this generic map may be required, an if missing, the hash policy excluded.
 For example, to implement header hashing, the `headerName` field would be required.
 
 This option was not chosen as it would require all future configuration fields to fit into a `string` value, making the possibility for more complex data types more difficult to use and validate.
-Strongly typed structs also match better with other configuration patterns we have used in Contour.
+Strongly typed structs also match better with other configuration patterns we have used in Sesame.
 
 ### Using `map[string]interface{}` for `HashOptions` Type
 This approach does have the benefit of not restricting hash options to string values if we choose to support a wide range of options in the future.

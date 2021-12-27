@@ -5,11 +5,11 @@ HTTPProxy follows a similar pattern to Ingress for configuring TLS credentials.
 You can secure a HTTPProxy by specifying a Secret that contains TLS private key and certificate information.
 If multiple HTTPProxies utilize the same Secret, the certificate must include the necessary Subject Authority Name (SAN) for each fqdn.
 
-Contour (via Envoy) requires that clients send the Server Name Indication (SNI) TLS extension so that requests can be routed to the correct virtual host.
+Sesame (via Envoy) requires that clients send the Server Name Indication (SNI) TLS extension so that requests can be routed to the correct virtual host.
 Virtual hosts are strongly bound to SNI names.
 This means that the Host header in HTTP requests must match the SNI name that was sent at the start of the TLS session.
 
-Contour also follows a "secure first" approach.
+Sesame also follows a "secure first" approach.
 When TLS is enabled for a virtual host, any request to the insecure port is redirected to the secure interface with a 301 redirect.
 Specific routes can be configured to override this behavior and handle insecure requests by enabling the `spec.routes.permitInsecure` parameter on a Route.
 
@@ -62,19 +62,19 @@ The TLS **Minimum Protocol Version** a virtual host should negotiate can be spec
 
 ## Fallback Certificate
 
-Contour provides virtual host based routing, so that any TLS request is routed to the appropriate service based on both the server name requested by the TLS client and the HOST header in the HTTP request.
+Sesame provides virtual host based routing, so that any TLS request is routed to the appropriate service based on both the server name requested by the TLS client and the HOST header in the HTTP request.
 
 Since the HOST Header is encrypted during TLS handshake, it can’t be used for virtual host based routing unless the client sends HTTPS requests specifying hostname using the TLS server name, or the request is first decrypted using a default TLS certificate.
 
 Some legacy TLS clients do not send the server name, so Envoy does not know how to select the right certificate. A fallback certificate is needed for these clients.
 
 _**Note:**
-The minimum TLS protocol version for any fallback request is defined by the `minimum TLS protocol version` set in the Contour configuration file.
+The minimum TLS protocol version for any fallback request is defined by the `minimum TLS protocol version` set in the Sesame configuration file.
 Enabling the fallback certificate is not compatible with TLS client authentication._
 
 ### Fallback Certificate Configuration
 
-First define the `namespace/name` in the [Contour configuration file][1] of a Kubernetes secret which will be used as the fallback certificate.
+First define the `namespace/name` in the [Sesame configuration file][1] of a Kubernetes secret which will be used as the fallback certificate.
 Any HTTPProxy which enables fallback certificate delegation must have the fallback certificate delegated to the namespace in which the HTTPProxy object resides.
 
 To do that, configure `TLSCertificateDelegation` to delegate the fallback certificate to specific or all namespaces (e.g. `*`) which should be allowed to enable the fallback certificate.

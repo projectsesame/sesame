@@ -1,9 +1,9 @@
 toc:
   - title: Introduction
     subfolderitems:
-      - page: Contour Architecture
+      - page: Sesame Architecture
         url: /architecture
-      - page: Contour Philosophy
+      - page: Sesame Philosophy
         link: /resources/philosophy
   - title: Configuration
     subfolderitems:
@@ -41,11 +41,11 @@ toc:
     subfolderitems:
       - page: Deployment Options
         url: /deploy-options
-      - page: Contour Configuration
+      - page: Sesame Configuration
         url: /configuration
-      - page: Upgrading Contour
+      - page: Upgrading Sesame
         link: /resources/upgrading
-      - page: Enabling TLS between Envoy and Contour
+      - page: Enabling TLS between Envoy and Sesame
         url: /grpc-tls-howto
       - page: Redeploy Envoy
         url: /redeploy-envoy
@@ -71,17 +71,17 @@ toc:
     subfolderitems:
       - page: Envoy Administration Access
         url: /troubleshooting/envoy-admin-interface
-      - page: Contour Debug Logging
+      - page: Sesame Debug Logging
         url: /troubleshooting/sesame-debug-log
       - page: Envoy Debug Logging
         url: /troubleshooting/envoy-debug-log
-      - page: Visualize the Contour Graph
+      - page: Visualize the Sesame Graph
         url: /troubleshooting/sesame-graph
-      - page: Show Contour xDS Resources
+      - page: Show Sesame xDS Resources
         url: /troubleshooting/sesame-xds-resources
-      - page: Profiling Contour
+      - page: Profiling Sesame
         url: /troubleshooting/profiling-sesame
-      - page: Contour Operator
+      - page: Sesame Operator
         url: /troubleshooting/operator
   - title: Resources
     subfolderitems:
@@ -91,7 +91,7 @@ toc:
         link: /resources/envoy
       - page: Kubernetes Support Matrix
         link: /resources/kubernetes
-      - page: Contour Deprecation Policy
+      - page: Sesame Deprecation Policy
         link: /resources/deprecation-policy
       - page: Release Process
         link: /resources/release-process

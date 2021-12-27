@@ -43,7 +43,7 @@ spec:
       volumes:
         - name: tls
           secret:
-            secretName: contourcert
+            secretName: Sesamecert
 ---
 apiVersion: v1
 kind: Service

@@ -19,15 +19,15 @@ import (
 	envoy_listener_v3 "github.com/envoyproxy/go-control-plane/envoy/config/listener/v3"
 	envoy_tls_v3 "github.com/envoyproxy/go-control-plane/envoy/extensions/transport_sockets/tls/v3"
 	envoy_discovery_v3 "github.com/envoyproxy/go-control-plane/envoy/service/discovery/v3"
-	contour_api_v1 "github.com/projectcontour/sesame/apis/projectsesame/v1"
-	envoy_v3 "github.com/projectcontour/sesame/internal/envoy/v3"
-	xdscache_v3 "github.com/projectcontour/sesame/internal/xdscache/v3"
+	Sesame_api_v1 "github.com/projectsesame/sesame/apis/projectsesame/v1"
 	"github.com/projectsesame/sesame/apis/projectsesame/v1alpha1"
 	"github.com/projectsesame/sesame/internal/dag"
+	envoy_v3 "github.com/projectsesame/sesame/internal/envoy/v3"
 	"github.com/projectsesame/sesame/internal/featuretests"
 	"github.com/projectsesame/sesame/internal/fixture"
 	"github.com/projectsesame/sesame/internal/timeout"
 	"github.com/projectsesame/sesame/internal/xdscache"
+	xdscache_v3 "github.com/projectsesame/sesame/internal/xdscache/v3"
 	v1 "k8s.io/api/core/v1"
 	networking_v1 "k8s.io/api/networking/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -306,24 +306,24 @@ func TestHTTPProxyTLSListener(t *testing.T) {
 		WithPorts(v1.ServicePort{Name: "http", Port: 80})
 
 	// p1 is a tls httpproxy
-	p1 := &contour_api_v1.HTTPProxy{
+	p1 := &Sesame_api_v1.HTTPProxy{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "simple",
 			Namespace: secret1.Namespace,
 		},
-		Spec: contour_api_v1.HTTPProxySpec{
-			VirtualHost: &contour_api_v1.VirtualHost{
+		Spec: Sesame_api_v1.HTTPProxySpec{
+			VirtualHost: &Sesame_api_v1.VirtualHost{
 				Fqdn: "kuard.example.com",
-				TLS: &contour_api_v1.TLS{
+				TLS: &Sesame_api_v1.TLS{
 					SecretName:             secret1.Name,
 					MinimumProtocolVersion: "1.2",
 				},
 			},
-			Routes: []contour_api_v1.Route{{
-				Conditions: []contour_api_v1.MatchCondition{{
+			Routes: []Sesame_api_v1.Route{{
+				Conditions: []Sesame_api_v1.MatchCondition{{
 					Prefix: "/",
 				}},
-				Services: []contour_api_v1.Service{{
+				Services: []Sesame_api_v1.Service{{
 					Name: svc1.Name,
 					Port: int(svc1.Spec.Ports[0].Port),
 				}},
@@ -332,24 +332,24 @@ func TestHTTPProxyTLSListener(t *testing.T) {
 	}
 
 	// p2 is a tls httpproxy
-	p2 := &contour_api_v1.HTTPProxy{
+	p2 := &Sesame_api_v1.HTTPProxy{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "simple",
 			Namespace: secret1.Namespace,
 		},
-		Spec: contour_api_v1.HTTPProxySpec{
-			VirtualHost: &contour_api_v1.VirtualHost{
+		Spec: Sesame_api_v1.HTTPProxySpec{
+			VirtualHost: &Sesame_api_v1.VirtualHost{
 				Fqdn: "kuard.example.com",
-				TLS: &contour_api_v1.TLS{
+				TLS: &Sesame_api_v1.TLS{
 					SecretName:             secret1.Name,
 					MinimumProtocolVersion: "1.3",
 				},
 			},
-			Routes: []contour_api_v1.Route{{
-				Conditions: []contour_api_v1.MatchCondition{{
+			Routes: []Sesame_api_v1.Route{{
+				Conditions: []Sesame_api_v1.MatchCondition{{
 					Prefix: "/",
 				}},
-				Services: []contour_api_v1.Service{{
+				Services: []Sesame_api_v1.Service{{
 					Name: svc1.Name,
 					Port: int(svc1.Spec.Ports[0].Port),
 				}},
@@ -463,24 +463,24 @@ func TestTLSListenerCipherSuites(t *testing.T) {
 		WithPorts(v1.ServicePort{Name: "http", Port: 80})
 
 	// p1 is a tls httpproxy
-	p1 := &contour_api_v1.HTTPProxy{
+	p1 := &Sesame_api_v1.HTTPProxy{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "simple",
 			Namespace: secret1.Namespace,
 		},
-		Spec: contour_api_v1.HTTPProxySpec{
-			VirtualHost: &contour_api_v1.VirtualHost{
+		Spec: Sesame_api_v1.HTTPProxySpec{
+			VirtualHost: &Sesame_api_v1.VirtualHost{
 				Fqdn: "kuard.example.com",
-				TLS: &contour_api_v1.TLS{
+				TLS: &Sesame_api_v1.TLS{
 					SecretName:             secret1.Name,
 					MinimumProtocolVersion: "1.2",
 				},
 			},
-			Routes: []contour_api_v1.Route{{
-				Conditions: []contour_api_v1.MatchCondition{{
+			Routes: []Sesame_api_v1.Route{{
+				Conditions: []Sesame_api_v1.MatchCondition{{
 					Prefix: "/",
 				}},
-				Services: []contour_api_v1.Service{{
+				Services: []Sesame_api_v1.Service{{
 					Name: svc1.Name,
 					Port: int(svc1.Spec.Ports[0].Port),
 				}},
@@ -980,23 +980,23 @@ func TestHTTPProxyHTTPS(t *testing.T) {
 	}
 
 	// p1 is a httpproxy that has TLS
-	p1 := &contour_api_v1.HTTPProxy{
+	p1 := &Sesame_api_v1.HTTPProxy{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "simple",
 			Namespace: "default",
 		},
-		Spec: contour_api_v1.HTTPProxySpec{
-			VirtualHost: &contour_api_v1.VirtualHost{
+		Spec: Sesame_api_v1.HTTPProxySpec{
+			VirtualHost: &Sesame_api_v1.VirtualHost{
 				Fqdn: "example.com",
-				TLS: &contour_api_v1.TLS{
+				TLS: &Sesame_api_v1.TLS{
 					SecretName: "secret",
 				},
 			},
-			Routes: []contour_api_v1.Route{{
-				Conditions: []contour_api_v1.MatchCondition{{
+			Routes: []Sesame_api_v1.Route{{
+				Conditions: []Sesame_api_v1.MatchCondition{{
 					Prefix: "/",
 				}},
-				Services: []contour_api_v1.Service{{
+				Services: []Sesame_api_v1.Service{{
 					Name: "kuard",
 					Port: 8080,
 				}},
@@ -1063,24 +1063,24 @@ func TestHTTPProxyMinimumTLSVersion(t *testing.T) {
 		WithPorts(v1.ServicePort{Name: "http", Port: 80}))
 
 	// p1 is a tls httpproxy
-	p1 := &contour_api_v1.HTTPProxy{
+	p1 := &Sesame_api_v1.HTTPProxy{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "simple",
 			Namespace: "default",
 		},
-		Spec: contour_api_v1.HTTPProxySpec{
-			VirtualHost: &contour_api_v1.VirtualHost{
+		Spec: Sesame_api_v1.HTTPProxySpec{
+			VirtualHost: &Sesame_api_v1.VirtualHost{
 				Fqdn: "kuard.example.com",
-				TLS: &contour_api_v1.TLS{
+				TLS: &Sesame_api_v1.TLS{
 					SecretName:             "secret",
 					MinimumProtocolVersion: "1.1",
 				},
 			},
-			Routes: []contour_api_v1.Route{{
-				Conditions: []contour_api_v1.MatchCondition{{
+			Routes: []Sesame_api_v1.Route{{
+				Conditions: []Sesame_api_v1.MatchCondition{{
 					Prefix: "/",
 				}},
-				Services: []contour_api_v1.Service{{
+				Services: []Sesame_api_v1.Service{{
 					Name: "backend",
 					Port: 80,
 				}},
@@ -1121,25 +1121,25 @@ func TestHTTPProxyMinimumTLSVersion(t *testing.T) {
 	})
 
 	// p2 is a tls httpproxy
-	p2 := &contour_api_v1.HTTPProxy{
+	p2 := &Sesame_api_v1.HTTPProxy{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "simple",
 			Namespace: "default",
 		},
-		Spec: contour_api_v1.HTTPProxySpec{
-			VirtualHost: &contour_api_v1.VirtualHost{
+		Spec: Sesame_api_v1.HTTPProxySpec{
+			VirtualHost: &Sesame_api_v1.VirtualHost{
 				Fqdn: "kuard.example.com",
-				TLS: &contour_api_v1.TLS{
+				TLS: &Sesame_api_v1.TLS{
 					SecretName:             "secret",
 					MinimumProtocolVersion: "1.3",
 				},
 			},
-			Routes: []contour_api_v1.Route{{
-				Conditions: []contour_api_v1.MatchCondition{{
+			Routes: []Sesame_api_v1.Route{{
+				Conditions: []Sesame_api_v1.MatchCondition{{
 					Prefix: "/",
 				}},
 
-				Services: []contour_api_v1.Service{{
+				Services: []Sesame_api_v1.Service{{
 					Name: "backend",
 					Port: 80,
 				}},
@@ -1187,20 +1187,20 @@ func TestLDSHTTPProxyRootCannotDelegateToAnotherRoot(t *testing.T) {
 	rh.OnAdd(fixture.NewService("marketing/green").
 		WithPorts(v1.ServicePort{Name: "http", Port: 80}))
 
-	child := &contour_api_v1.HTTPProxy{
+	child := &Sesame_api_v1.HTTPProxy{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "blog",
 			Namespace: "marketing",
 		},
-		Spec: contour_api_v1.HTTPProxySpec{
-			VirtualHost: &contour_api_v1.VirtualHost{
+		Spec: Sesame_api_v1.HTTPProxySpec{
+			VirtualHost: &Sesame_api_v1.VirtualHost{
 				Fqdn: "www.containersteve.com",
 			},
-			Routes: []contour_api_v1.Route{{
-				Conditions: []contour_api_v1.MatchCondition{{
+			Routes: []Sesame_api_v1.Route{{
+				Conditions: []Sesame_api_v1.MatchCondition{{
 					Prefix: "/",
 				}},
-				Services: []contour_api_v1.Service{{
+				Services: []Sesame_api_v1.Service{{
 					Name: "green",
 					Port: 80,
 				}},
@@ -1209,17 +1209,17 @@ func TestLDSHTTPProxyRootCannotDelegateToAnotherRoot(t *testing.T) {
 	}
 	rh.OnAdd(child)
 
-	root := &contour_api_v1.HTTPProxy{
+	root := &Sesame_api_v1.HTTPProxy{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "root-blog",
 			Namespace: "default",
 		},
-		Spec: contour_api_v1.HTTPProxySpec{
-			VirtualHost: &contour_api_v1.VirtualHost{
+		Spec: Sesame_api_v1.HTTPProxySpec{
+			VirtualHost: &Sesame_api_v1.VirtualHost{
 				Fqdn: "blog.containersteve.com",
 			},
-			Includes: []contour_api_v1.Include{{
-				Conditions: []contour_api_v1.MatchCondition{{
+			Includes: []Sesame_api_v1.Include{{
+				Conditions: []Sesame_api_v1.MatchCondition{{
 					Prefix: "/",
 				}},
 				Name:      child.Name,
@@ -1251,20 +1251,20 @@ func TestHTTPProxyXffNumTrustedHops(t *testing.T) {
 		WithPorts(v1.ServicePort{Name: "http", Port: 80}))
 
 	// p1 is a httpproxy
-	p1 := &contour_api_v1.HTTPProxy{
+	p1 := &Sesame_api_v1.HTTPProxy{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "simple",
 			Namespace: "default",
 		},
-		Spec: contour_api_v1.HTTPProxySpec{
-			VirtualHost: &contour_api_v1.VirtualHost{
+		Spec: Sesame_api_v1.HTTPProxySpec{
+			VirtualHost: &Sesame_api_v1.VirtualHost{
 				Fqdn: "kuard.example.com",
 			},
-			Routes: []contour_api_v1.Route{{
-				Conditions: []contour_api_v1.MatchCondition{{
+			Routes: []Sesame_api_v1.Route{{
+				Conditions: []Sesame_api_v1.MatchCondition{{
 					Prefix: "/",
 				}},
-				Services: []contour_api_v1.Service{{
+				Services: []Sesame_api_v1.Service{{
 					Name: "backend",
 					Port: 80,
 				}},

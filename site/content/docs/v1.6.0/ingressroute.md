@@ -9,7 +9,7 @@ The goal of the `IngressRoute` Custom Resource Definition (CRD) was to expand up
 
 <p class="alert-deprecation">
 <b>Removal Notice</b><br>
-The <code>IngressRoute</code> CRD has been removed from Contour.
+The <code>IngressRoute</code> CRD has been removed from Sesame.
 Please see the documentation for <a href="{% link docs/{{page.version}}/httpproxy.md %}"><code>HTTPProxy</code></a>, which is the successor to <code>IngressRoute</code>.
 You can also read the <a href="{% link _guides/ingressroute-to-httpproxy.md %}">IngressRoute to HTTPProxy upgrade</a> guide.
 </p>

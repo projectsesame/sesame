@@ -3,7 +3,7 @@ title: External Authorization Support
 layout: page
 ---
 
-Starting in version 1.9, Contour supports routing client requests to an
+Starting in version 1.9, Sesame supports routing client requests to an
 external authorization server. This feature can be used to centralize
 client authorization so that applications don't have to implement their
 own authorization mechanisms.
@@ -11,21 +11,21 @@ own authorization mechanisms.
 ## Authorization Architecture
 
 An external authorization server is a server that implements the Envoy
-external authorization [GRPC protocol][3]. Contour supports any server
+external authorization [GRPC protocol][3]. Sesame supports any server
 that implements this protocol.
 
-You can bind an authorization server to Contour by creating a
+You can bind an authorization server to Sesame by creating a
 [`ExtensionService`][4] resource.
-This resource tells Contour the service exists, and that it should
+This resource tells Sesame the service exists, and that it should
 program Envoy with an upstream cluster directing traffic to it.
 Note that the `ExtensionService` resource just binds the server; at this
-point Contour doesn't assume that the server is an authorization server.
+point Sesame doesn't assume that the server is an authorization server.
 
 Once you have created `ExtensionService` resource, you can bind it to a
 particular application by referencing it in a [`HTTPProxy`][5] resource.
 In the `virtualhost` field, a new `authorization` field specifies the name
 of an `ExtensionService` to bind for the virtual host.
-When you specify a resource name here, Contour will program Envoy to
+When you specify a resource name here, Sesame will program Envoy to
 send authorization checks to the extension service cluster before routing
 the request to the upstream application.
 
@@ -46,10 +46,10 @@ be a separate application from the authorization provider.
 </p>
 
 A HTTP Client generates an HTTP request and sends it to
-an Envoy instance that Contour has programmed with an external
+an Envoy instance that Sesame has programmed with an external
 authorization configuration.
 Envoy holds the HTTP request and sends an authorization check request
-to the Authorization server that Contour has bound to the virtual host.
+to the Authorization server that Sesame has bound to the virtual host.
 The Authorization server may be able to verify the request locally, but in
 many cases it will need to make additional requests to an Authorization
 Provider server to verify or obtain an authorization token.
@@ -63,14 +63,14 @@ forwards it to the application.
 If the authorization was not successful, the Proxy would have immediately
 responded to the client with an HTTP error.
 
-## Using the Contour Authorization Server
+## Using the Sesame Authorization Server
 
-The Contour project has built a simple authorization server named
-[`contour-authserver`][1]. `contour-authserver` supports an authorization
+The Sesame project has built a simple authorization server named
+[`Sesame-authserver`][1]. `Sesame-authserver` supports an authorization
 testing server, and an HTTP basic authorization server that accesses
 credentials stored in [htpasswd][2] format.
 
-To get started, ensure that Contour is deployed and that you have
+To get started, ensure that Sesame is deployed and that you have
 [cert-manager][6] installed in your cluster so that you can easily issue
 self-signed TLS certificates.
 
@@ -91,7 +91,7 @@ clusterissuer.cert-manager.io/selfsigned created
 
 ### Deploying the Authorization Server
 
-The first step is to deploy `contour-authserver` to the `projectcontour-auth`
+The first step is to deploy `Sesame-authserver` to the `projectsesame-auth`
 namespace.
 To do this, we will use [`kustomize`][8] to build a set of YAML object that we can
 deploy using kubectl.
@@ -126,12 +126,12 @@ images:
 
 Note that the kustomization patches the `Certificate` resource to use the
 "selfsigned" `ClusterIssuer` that we created earlier.
-This is required because the `contour-authserver` deployment includes a
+This is required because the `Sesame-authserver` deployment includes a
 request for a self-signed TLS server certificate.
 In a real deployment, this certificate should be requested from a real trusted
 certificate issuer.
 
-Now create the `projectcontour-auth` namespace, build the deployment YAML,
+Now create the `projectsesame-auth` namespace, build the deployment YAML,
 and apply to your cluster:
 
 ```bash
@@ -146,13 +146,13 @@ deployment.apps/htpasswd created
 certificate.cert-manager.io/htpasswd created
 ```
 
-At this point, `contour-authserver` is deployed and is exposed to
-the cluster as the Service `projectcontour-auth/htpasswd`.
+At this point, `Sesame-authserver` is deployed and is exposed to
+the cluster as the Service `projectsesame-auth/htpasswd`.
 It has a self-signed TLS certificate and is accepting secure connections
 on port 9443.
 
-In the default configuration, `contour-authserver` will accept htpasswd data
-from secrets with the `projectcontour.io/auth-type: basic` annotation.
+In the default configuration, `Sesame-authserver` will accept htpasswd data
+from secrets with the `projectsesame.io/auth-type: basic` annotation.
 Most systems install the Apache [`htpasswd`][7] tool, which we can use
 to generate the password file:
 
@@ -168,7 +168,7 @@ Adding password for user user3
 
 Once we have some password data, we can populate a Kubernetes secret with it.
 Note that the password data must be in the `auth` key in the secret, and that
-the secret must be annotated with the `projectcontour.io/auth-type` key.
+the secret must be annotated with the `projectsesame.io/auth-type` key.
 
 ```bash
 $ kubectl create secret generic -n projectsesame-auth passwords --from-file=auth
@@ -179,7 +179,7 @@ secret/passwords annotated
 
 ### Creating an Extension Service
 
-Now that `contour-authserver` is deployed, the next step is to create a
+Now that `Sesame-authserver` is deployed, the next step is to create a
 `ExtensionService` resource.
 
 ```yaml
@@ -258,7 +258,7 @@ deployment.apps/ingress-conformance-echo created
 service/ingress-conformance-echo created
 ```
 
-Once the application is running, we can expose it to Contour with a `HTTPProxy`
+Once the application is running, we can expose it to Sesame with a `HTTPProxy`
 resource.
 
 ```yaml
@@ -303,8 +303,8 @@ echo   local.projectsesame.io   ingress-conformance-echo   valid    valid HTTPPr
 We can verify that the application is working by requesting any path:
 
 ```bash
-$ curl -k https://local.projectcontour.io/test/$((RANDOM))
-{"TestId":"","Path":"/test/12707","Host":"local.projectcontour.io","Method":"GET","Proto":"HTTP/1.1","Headers":{"Accept":["*/*"],"Content-Length":["0"],"User-Agent":["curl/7.64.1"],"X-Envoy-Expected-Rq-Timeout-Ms":["15000"],"X-Envoy-Internal":["true"],"X-Forwarded-For":["172.18.0.1"],"X-Forwarded-Proto":["https"],"X-Request-Id":["7b87d5d1-8ee8-40e3-81ac-7d74dfd4d50b"],"X-Request-Start":["t=1601596511.489"]}}
+$ curl -k https://local.projectsesame.io/test/$((RANDOM))
+{"TestId":"","Path":"/test/12707","Host":"local.projectsesame.io","Method":"GET","Proto":"HTTP/1.1","Headers":{"Accept":["*/*"],"Content-Length":["0"],"User-Agent":["curl/7.64.1"],"X-Envoy-Expected-Rq-Timeout-Ms":["15000"],"X-Envoy-Internal":["true"],"X-Forwarded-For":["172.18.0.1"],"X-Forwarded-Proto":["https"],"X-Request-Id":["7b87d5d1-8ee8-40e3-81ac-7d74dfd4d50b"],"X-Request-Start":["t=1601596511.489"]}}
 ```
 
 ### Using the Authorization Server
@@ -344,7 +344,7 @@ Now, when we make the same HTTP request, we find the response requests
 authorization:
 
 ```bash
-$ curl -k -I https://local.projectcontour.io/test/$((RANDOM))
+$ curl -k -I https://local.projectsesame.io/test/$((RANDOM))
 HTTP/2 401
 www-authenticate: Basic realm="default", charset="UTF-8"
 date: Fri, 02 Oct 2020 00:27:49 GMT
@@ -352,13 +352,13 @@ server: envoy
 ```
 
 Providing a user credential from the password file that we created
-earlier allows the request to succeed. Note that `contour-authserver`
+earlier allows the request to succeed. Note that `Sesame-authserver`
 has injected a number of headers (prefixed with `Auth-`) to let the
 application know how the request has been authorized.
 
 ```bash
-$ curl -k --user user1:password1 https://local.projectcontour.io/test/$((RANDOM))
-{"TestId":"","Path":"/test/27132","Host":"local.projectcontour.io","Method":"GET","Proto":"HTTP/1.1","Headers":{"Accept":["*/*"],"Auth-Handler":["htpasswd"],"Auth-Realm":["default"],"Auth-Username":["user1"],"Authorization":["Basic dXNlcjE6cGFzc3dvcmQx"],"Content-Length":["0"],"User-Agent":["curl/7.64.1"],"X-Envoy-Expected-Rq-Timeout-Ms":["15000"],"X-Envoy-Internal":["true"],"X-Forwarded-For":["172.18.0.1"],"X-Forwarded-Proto":["https"],"X-Request-Id":["2c0ae102-4cf6-400e-a38f-5f0b844364cc"],"X-Request-Start":["t=1601601826.102"]}}
+$ curl -k --user user1:password1 https://local.projectsesame.io/test/$((RANDOM))
+{"TestId":"","Path":"/test/27132","Host":"local.projectsesame.io","Method":"GET","Proto":"HTTP/1.1","Headers":{"Accept":["*/*"],"Auth-Handler":["htpasswd"],"Auth-Realm":["default"],"Auth-Username":["user1"],"Authorization":["Basic dXNlcjE6cGFzc3dvcmQx"],"Content-Length":["0"],"User-Agent":["curl/7.64.1"],"X-Envoy-Expected-Rq-Timeout-Ms":["15000"],"X-Envoy-Internal":["true"],"X-Forwarded-For":["172.18.0.1"],"X-Forwarded-Proto":["https"],"X-Request-Id":["2c0ae102-4cf6-400e-a38f-5f0b844364cc"],"X-Request-Start":["t=1601601826.102"]}}
 ```
 
 ## Caveats
@@ -373,8 +373,8 @@ authorization:
 [1]: https://github.com/projectsesame/sesame-authserver
 [2]: https://httpd.apache.org/docs/current/misc/password_encryptions.html
 [3]: https://www.envoyproxy.io/docs/envoy/latest/api-v3/service/auth/v3/external_auth.proto
-[4]: /docs/{{< param latest_version >}}/config/api/#projectcontour.io/v1alpha1.ExtensionService
-[5]: /docs/{{< param latest_version >}}/config/api/#projectcontour.io/v1.HTTPProxy
+[4]: /docs/{{< param latest_version >}}/config/api/#projectsesame.io/v1alpha1.ExtensionService
+[5]: /docs/{{< param latest_version >}}/config/api/#projectsesame.io/v1.HTTPProxy
 [6]: https://cert-manager.io/
 [7]: https://httpd.apache.org/docs/current/programs/htpasswd.html
 [8]: https://kubernetes-sigs.github.io/kustomize/

@@ -1,6 +1,6 @@
 #! /usr/bin/env bash
 
-# Copyright Project Contour Authors
+# Copyright Project Sesame Authors
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you may
 # not use this file except in compliance with the License.  You may obtain
@@ -15,7 +15,7 @@
 # under the License.
 
 # make-kind-cluster.sh: build a kind cluster and install a working copy
-# of Contour into it.
+# of Sesame into it.
 
 set -o pipefail
 set -o errexit

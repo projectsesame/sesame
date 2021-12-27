@@ -1,12 +1,12 @@
 # Envoy v2 gRPC API support
 
-Contour currently supports the Envoy v1 JSON discovery APIs.
+Sesame currently supports the Envoy v1 JSON discovery APIs.
 This document proposes a process to migrate to the upcoming v2 gRPC discovery APIs, and explains why it's worth doing.
 
 ## Goals
 
-- Contour will offer full support for the v2 gRPC Envoy APIs.
-- When deployed as an Ingress controller, each Envoy container will treat its Contour sidecar container as its [management server][0].
+- Sesame will offer full support for the v2 gRPC Envoy APIs.
+- When deployed as an Ingress controller, each Envoy container will treat its Sesame sidecar container as its [management server][0].
 
 ## Non-goals
 
@@ -16,15 +16,15 @@ This document proposes a process to migrate to the upcoming v2 gRPC discovery AP
 
 Envoy supports calls to APIs for configuration of routes, clusters, cluster members, health checks, and so on.
 Hereafter these APIs are collectively known by their colloquialism, xDS (for the amalgam of CDS, SDS, RDS, and so on).
-When deployed as an Ingress controller, Contour acts as a [management server][0] for Envoy, providing the xDS APIs over REST/JSON.
+When deployed as an Ingress controller, Sesame acts as a [management server][0] for Envoy, providing the xDS APIs over REST/JSON.
 These are known as the v1 APIs.
 
-The combination of Contour as the v1 API server and Envoy as the forward proxy works well today.
+The combination of Sesame as the v1 API server and Envoy as the forward proxy works well today.
 Open design concerns remain, however, related to the polling based nature of the v1 API.
-A poll from Envoy to Contour occurs at a fixed interval (plus some additional jitter) and is required for Envoy to learn changes to routes, services, and endpoints in Kubernetes.
+A poll from Envoy to Sesame occurs at a fixed interval (plus some additional jitter) and is required for Envoy to learn changes to routes, services, and endpoints in Kubernetes.
 The length of the polling interval directly affects the latency of service and endpoint changes in the Kubernetes API showing up in the Envoy configuration.
 Too long, and Envoy lags behind Pod Endpoints scaling up and down. Ingress objects remain invisible for extended periods, eroding trust.
-Too short, and resources are wasted as Contour repetitively constructs lengthy JSON documents that contain minimally changed information that Envoy must parse and discard.
+Too short, and resources are wasted as Sesame repetitively constructs lengthy JSON documents that contain minimally changed information that Envoy must parse and discard.
 
 The solution to the latency problem is the v2 gRPC APIs, which both provide a more efficient protocol buffer wire representation, and add the ability to stream changes to Envoy as they happen.
 
@@ -56,8 +56,8 @@ The v1 API call from Envoy is satisfied by simply dumping the cache over the wir
 
 Placing the cache after the conversion logic permits smarter analysis. For example:
 
-- Contour can avoid creating Envoy Cluster configurations for Ingress objects that are excluded with the `kubernetes.io/ingress.class` annotation.
-- Contour can avoid creating duplicate Cluster configurations for named Service ports by canonicalizing the port name of any Service to its integer value.
+- Sesame can avoid creating Envoy Cluster configurations for Ingress objects that are excluded with the `kubernetes.io/ingress.class` annotation.
+- Sesame can avoid creating duplicate Cluster configurations for named Service ports by canonicalizing the port name of any Service to its integer value.
 
 From there, the population of a second cache of v2 gRPC Envoy types is straightforward.
 
@@ -69,7 +69,7 @@ Currently the v1 REST APIs iterate over a cache of values populated via the resp
 
 Once a v2 Fetch gRPC implementation is available the v1 REST API should be rewritten in terms of the v2 Fetch API, then translated back to v1 JSON.
 There is a small performance overhead in an extra layer of translation.
-Given the goal is to move Contour off the v1 APIs, a modest overhead during the transition is a reasonable cost for most deployments.
+Given the goal is to move Sesame off the v1 APIs, a modest overhead during the transition is a reasonable cost for most deployments.
 
 The current end-to-end tests for the v1 REST API should be sufficient to ensure this change is backwards compatible.
 
@@ -100,7 +100,7 @@ func Stream() {
 ## Alternatives Considered
 
 An unexplored alternative to using the v2 gRPC APIs might be to add a hook on the Envoy management API to request a poll.
-When Contour learns of changes in API server documents, it would ping the management API endpoint to request a poll.
+When Sesame learns of changes in API server documents, it would ping the management API endpoint to request a poll.
 
 We did not explore this option because the strong preference of the Envoy team is to pursue the gRPC API mechanism.
 

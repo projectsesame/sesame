@@ -1,4 +1,4 @@
-We are delighted to present version $$VERSION$$ of Contour, our layer 7 HTTP reverse proxy for Kubernetes clusters.
+We are delighted to present version $$VERSION$$ of Sesame, our layer 7 HTTP reverse proxy for Kubernetes clusters.
 
 A big thank you to everyone who contributed to the release.
 
@@ -31,15 +31,15 @@ Description
 ## Deprecation 2
 
 # Upgrading
-Please consult the [upgrade documentation](https://projectcontour.io/resources/upgrading/).
+Please consult the [upgrade documentation](https://projectsesame.io/resources/upgrading/).
 
 ## Compatible Kubernetes Versions
 
-Contour $$VERSION$$ is tested against Kubernetes X.X through Y.Y
+Sesame $$VERSION$$ is tested against Kubernetes X.X through Y.Y
 
 # Community Thanks!
-We’re immensely grateful for all the community contributions that help make Contour even better! For this release, special thanks go out to the following contributors:
+We’re immensely grateful for all the community contributions that help make Sesame even better! For this release, special thanks go out to the following contributors:
 - ...
 
-# Are you a Contour user? We would love to know!
-If you're using Contour and want to add your organization to our adopters list, please visit this [page](https://github.com/projectsesame/sesame/blob/master/ADOPTERS.md). If you prefer to keep your organization name anonymous but still give us feedback into your usage and scenarios for Contour, please post on this [GitHub thread](https://github.com/projectsesame/sesame/issues/1269).
+# Are you a Sesame user? We would love to know!
+If you're using Sesame and want to add your organization to our adopters list, please visit this [page](https://github.com/projectsesame/sesame/blob/master/ADOPTERS.md). If you prefer to keep your organization name anonymous but still give us feedback into your usage and scenarios for Sesame, please post on this [GitHub thread](https://github.com/projectsesame/sesame/issues/1269).

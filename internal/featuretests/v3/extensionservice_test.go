@@ -22,10 +22,10 @@ import (
 	envoy_v3_tls "github.com/envoyproxy/go-control-plane/envoy/extensions/transport_sockets/tls/v3"
 	envoy_discovery_v3 "github.com/envoyproxy/go-control-plane/envoy/service/discovery/v3"
 	matcher "github.com/envoyproxy/go-control-plane/envoy/type/matcher/v3"
-	contour_api_v1 "github.com/projectcontour/sesame/apis/projectsesame/v1"
-	envoy_v3 "github.com/projectcontour/sesame/internal/envoy/v3"
+	Sesame_api_v1 "github.com/projectsesame/sesame/apis/projectsesame/v1"
 	"github.com/projectsesame/sesame/apis/projectsesame/v1alpha1"
 	"github.com/projectsesame/sesame/internal/dag"
+	envoy_v3 "github.com/projectsesame/sesame/internal/envoy/v3"
 	"github.com/projectsesame/sesame/internal/featuretests"
 	"github.com/projectsesame/sesame/internal/fixture"
 	corev1 "k8s.io/api/core/v1"
@@ -33,7 +33,7 @@ import (
 	"k8s.io/utils/pointer"
 )
 
-func extBasic(t *testing.T, rh cache.ResourceEventHandler, c *Contour) {
+func extBasic(t *testing.T, rh cache.ResourceEventHandler, c *Sesame) {
 	rh.OnAdd(&v1alpha1.ExtensionService{
 		ObjectMeta: fixture.ObjectMeta("ns/ext"),
 		Spec: v1alpha1.ExtensionServiceSpec{
@@ -75,7 +75,7 @@ func extBasic(t *testing.T, rh cache.ResourceEventHandler, c *Contour) {
 	})
 }
 
-func extCleartext(t *testing.T, rh cache.ResourceEventHandler, c *Contour) {
+func extCleartext(t *testing.T, rh cache.ResourceEventHandler, c *Sesame) {
 	rh.OnAdd(&v1alpha1.ExtensionService{
 		ObjectMeta: fixture.ObjectMeta("ns/ext"),
 		Spec: v1alpha1.ExtensionServiceSpec{
@@ -97,14 +97,14 @@ func extCleartext(t *testing.T, rh cache.ResourceEventHandler, c *Contour) {
 	})
 }
 
-func extUpstreamValidation(t *testing.T, rh cache.ResourceEventHandler, c *Contour) {
+func extUpstreamValidation(t *testing.T, rh cache.ResourceEventHandler, c *Sesame) {
 	ext := &v1alpha1.ExtensionService{
 		ObjectMeta: fixture.ObjectMeta("ns/ext"),
 		Spec: v1alpha1.ExtensionServiceSpec{
 			Services: []v1alpha1.ExtensionServiceTarget{
 				{Name: "svc1", Port: 8081},
 			},
-			UpstreamValidation: &contour_api_v1.UpstreamValidation{
+			UpstreamValidation: &Sesame_api_v1.UpstreamValidation{
 				CACertificate: "cacert",
 				SubjectName:   "ext.projectsesame.io",
 			},
@@ -154,7 +154,7 @@ func extUpstreamValidation(t *testing.T, rh cache.ResourceEventHandler, c *Conto
 			Services: []v1alpha1.ExtensionServiceTarget{
 				{Name: "svc1", Port: 8081},
 			},
-			UpstreamValidation: &contour_api_v1.UpstreamValidation{
+			UpstreamValidation: &Sesame_api_v1.UpstreamValidation{
 				CACertificate: "missing",
 				SubjectName:   "ext.projectsesame.io",
 			},
@@ -181,7 +181,7 @@ func extUpstreamValidation(t *testing.T, rh cache.ResourceEventHandler, c *Conto
 			Services: []v1alpha1.ExtensionServiceTarget{
 				{Name: "svc1", Port: 8081},
 			},
-			UpstreamValidation: &contour_api_v1.UpstreamValidation{
+			UpstreamValidation: &Sesame_api_v1.UpstreamValidation{
 				CACertificate: "otherNs/cacert",
 				SubjectName:   "ext.projectsesame.io",
 			},
@@ -194,10 +194,10 @@ func extUpstreamValidation(t *testing.T, rh cache.ResourceEventHandler, c *Conto
 	})
 
 	// Delegate the CACertificate secret to be used in the ExtensionService's namespace
-	rh.OnAdd(&contour_api_v1.TLSCertificateDelegation{
+	rh.OnAdd(&Sesame_api_v1.TLSCertificateDelegation{
 		ObjectMeta: fixture.ObjectMeta("otherNs/delegate-cacert"),
-		Spec: contour_api_v1.TLSCertificateDelegationSpec{
-			Delegations: []contour_api_v1.CertificateDelegation{{
+		Spec: Sesame_api_v1.TLSCertificateDelegationSpec{
+			Delegations: []Sesame_api_v1.CertificateDelegation{{
 				SecretName:       "cacert",
 				TargetNamespaces: []string{"*"},
 			}},
@@ -216,7 +216,7 @@ func extUpstreamValidation(t *testing.T, rh cache.ResourceEventHandler, c *Conto
 	})
 }
 
-func extExternalName(_ *testing.T, rh cache.ResourceEventHandler, c *Contour) {
+func extExternalName(_ *testing.T, rh cache.ResourceEventHandler, c *Sesame) {
 	rh.OnAdd(fixture.NewService("ns/external").
 		WithSpec(corev1.ServiceSpec{
 			Type:         corev1.ServiceTypeExternalName,
@@ -243,7 +243,7 @@ func extExternalName(_ *testing.T, rh cache.ResourceEventHandler, c *Contour) {
 	})
 }
 
-func extMissingService(_ *testing.T, rh cache.ResourceEventHandler, c *Contour) {
+func extMissingService(_ *testing.T, rh cache.ResourceEventHandler, c *Sesame) {
 	rh.OnAdd(&v1alpha1.ExtensionService{
 		ObjectMeta: fixture.ObjectMeta("ns/ext"),
 		Spec: v1alpha1.ExtensionServiceSpec{
@@ -258,7 +258,7 @@ func extMissingService(_ *testing.T, rh cache.ResourceEventHandler, c *Contour) 
 	})
 }
 
-func extInvalidTimeout(_ *testing.T, rh cache.ResourceEventHandler, c *Contour) {
+func extInvalidTimeout(_ *testing.T, rh cache.ResourceEventHandler, c *Sesame) {
 	rh.OnAdd(&v1alpha1.ExtensionService{
 		ObjectMeta: fixture.ObjectMeta("ns/ext"),
 		Spec: v1alpha1.ExtensionServiceSpec{
@@ -266,7 +266,7 @@ func extInvalidTimeout(_ *testing.T, rh cache.ResourceEventHandler, c *Contour) 
 				{Name: "svc1", Port: 8081},
 				{Name: "svc2", Port: 8082},
 			},
-			TimeoutPolicy: &contour_api_v1.TimeoutPolicy{
+			TimeoutPolicy: &Sesame_api_v1.TimeoutPolicy{
 				Response: "invalid",
 			},
 		},
@@ -277,7 +277,7 @@ func extInvalidTimeout(_ *testing.T, rh cache.ResourceEventHandler, c *Contour) 
 	})
 }
 
-func extInconsistentProto(_ *testing.T, rh cache.ResourceEventHandler, c *Contour) {
+func extInconsistentProto(_ *testing.T, rh cache.ResourceEventHandler, c *Sesame) {
 	rh.OnAdd(&v1alpha1.ExtensionService{
 		ObjectMeta: fixture.ObjectMeta("ns/ext"),
 		Spec: v1alpha1.ExtensionServiceSpec{
@@ -285,7 +285,7 @@ func extInconsistentProto(_ *testing.T, rh cache.ResourceEventHandler, c *Contou
 				{Name: "svc1", Port: 8081},
 			},
 			Protocol: pointer.StringPtr("h2c"),
-			UpstreamValidation: &contour_api_v1.UpstreamValidation{
+			UpstreamValidation: &Sesame_api_v1.UpstreamValidation{
 				CACertificate: "cacert",
 				SubjectName:   "ext.projectsesame.io",
 			},
@@ -299,7 +299,7 @@ func extInconsistentProto(_ *testing.T, rh cache.ResourceEventHandler, c *Contou
 }
 
 // "Cookie" and "RequestHash" policies are not valid on ExtensionService.
-func extInvalidLoadBalancerPolicy(t *testing.T, rh cache.ResourceEventHandler, c *Contour) {
+func extInvalidLoadBalancerPolicy(t *testing.T, rh cache.ResourceEventHandler, c *Sesame) {
 	ext := &v1alpha1.ExtensionService{
 		ObjectMeta: fixture.ObjectMeta("ns/ext"),
 		Spec: v1alpha1.ExtensionServiceSpec{
@@ -307,7 +307,7 @@ func extInvalidLoadBalancerPolicy(t *testing.T, rh cache.ResourceEventHandler, c
 				{Name: "svc1", Port: 8081},
 				{Name: "svc2", Port: 8082},
 			},
-			LoadBalancerPolicy: &contour_api_v1.LoadBalancerPolicy{
+			LoadBalancerPolicy: &Sesame_api_v1.LoadBalancerPolicy{
 				Strategy: "Cookie",
 			},
 		},
@@ -342,7 +342,7 @@ func extInvalidLoadBalancerPolicy(t *testing.T, rh cache.ResourceEventHandler, c
 				{Name: "svc1", Port: 8081},
 				{Name: "svc2", Port: 8082},
 			},
-			LoadBalancerPolicy: &contour_api_v1.LoadBalancerPolicy{
+			LoadBalancerPolicy: &Sesame_api_v1.LoadBalancerPolicy{
 				Strategy: "RequestHash",
 			},
 		},
@@ -370,7 +370,7 @@ func extInvalidLoadBalancerPolicy(t *testing.T, rh cache.ResourceEventHandler, c
 }
 
 func TestExtensionService(t *testing.T) {
-	subtests := map[string]func(*testing.T, cache.ResourceEventHandler, *Contour){
+	subtests := map[string]func(*testing.T, cache.ResourceEventHandler, *Sesame){
 		"Basic":                     extBasic,
 		"Cleartext":                 extCleartext,
 		"UpstreamValidation":        extUpstreamValidation,

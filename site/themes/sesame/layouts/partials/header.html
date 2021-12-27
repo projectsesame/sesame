@@ -1,7 +1,7 @@
 {{ $latest := (cond (.Site.Params.docs_versioning) .Site.Params.latest_version "") }}
 <header>
 	<div class="wrapper">
-		<a href="{{ .Site.BaseURL }}"><img class="image" src="/img/Contour.svg" alt="Contour Logo" /></a>
+		<a href="{{ .Site.BaseURL }}"><img class="image" src="/img/Sesame.svg" alt="Sesame Logo" /></a>
 		<ul class="desktop-links">
 			<li><a href="/getting-started/" {{ if (eq .RelPermalink "/getting-started/")  }}class="active"{{ end }}>Getting Started</a></li>
 			<li><a href="/guides/" {{ if (eq .RelPermalink "/guides/")  }}class="active"{{ end }}>Guides</a></li>
@@ -24,8 +24,8 @@
 				<li><a href="/blog/" {{ if or (eq .Page.Section "posts") (eq .Page.Section "tags") }}class="active"{{ end }}>Blog</a></li>
 			</ul>
 			<div class="social">
-				<a href="https://twitter.com/projectcontour"><img src="/img/twitter.png" />Twitter</a>
-				<a href="https://kubernetes.slack.com/?redir=%2Fmessages%2Fcontour"><img src="/img/slack.png" />Slack</a>
+				<a href="https://twitter.com/projectsesame"><img src="/img/twitter.png" />Twitter</a>
+				<a href="https://kubernetes.slack.com/?redir=%2Fmessages%2FSesame"><img src="/img/slack.png" />Slack</a>
 				<a href="/blog/feed.xml"><img src="/img/rss.png" />RSS</a>
 				<a href="https://github.com/projectsesame/sesame"><img src="/img/github.svg" />GitHub</a>
 			</div>

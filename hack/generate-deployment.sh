@@ -9,7 +9,7 @@ readonly REPO=$(cd "${HERE}"/.. && pwd)
 readonly PROGNAME=$(basename "$0")
 
 
-readonly TARGET="${REPO}/examples/render/contour.yaml"
+readonly TARGET="${REPO}/examples/render/sesame.yaml"
 
 exec > >(git stripspace >"$TARGET")
 
@@ -28,7 +28,7 @@ echo
 
 # certgen uses the ':latest' image tag, so it always needs to be pulled. Everything
 # else correctly uses versioned image tags so we should use IfNotPresent.
-for y in "${REPO}/examples/contour/"*.yaml ; do
+for y in "${REPO}/examples/sesame/"*.yaml ; do
     echo # Ensure we have at least one newline between joined fragments.
     case $y in
     */02-job-certgen.yaml)

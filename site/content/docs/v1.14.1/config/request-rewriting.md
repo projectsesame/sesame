@@ -173,7 +173,7 @@ Examples:
         value: "%RESPONSE_FLAGS%"
 ```
 
-Contour supports most of the custom request/response header variables offered
+Sesame supports most of the custom request/response header variables offered
 by Envoy - see the <a
 href="https://www.envoyproxy.io/docs/envoy/latest/configuration/http/http_conn_man/headers#custom-request-response-headers">Envoy
 documentation </a> for details of what each of these resolve to:
@@ -214,20 +214,20 @@ skips them entirely - for example:
 * Envoy ignores REQ headers that refer to an non-existent header - for example
   `%REQ(Host)%` works as expected but `%REQ(Missing-Header)%` is skipped
 
-Contour already sets the `X-Request-Start` request header to
+Sesame already sets the `X-Request-Start` request header to
 `t=%START_TIME(%s.%3f)%` which is the Unix epoch time when the request
 started.
 
-To enable setting header values based on the destination service Contour also supports:
+To enable setting header values based on the destination service Sesame also supports:
 
-* `%CONTOUR_NAMESPACE%`
-* `%CONTOUR_SERVICE_NAME%`
-* `%CONTOUR_SERVICE_PORT%`
+* `%Sesame_NAMESPACE%`
+* `%Sesame_SERVICE_NAME%`
+* `%Sesame_SERVICE_PORT%`
 
 For example, with the following HTTPProxy object that has a per-Service requestHeadersPolicy using these variables:
 ```
 # httpproxy.yaml
-apiVersion: projectcontour.io/v1
+apiVersion: projectsesame.io/v1
 kind: HTTPProxy
 metadata:
   name: basic
@@ -244,16 +244,16 @@ spec:
           requestHeadersPolicy:
             set:
             - name: l5d-dst-override
-              value: "%CONTOUR_SERVICE_NAME%.%CONTOUR_NAMESPACE%.svc.cluster.local:%CONTOUR_SERVICE_PORT%"
+              value: "%Sesame_SERVICE_NAME%.%Sesame_NAMESPACE%.svc.cluster.local:%Sesame_SERVICE_PORT%"
 ```
 the values would be:
-* `CONTOUR_NAMESPACE: "myns"`
-* `CONTOUR_SERVICE_NAME: "s1"`
-* `CONTOUR_SERVICE_PORT: "80"`
+* `Sesame_NAMESPACE: "myns"`
+* `Sesame_SERVICE_NAME: "s1"`
+* `Sesame_SERVICE_PORT: "80"`
 
 and the `l5-dst-override` header would be set to `s1.myns.svc.cluster.local:80`.
 
-For per-Route requestHeadersPolicy only `%CONTOUR_NAMESPACE%` is set and using
-`%CONTOUR_SERVICE_NAME%` and `%CONTOUR_SERVICE_PORT%` will end up as the
-literal values `%%CONTOUR_SERVICE_NAME%%` and `%%CONTOUR_SERVICE_PORT%%`,
+For per-Route requestHeadersPolicy only `%Sesame_NAMESPACE%` is set and using
+`%Sesame_SERVICE_NAME%` and `%Sesame_SERVICE_PORT%` will end up as the
+literal values `%%Sesame_SERVICE_NAME%%` and `%%Sesame_SERVICE_PORT%%`,
 respectively.

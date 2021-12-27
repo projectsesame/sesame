@@ -1,7 +1,7 @@
 # TLS Certificate Delegation
 
-In order to support wildcard certificates, TLS certificates for a `*.somedomain.com`, which are stored in a namespace controlled by the cluster administrator, Contour supports a facility known as TLS Certificate Delegation.
-This facility allows the owner of a TLS certificate to delegate, for the purposes of referencing the TLS certificate, permission to Contour to read the Secret object from another namespace.
+In order to support wildcard certificates, TLS certificates for a `*.somedomain.com`, which are stored in a namespace controlled by the cluster administrator, Sesame supports a facility known as TLS Certificate Delegation.
+This facility allows the owner of a TLS certificate to delegate, for the purposes of referencing the TLS certificate, permission to Sesame to read the Secret object from another namespace.
 Delegation works for both HTTPProxy and Ingress resources.
 
 The [`TLSCertificateDelegation`][1] resource defines a set of `delegations` in the `spec`.
@@ -39,7 +39,7 @@ spec:
           port: 80
 ```
 
-In this example, the permission for Contour to reference the Secret `example-com-wildcard` in the `admin` namespace has been delegated to HTTPProxy objects in the `example-com` namespace.
-Also, the permission for Contour to reference the Secret `another-com-wildcard` from all namespaces has been delegated to all HTTPProxy objects in the cluster.
+In this example, the permission for Sesame to reference the Secret `example-com-wildcard` in the `admin` namespace has been delegated to HTTPProxy objects in the `example-com` namespace.
+Also, the permission for Sesame to reference the Secret `another-com-wildcard` from all namespaces has been delegated to all HTTPProxy objects in the cluster.
 
-[1]: /docs/{{< param version >}}/config/api/#projectcontour.io/v1.TLSCertificateDelegation
+[1]: /docs/{{< param version >}}/config/api/#projectsesame.io/v1.TLSCertificateDelegation

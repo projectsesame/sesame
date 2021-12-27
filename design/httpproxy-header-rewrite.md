@@ -86,7 +86,7 @@ requestHeadersPolicy:
   - Blah
 ```
 
-2. Whether to suffix the field with `Policy`, or just the Go type.  The decision was to bias towards consistency with other applications of the `Policy`-style throughout the Contour API, which were already present in the "v1" API surface and impossible to change without revving the API version.  In general, there was some loose agreement that it might have been better to name fields without the suffix, but the Go types with the suffix.  However, the prevailing sentiment was that API consistency was more important.
+2. Whether to suffix the field with `Policy`, or just the Go type.  The decision was to bias towards consistency with other applications of the `Policy`-style throughout the Sesame API, which were already present in the "v1" API surface and impossible to change without revving the API version.  In general, there was some loose agreement that it might have been better to name fields without the suffix, but the Go types with the suffix.  However, the prevailing sentiment was that API consistency was more important.
 
 
 ## Security Considerations

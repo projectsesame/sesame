@@ -2,11 +2,11 @@
 
 _Status_: Accepted
 
-This document looks to allow Contour to process Kubernetes service types `ExternalName` so that traffic can be proxied to dns hosts rather than only pod endpoints.
+This document looks to allow Sesame to process Kubernetes service types `ExternalName` so that traffic can be proxied to dns hosts rather than only pod endpoints.
 
 ## Goals
 
-- Allow for Contour to proxy traffic via Envoy to external dns endpoints
+- Allow for Sesame to proxy traffic via Envoy to external dns endpoints
 - Utilize built-in Kubernetes object types (i.e. ExternalName service)
 
 ## Non-goals
@@ -17,15 +17,15 @@ This document looks to allow Contour to process Kubernetes service types `Extern
 
 ## Background
 
-Contour currently watches Kubernetes services and endpoints, streaming them to via Envoy xDS CDS & EDS endpoints.
+Sesame currently watches Kubernetes services and endpoints, streaming them to via Envoy xDS CDS & EDS endpoints.
 Kubernetes pods are identified by their presence in the Endpoint document and streamed to Envoy via EDS.
 Requests to envoy are routed directly to Kubernetes pods (i.e. endpoints).
 This proposal looks to add a second way to identify the members of a Envoy clustr object, using a DNS entry to supply the cluster members rather than EDS.
 
 ## High-level Design
 
-Contour will need to watch for and process Kubernetes service types of `ExternalName` (https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.13/#servicespec-v1-core).
-When configuring a Route, Contour will use the contents of the `spec.externalName` of the service as well as the port from the `spec.ports` section of the Kubernetes service.
+Sesame will need to watch for and process Kubernetes service types of `ExternalName` (https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.13/#servicespec-v1-core).
+When configuring a Route, Sesame will use the contents of the `spec.externalName` of the service as well as the port from the `spec.ports` section of the Kubernetes service.
 
 If ports are not supplied for the Kubernetes service, then the IngressRoute status will be set accordingly with an error message.
 
@@ -48,4 +48,4 @@ The downside to this approach is it couldn't be used with Ingress resources.
 
 Potentially someone could use an `ExternalName` service to reference services in another namespace by setting the `externalName` (ex: `other-service.namespace-other.svc.cluster.local`).
 
-This scenario exists in a cluster regardless if Contour is deployed or not, other security restrictions should be applied if users want to avoid this from happening.
+This scenario exists in a cluster regardless if Sesame is deployed or not, other security restrictions should be applied if users want to avoid this from happening.

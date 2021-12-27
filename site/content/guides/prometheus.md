@@ -5,7 +5,7 @@ layout: page
 
 <div id="toc" class="navigation"></div>
 
-Contour and Envoy expose metrics that can be scraped with Prometheus. By
+Sesame and Envoy expose metrics that can be scraped with Prometheus. By
 default, annotations to gather them are in all the `deployment` yamls and they
 should work out of the box with most configurations.
 
@@ -13,17 +13,17 @@ should work out of the box with most configurations.
 
 Envoy typically [exposes metrics](https://www.envoyproxy.io/docs/envoy/v1.15.0/configuration/http/http_conn_man/stats#config-http-conn-man-stats) through an endpoint on its admin interface. To
 avoid exposing the entire admin interface to Prometheus (and other workloads in
-the cluster), Contour configures a static listener that sends traffic to the
+the cluster), Sesame configures a static listener that sends traffic to the
 stats endpoint and nowhere else.
 
 Envoy supports Prometheus-compatible `/stats/prometheus` endpoint for metrics on
 port `8002`.
 
-## Contour Metrics
+## Sesame Metrics
 
-Contour exposes a Prometheus-compatible `/metrics` endpoint that defaults to listening on port 8000. This can be configured by using the `--http-address` and `--http-port` flags for the `serve` command.
+Sesame exposes a Prometheus-compatible `/metrics` endpoint that defaults to listening on port 8000. This can be configured by using the `--http-address` and `--http-port` flags for the `serve` command.
 
-**Note:** the `Service` deployment manifest when installing Contour must be updated to represent the same port as the configured flag.
+**Note:** the `Service` deployment manifest when installing Sesame must be updated to represent the same port as the configured flag.
 
 **The metrics endpoint exposes the following metrics:**
 

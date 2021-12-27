@@ -123,19 +123,19 @@ default:
       target: both
       addedBy: label
     - color: 0052cc
-      description: Issues or PRs about making Contour easier to operate as a production service.
+      description: Issues or PRs about making Sesame easier to operate as a production service.
       name: area/operational
       target: both
       addedBy: label
     - color: 0052cc
-      description: Issues or PRs about making Contour interoperate with service meshes. Contour is not a service mesh.
+      description: Issues or PRs about making Sesame interoperate with service meshes. Sesame is not a service mesh.
       name: area/service-mesh
       previously:
         - name: "area/service mesh"
       target: both
       addedBy: label
     - color: 0052cc
-      description: Issues or PRs about Contour's support for sticky sessions.
+      description: Issues or PRs about Sesame's support for sticky sessions.
       name: area/sticky-session
       previously:
         - name: "area/sticky session"
