@@ -3,15 +3,15 @@
 #
 # Generated from:
 #       examples/sesame/00-common.yaml
-#       examples/sesame/01-sesame-config.yaml
 #       examples/sesame/01-crds.yaml
+#       examples/sesame/01-sesame-config.yaml
 #       examples/sesame/02-job-certgen.yaml
 #       examples/sesame/02-rbac.yaml
 #       examples/sesame/02-role-sesame.yaml
-#       examples/sesame/02-service-sesame.yaml
 #       examples/sesame/02-service-envoy.yaml
-#       examples/sesame/03-sesame.yaml
+#       examples/sesame/02-service-sesame.yaml
 #       examples/sesame/03-envoy.yaml
+#       examples/sesame/03-sesame.yaml
 #
 
 ---
@@ -33,182 +33,23 @@ metadata:
   namespace: projectsesame
 
 ---
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: sesame
-  namespace: projectsesame
-data:
-  Sesame.yaml: |
-    #
-    # server:
-    #   determine which XDS Server implementation to utilize in Sesame.
-    #   xds-server-type: Sesame
-    #
-    # Specify the Gateway API configuration.
-    # gateway:
-    #   controllerName: projectsesame.io/projectsesame/Sesame
-    #
-    # should Sesame expect to be running inside a k8s cluster
-    # incluster: true
-    #
-    # path to kubeconfig (if not running inside a k8s cluster)
-    # kubeconfig: /path/to/.kube/config
-    #
-    # Disable RFC-compliant behavior to strip "Content-Length" header if
-    # "Tranfer-Encoding: chunked" is also set.
-    # disableAllowChunkedLength: false
-    # Disable HTTPProxy permitInsecure field
-    disablePermitInsecure: false
-    tls:
-    # minimum TLS version that Sesame will negotiate
-    # minimum-protocol-version: "1.2"
-    # TLS ciphers to be supported by Envoy TLS listeners when negotiating
-    # TLS 1.2.
-    # cipher-suites:
-    # - '[ECDHE-ECDSA-AES128-GCM-SHA256|ECDHE-ECDSA-CHACHA20-POLY1305]'
-    # - '[ECDHE-RSA-AES128-GCM-SHA256|ECDHE-RSA-CHACHA20-POLY1305]'
-    # - 'ECDHE-ECDSA-AES256-GCM-SHA384'
-    # - 'ECDHE-RSA-AES256-GCM-SHA384'
-    # Defines the Kubernetes name/namespace matching a secret to use
-    # as the fallback certificate when requests which don't match the
-    # SNI defined for a vhost.
-      fallback-certificate:
-    #   name: fallback-secret-name
-    #   namespace: projectsesame
-      envoy-client-certificate:
-    #   name: envoy-client-cert-secret-name
-    #   namespace: projectsesame
-    # The following config shows the defaults for the leader election.
-    # leaderelection:
-    #   configmap-name: leader-elect
-    #   configmap-namespace: projectsesame
-    ####
-    # ExternalName Services are disabled by default due to CVE-2021-XXXXX
-    # You can re-enable them by setting this setting to `true`.
-    # This is not recommended without understanding the security implications.
-    # Please see the advisory at https://github.com/projectsesame/sesame/security/advisories/GHSA-5ph6-qq5x-7jwc for the details.
-    # enableExternalNameService: false
-    ##
-    # Address to be placed in status.loadbalancer field of Ingress objects.
-    # May be either a literal IP address or a host name.
-    # The value will be placed directly into the relevant field inside the status.loadBalancer struct.
-    # ingress-status-address: local.projectsesame.io
-    ### Logging options
-    # Default setting
-    accesslog-format: envoy
-    # The default access log format is defined by Envoy but it can be customized by setting following variable.
-    # accesslog-format-string: "...\n"
-    # To enable JSON logging in Envoy
-    # accesslog-format: json
-    # The default fields that will be logged are specified below.
-    # To customise this list, just add or remove entries.
-    # The canonical list is available at
-    # https://godoc.org/github.com/projectsesame/sesame/internal/envoy#JSONFields
-    # json-fields:
-    #   - "@timestamp"
-    #   - "authority"
-    #   - "bytes_received"
-    #   - "bytes_sent"
-    #   - "downstream_local_address"
-    #   - "downstream_remote_address"
-    #   - "duration"
-    #   - "method"
-    #   - "path"
-    #   - "protocol"
-    #   - "request_id"
-    #   - "requested_server_name"
-    #   - "response_code"
-    #   - "response_flags"
-    #   - "uber_trace_id"
-    #   - "upstream_cluster"
-    #   - "upstream_host"
-    #   - "upstream_local_address"
-    #   - "upstream_service_time"
-    #   - "user_agent"
-    #   - "x_forwarded_for"
-    #
-    # default-http-versions:
-    # - "HTTP/2"
-    # - "HTTP/1.1"
-    #
-    # The following shows the default proxy timeout settings.
-    # timeouts:
-    #   request-timeout: infinity
-    #   connection-idle-timeout: 60s
-    #   stream-idle-timeout: 5m
-    #   max-connection-duration: infinity
-    #   delayed-close-timeout: 1s
-    #   connection-shutdown-grace-period: 5s
-    #
-    # Envoy cluster settings.
-    # cluster:
-    #   configure the cluster dns lookup family
-    #   valid options are: auto (default), v4, v6
-    #   dns-lookup-family: auto
-    #
-    # Envoy network settings.
-    # network:
-    #   Configure the number of additional ingress proxy hops from the
-    #   right side of the x-forwarded-for HTTP header to trust.
-    #   num-trusted-hops: 0
-    #   Configure the port used to access the Envoy Admin interface.
-    #   admin-port: 9001
-    #
-    # Configure an optional global rate limit service.
-    # rateLimitService:
-    #   Identifies the extension service defining the rate limit service,
-    #   formatted as <namespace>/<name>.
-    #   extensionService: projectsesame/ratelimit
-    #   Defines the rate limit domain to pass to the rate limit service.
-    #   Acts as a container for a set of rate limit definitions within
-    #   the RLS.
-    #   domain: Sesame
-    #   Defines whether to allow requests to proceed when the rate limit
-    #   service fails to respond with a valid rate limit decision within
-    #   the timeout defined on the extension service.
-    #   failOpen: false
-    #   Defines whether to include the X-RateLimit headers X-RateLimit-Limit,
-    #   X-RateLimit-Remaining, and X-RateLimit-Reset (as defined by the IETF
-    #   Internet-Draft linked below), on responses to clients when the Rate
-    #   Limit Service is consulted for a request.
-    #   ref. https://tools.ietf.org/id/draft-polli-ratelimit-headers-03.html
-    #   enableXRateLimitHeaders: false
-    #
-    # Global Policy settings.
-    # policy:
-    #   # Default headers to set on all requests (unless set/removed on the HTTPProxy object itself)
-    #   request-headers:
-    #     set:
-    #       # example: the hostname of the Envoy instance that proxied the request
-    #       X-Envoy-Hostname: %HOSTNAME%
-    #       # example: add a l5d-dst-override header to instruct Linkerd what service the request is destined for
-    #       l5d-dst-override: %Sesame_SERVICE_NAME%.%Sesame_NAMESPACE%.svc.cluster.local:%Sesame_SERVICE_PORT%
-    #   # default headers to set on all responses (unless set/removed on the HTTPProxy object itself)
-    #   response-headers:
-    #     set:
-    #       # example: Envoy flags that provide additional details about the response or connection
-    #       X-Envoy-Response-Flags: %RESPONSE_FLAGS%
-    #
-
----
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.6.2
   creationTimestamp: null
-  name: Sesameconfigurations.projectsesame.io
+  name: sesameconfigurations.projectsesame.io
 spec:
   preserveUnknownFields: false
   group: projectsesame.io
   names:
     kind: SesameConfiguration
     listKind: SesameConfigurationList
-    plural: Sesameconfigurations
+    plural: sesameconfigurations
     shortNames:
     - sesameconfig
-    singular: Sesameconfiguration
+    singular: sesameconfiguration
   scope: Namespaced
   versions:
   - name: v1alpha1
@@ -654,7 +495,7 @@ spec:
                 - https
                 - listener
                 - logging
-                - metrics
+                - metrics3
                 - network
                 - service
                 type: object
@@ -1119,16 +960,16 @@ metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.6.2
   creationTimestamp: null
-  name: Sesamedeployments.projectsesame.io
+  name: sesamedeployments.projectsesame.io
 spec:
   preserveUnknownFields: false
   group: projectsesame.io
   names:
     kind: SesameDeployment
     listKind: SesameDeploymentList
-    plural: Sesamedeployments
+    plural: sesamedeployments
     shortNames:
-    - Sesamedeploy
+    - sesamedeploy
     singular: Sesamedeployment
   scope: Namespaced
   versions:
@@ -4792,6 +4633,165 @@ status:
 
 ---
 apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sesame
+  namespace: projectsesame
+data:
+  sesame.yaml: |
+    #
+    # server:
+    #   determine which XDS Server implementation to utilize in Sesame.
+    #   xds-server-type: sesame
+    #
+    # Specify the Gateway API configuration.
+    # gateway:
+    #   controllerName: projectsesame.io/projectsesame/sesame
+    #
+    # should sesame expect to be running inside a k8s cluster
+    # incluster: true
+    #
+    # path to kubeconfig (if not running inside a k8s cluster)
+    # kubeconfig: /path/to/.kube/config
+    #
+    # Disable RFC-compliant behavior to strip "Content-Length" header if
+    # "Tranfer-Encoding: chunked" is also set.
+    # disableAllowChunkedLength: false
+    # Disable HTTPProxy permitInsecure field
+    disablePermitInsecure: false
+    tls:
+    # minimum TLS version that Sesame will negotiate
+    # minimum-protocol-version: "1.2"
+    # TLS ciphers to be supported by Envoy TLS listeners when negotiating
+    # TLS 1.2.
+    # cipher-suites:
+    # - '[ECDHE-ECDSA-AES128-GCM-SHA256|ECDHE-ECDSA-CHACHA20-POLY1305]'
+    # - '[ECDHE-RSA-AES128-GCM-SHA256|ECDHE-RSA-CHACHA20-POLY1305]'
+    # - 'ECDHE-ECDSA-AES256-GCM-SHA384'
+    # - 'ECDHE-RSA-AES256-GCM-SHA384'
+    # Defines the Kubernetes name/namespace matching a secret to use
+    # as the fallback certificate when requests which don't match the
+    # SNI defined for a vhost.
+      fallback-certificate:
+    #   name: fallback-secret-name
+    #   namespace: projectsesame
+      envoy-client-certificate:
+    #   name: envoy-client-cert-secret-name
+    #   namespace: projectsesame
+    # The following config shows the defaults for the leader election.
+    # leaderelection:
+    #   configmap-name: leader-elect
+    #   configmap-namespace: projectsesame
+    ####
+    # ExternalName Services are disabled by default due to CVE-2021-XXXXX
+    # You can re-enable them by setting this setting to `true`.
+    # This is not recommended without understanding the security implications.
+    # Please see the advisory at https://github.com/projectsesame/sesame/security/advisories/GHSA-5ph6-qq5x-7jwc for the details.
+    # enableExternalNameService: false
+    ##
+    # Address to be placed in status.loadbalancer field of Ingress objects.
+    # Maybe either a literal IP address or a host name.
+    # The value will be placed directly into the relevant field inside the status.loadBalancer struct.
+    # ingress-status-address: local.projectsesame.io
+    ### Logging options
+    # Default setting
+    accesslog-format: envoy
+    # The default access log format is defined by Envoy but it can be customized by setting following variable.
+    # accesslog-format-string: "...\n"
+    # To enable JSON logging in Envoy
+    # accesslog-format: json
+    # The default fields that will be logged are specified below.
+    # To customise this list, just add or remove entries.
+    # The canonical list is available at
+    # https://godoc.org/github.com/projectsesame/sesame/internal/envoy#JSONFields
+    # json-fields:
+    #   - "@timestamp"
+    #   - "authority"
+    #   - "bytes_received"
+    #   - "bytes_sent"
+    #   - "downstream_local_address"
+    #   - "downstream_remote_address"
+    #   - "duration"
+    #   - "method"
+    #   - "path"
+    #   - "protocol"
+    #   - "request_id"
+    #   - "requested_server_name"
+    #   - "response_code"
+    #   - "response_flags"
+    #   - "uber_trace_id"
+    #   - "upstream_cluster"
+    #   - "upstream_host"
+    #   - "upstream_local_address"
+    #   - "upstream_service_time"
+    #   - "user_agent"
+    #   - "x_forwarded_for"
+    #
+    # default-http-versions:
+    # - "HTTP/2"
+    # - "HTTP/1.1"
+    #
+    # The following shows the default proxy timeout settings.
+    # timeouts:
+    #   request-timeout: infinity
+    #   connection-idle-timeout: 60s
+    #   stream-idle-timeout: 5m
+    #   max-connection-duration: infinity
+    #   delayed-close-timeout: 1s
+    #   connection-shutdown-grace-period: 5s
+    #
+    # Envoy cluster settings.
+    # cluster:
+    #   configure the cluster dns lookup family
+    #   valid options are: auto (default), v4, v6
+    #   dns-lookup-family: auto
+    #
+    # Envoy network settings.
+    # network:
+    #   Configure the number of additional ingress proxy hops from the
+    #   right side of the x-forwarded-for HTTP header to trust.
+    #   num-trusted-hops: 0
+    #   Configure the port used to access the Envoy Admin interface.
+    #   admin-port: 9001
+    #
+    # Configure an optional global rate limit service.
+    # rateLimitService:
+    #   Identifies the extension service defining the rate limit service,
+    #   formatted as <namespace>/<name>.
+    #   extensionService: projectsesame/ratelimit
+    #   Defines the rate limit domain to pass to the rate limit service.
+    #   Acts as a container for a set of rate limit definitions within
+    #   the RLS.
+    #   domain: sesame
+    #   Defines whether to allow requests to proceed when the rate limit
+    #   service fails to respond with a valid rate limit decision within
+    #   the timeout defined on the extension service.
+    #   failOpen: false
+    #   Defines whether to include the X-RateLimit headers X-RateLimit-Limit,
+    #   X-RateLimit-Remaining, and X-RateLimit-Reset (as defined by the IETF
+    #   Internet-Draft linked below), on responses to clients when the Rate
+    #   Limit Service is consulted for a request.
+    #   ref. https://tools.ietf.org/id/draft-polli-ratelimit-headers-03.html
+    #   enableXRateLimitHeaders: false
+    #
+    # Global Policy settings.
+    # policy:
+    #   # Default headers to set on all requests (unless set/removed on the HTTPProxy object itself)
+    #   request-headers:
+    #     set:
+    #       # example: the hostname of the Envoy instance that proxied the request
+    #       X-Envoy-Hostname: %HOSTNAME%
+    #       # example: add a l5d-dst-override header to instruct Linkerd what service the request is destined for
+    #       l5d-dst-override: %SESAME_SERVICE_NAME%.%SESAME_NAMESPACE%.svc.cluster.local:%SESAME__SERVICE_PORT%
+    #   # default headers to set on all responses (unless set/removed on the HTTPProxy object itself)
+    #   response-headers:
+    #     set:
+    #       # example: Envoy flags that provide additional details about the response or connection
+    #       X-Envoy-Response-Flags: %RESPONSE_FLAGS%
+    #
+
+---
+apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: sesame-certgen
@@ -4850,7 +4850,7 @@ spec:
         - --secrets-format=compact
         - --namespace=$(Sesame_NAMESPACE)
         env:
-        - name: Sesame_NAMESPACE
+        - name: SESAME_NAMESPACE
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
@@ -4977,29 +4977,13 @@ rules:
 - apiGroups:
   - projectsesame.io
   resources:
-  - Sesameconfigurations/status
+  - sesameconfigurations/status
   - extensionservices/status
   - httpproxies/status
   verbs:
   - create
   - get
   - update
-
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: sesame
-  namespace: projectsesame
-spec:
-  ports:
-  - port: 8001
-    name: xds
-    protocol: TCP
-    targetPort: 8001
-  selector:
-    app: sesame
-  type: ClusterIP
 
 ---
 apiVersion: v1
@@ -5031,109 +5015,20 @@ spec:
   type: LoadBalancer
 
 ---
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: v1
+kind: Service
 metadata:
-  labels:
-    app: sesame
   name: sesame
   namespace: projectsesame
 spec:
-  replicas: 2
-  strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      # This value of maxSurge means that during a rolling update
-      # the new ReplicaSet will be created first.
-      maxSurge: 50%
+  ports:
+  - port: 8001
+    name: xds
+    protocol: TCP
+    targetPort: 8001
   selector:
-    matchLabels:
-      app: sesame
-  template:
-    metadata:
-      annotations:
-        prometheus.io/scrape: "true"
-        prometheus.io/port: "8000"
-      labels:
-        app: sesame
-    spec:
-      affinity:
-        podAntiAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-          - podAffinityTerm:
-              labelSelector:
-                matchLabels:
-                  app: sesame
-              topologyKey: kubernetes.io/hostname
-            weight: 100
-      containers:
-      - args:
-        - serve
-        - --incluster
-        - --xds-address=0.0.0.0
-        - --xds-port=8001
-        - --sesame-cafile=/certs/ca.crt
-        - --sesame-cert-file=/certs/tls.crt
-        - --sesame-key-file=/certs/tls.key
-        - --config-path=/config/sesame.yaml
-        command: ["sesame"]
-        image: ghcr.io/projectsesame/sesame:main
-        imagePullPolicy: IfNotPresent
-        name: sesame
-        ports:
-        - containerPort: 8001
-          name: xds
-          protocol: TCP
-        - containerPort: 8000
-          name: metrics
-          protocol: TCP
-        - containerPort: 6060
-          name: debug
-          protocol: TCP
-        livenessProbe:
-          httpGet:
-            path: /healthz
-            port: 8000
-        readinessProbe:
-          tcpSocket:
-            port: 8001
-          initialDelaySeconds: 15
-          periodSeconds: 10
-        volumeMounts:
-          - name: Sesamecert
-            mountPath: /certs
-            readOnly: true
-          - name: sesame-config
-            mountPath: /config
-            readOnly: true
-        env:
-        - name: Sesame_NAMESPACE
-          valueFrom:
-            fieldRef:
-              apiVersion: v1
-              fieldPath: metadata.namespace
-        - name: POD_NAME
-          valueFrom:
-            fieldRef:
-              apiVersion: v1
-              fieldPath: metadata.name
-      dnsPolicy: ClusterFirst
-      serviceAccountName: sesame
-      securityContext:
-        runAsNonRoot: true
-        runAsUser: 65534
-        runAsGroup: 65534
-      volumes:
-        - name: Sesamecert
-          secret:
-            secretName: Sesamecert
-        - name: sesame-config
-          configMap:
-            name: sesame
-            defaultMode: 0644
-            items:
-            - key: sesame.yaml
-              path: sesame.yaml
+    app: sesame
+  type: ClusterIP
 
 ---
 apiVersion: apps/v1
@@ -5280,3 +5175,108 @@ spec:
         runAsNonRoot: true
         runAsUser: 65534
         runAsGroup: 65534
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: sesame
+  name: sesame
+  namespace: projectsesame
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      # This value of maxSurge means that during a rolling update
+      # the new ReplicaSet will be created first.
+      maxSurge: 50%
+  selector:
+    matchLabels:
+      app: sesame
+  template:
+    metadata:
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8000"
+      labels:
+        app: sesame
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  app: sesame
+              topologyKey: kubernetes.io/hostname
+            weight: 100
+      containers:
+      - args:
+        - serve
+        - --incluster
+        - --xds-address=0.0.0.0
+        - --xds-port=8001
+        - --sesame-cafile=/certs/ca.crt
+        - --sesame-cert-file=/certs/tls.crt
+        - --sesame-key-file=/certs/tls.key
+        - --config-path=/config/sesame.yaml
+        command: ["sesame"]
+        image: ghcr.io/projectsesame/sesame:main
+        imagePullPolicy: IfNotPresent
+        name: sesame
+        ports:
+        - containerPort: 8001
+          name: xds
+          protocol: TCP
+        - containerPort: 8000
+          name: metrics
+          protocol: TCP
+        - containerPort: 6060
+          name: debug
+          protocol: TCP
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8000
+        readinessProbe:
+          tcpSocket:
+            port: 8001
+          initialDelaySeconds: 15
+          periodSeconds: 10
+        volumeMounts:
+          - name: sesamecert
+            mountPath: /certs
+            readOnly: true
+          - name: sesame-config
+            mountPath: /config
+            readOnly: true
+        env:
+        - name: SESAME_NAMESPACE
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.name
+      dnsPolicy: ClusterFirst
+      serviceAccountName: sesame
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        runAsGroup: 65534
+      volumes:
+        - name: sesamecert
+          secret:
+            secretName: sesamecert
+        - name: sesame-config
+          configMap:
+            name: sesame
+            defaultMode: 0644
+            items:
+            - key: sesame.yaml
+              path: sesame.yaml

@@ -96,7 +96,7 @@ rules:
 - apiGroups:
   - projectsesame.io
   resources:
-  - sesameconfigurations/status
+  - Sesameconfigurations/status
   - extensionservices/status
   - httpproxies/status
   verbs:

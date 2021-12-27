@@ -281,7 +281,7 @@ TLSCertificateDelegationStatus
 </h3>
 <p>
 (<em>Appears on:</em>
-<a href="#projectsesame.io/v1.AuthorizationServer">AuthorizationServer</a>,
+<a href="#projectsesame.io/v1.AuthorizationServer">AuthorizationServer</a>, 
 <a href="#projectsesame.io/v1.Route">Route</a>)
 </p>
 <p>
@@ -713,7 +713,7 @@ For now this is required.</p>
 </h3>
 <p>
 (<em>Appears on:</em>
-<a href="#projectsesame.io/v1.Route">Route</a>,
+<a href="#projectsesame.io/v1.Route">Route</a>, 
 <a href="#projectsesame.io/v1.Service">Service</a>)
 </p>
 <p>
@@ -804,11 +804,11 @@ If not set, SameSite attribute will not be rewritten.</p>
 </h3>
 <p>
 (<em>Appears on:</em>
-<a href="#projectsesame.io/v1.HTTPProxyStatus">HTTPProxyStatus</a>,
-<a href="#projectsesame.io/v1.TLSCertificateDelegationStatus">TLSCertificateDelegationStatus</a>,
-<a href="#projectsesame.io/v1alpha1.SesameConfigurationStatus">SesameConfigurationStatus</a>,
-<a href="#projectsesame.io/v1alpha1.SesameDeploymentStatus">SesameDeploymentStatus</a>,
-<a href="#projectsesame.io/v1alpha1.ExtensionServiceStatus">ExtensionServiceStatus</a>)
+<a href="#projectsesame.io/v1.HTTPProxyStatus">HTTPProxyStatus</a>, 
+<a href="#projectsesame.io/v1.TLSCertificateDelegationStatus">TLSCertificateDelegationStatus</a>, 
+<a href="#projectsesame.io/v1alpha1.ExtensionServiceStatus">ExtensionServiceStatus</a>, 
+<a href="#projectsesame.io/v1alpha1.SesameConfigurationStatus">SesameConfigurationStatus</a>, 
+<a href="#projectsesame.io/v1alpha1.SesameDeploymentStatus">SesameDeploymentStatus</a>)
 </p>
 <p>
 <p>DetailedCondition is an extension of the normal Kubernetes conditions, with two extra
@@ -1129,7 +1129,7 @@ string
 </td>
 <td>
 <p>The value of the host header in the HTTP health check request.
-If left empty (default value), the name &ldquo;Sesame-envoy-healthcheck&rdquo;
+If left empty (default value), the name &ldquo;sesame-envoy-healthcheck&rdquo;
 will be used.</p>
 </td>
 </tr>
@@ -1481,7 +1481,7 @@ request, no hash will be produced.</p>
 </h3>
 <p>
 (<em>Appears on:</em>
-<a href="#projectsesame.io/v1.MatchCondition">MatchCondition</a>,
+<a href="#projectsesame.io/v1.MatchCondition">MatchCondition</a>, 
 <a href="#projectsesame.io/v1.RequestHeaderValueMatchDescriptor">RequestHeaderValueMatchDescriptor</a>)
 </p>
 <p>
@@ -1602,7 +1602,7 @@ equal to. The condition is true if the header has any other value.</p>
 </h3>
 <p>
 (<em>Appears on:</em>
-<a href="#projectsesame.io/v1.HeadersPolicy">HeadersPolicy</a>,
+<a href="#projectsesame.io/v1.HeadersPolicy">HeadersPolicy</a>, 
 <a href="#projectsesame.io/v1.LocalRateLimitPolicy">LocalRateLimitPolicy</a>)
 </p>
 <p>
@@ -1646,7 +1646,7 @@ string
 </h3>
 <p>
 (<em>Appears on:</em>
-<a href="#projectsesame.io/v1.Route">Route</a>,
+<a href="#projectsesame.io/v1.Route">Route</a>, 
 <a href="#projectsesame.io/v1.Service">Service</a>)
 </p>
 <p>
@@ -1763,8 +1763,8 @@ include invalid.</p>
 </h3>
 <p>
 (<em>Appears on:</em>
-<a href="#projectsesame.io/v1.Route">Route</a>,
-<a href="#projectsesame.io/v1.TCPProxy">TCPProxy</a>,
+<a href="#projectsesame.io/v1.Route">Route</a>, 
+<a href="#projectsesame.io/v1.TCPProxy">TCPProxy</a>, 
 <a href="#projectsesame.io/v1alpha1.ExtensionServiceSpec">ExtensionServiceSpec</a>)
 </p>
 <p>
@@ -1911,7 +1911,7 @@ set when a request is rate-limited.</p>
 </h3>
 <p>
 (<em>Appears on:</em>
-<a href="#projectsesame.io/v1.Include">Include</a>,
+<a href="#projectsesame.io/v1.Include">Include</a>, 
 <a href="#projectsesame.io/v1.Route">Route</a>)
 </p>
 <p>
@@ -2116,7 +2116,7 @@ and a value equal to the client&rsquo;s IP address (from x-forwarded-for).</p>
 </h3>
 <p>
 (<em>Appears on:</em>
-<a href="#projectsesame.io/v1.Route">Route</a>,
+<a href="#projectsesame.io/v1.Route">Route</a>, 
 <a href="#projectsesame.io/v1.VirtualHost">VirtualHost</a>)
 </p>
 <p>
@@ -2766,7 +2766,7 @@ HTTPRequestRedirectPolicy
 </h3>
 <p>
 (<em>Appears on:</em>
-<a href="#projectsesame.io/v1.Route">Route</a>,
+<a href="#projectsesame.io/v1.Route">Route</a>, 
 <a href="#projectsesame.io/v1.TCPProxy">TCPProxy</a>)
 </p>
 <p>
@@ -3385,7 +3385,7 @@ namespace your condition with a label, like <code>controller.domain.com\Conditio
 </h3>
 <p>
 (<em>Appears on:</em>
-<a href="#projectsesame.io/v1.Route">Route</a>,
+<a href="#projectsesame.io/v1.Route">Route</a>, 
 <a href="#projectsesame.io/v1alpha1.ExtensionServiceSpec">ExtensionServiceSpec</a>)
 </p>
 <p>
@@ -3440,7 +3440,7 @@ stream_idle_timeout default of 5m still applies.</p>
 </h3>
 <p>
 (<em>Appears on:</em>
-<a href="#projectsesame.io/v1.Service">Service</a>,
+<a href="#projectsesame.io/v1.Service">Service</a>, 
 <a href="#projectsesame.io/v1alpha1.ExtensionServiceSpec">ExtensionServiceSpec</a>)
 </p>
 <p>
@@ -3588,12 +3588,193 @@ RateLimitPolicy
 </p>
 Resource Types:
 <ul><li>
+<a href="#projectsesame.io/v1alpha1.ExtensionService">ExtensionService</a>
+</li><li>
 <a href="#projectsesame.io/v1alpha1.SesameConfiguration">SesameConfiguration</a>
 </li><li>
 <a href="#projectsesame.io/v1alpha1.SesameDeployment">SesameDeployment</a>
-</li><li>
-<a href="#projectsesame.io/v1alpha1.ExtensionService">ExtensionService</a>
 </li></ul>
+<h3 id="projectsesame.io/v1alpha1.ExtensionService">ExtensionService
+</h3>
+<p>
+<p>ExtensionService is the schema for the Sesame extension services API.
+An ExtensionService resource binds a network service to the Sesame
+API so that Sesame API features can be implemented by collaborating
+components.</p>
+</p>
+<table class="table table-striped table-borderless" style="border:none">
+<thead class="border-bottom">
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody class="border-top">
+<tr>
+<td>
+<code>apiVersion</code>
+<br>
+string</td>
+<td>
+<code>
+projectsesame.io/v1alpha1
+</code>
+</td>
+</tr>
+<tr>
+<td>
+<code>kind</code>
+<br>
+string
+</td>
+<td><code>ExtensionService</code></td>
+</tr>
+<tr>
+<td style="white-space:nowrap">
+<code>metadata</code>
+<br>
+<em>
+<a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#objectmeta-v1-meta">
+Kubernetes meta/v1.ObjectMeta
+</a>
+</em>
+</td>
+<td>
+Refer to the Kubernetes API documentation for the fields of the
+<code>metadata</code> field.
+</td>
+</tr>
+<tr>
+<td style="white-space:nowrap">
+<code>spec</code>
+<br>
+<em>
+<a href="#projectsesame.io/v1alpha1.ExtensionServiceSpec">
+ExtensionServiceSpec
+</a>
+</em>
+</td>
+<td>
+<br>
+<br>
+<table style="border:none">
+<tr>
+<td style="white-space:nowrap">
+<code>services</code>
+<br>
+<em>
+<a href="#projectsesame.io/v1alpha1.ExtensionServiceTarget">
+[]ExtensionServiceTarget
+</a>
+</em>
+</td>
+<td>
+<p>Services specifies the set of Kubernetes Service resources that
+receive GRPC extension API requests.
+If no weights are specified for any of the entries in
+this array, traffic will be spread evenly across all the
+services.
+Otherwise, traffic is balanced proportionally to the
+Weight field in each entry.</p>
+</td>
+</tr>
+<tr>
+<td style="white-space:nowrap">
+<code>validation</code>
+<br>
+<em>
+<a href="#projectsesame.io/v1.UpstreamValidation">
+UpstreamValidation
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>UpstreamValidation defines how to verify the backend service&rsquo;s certificate</p>
+</td>
+</tr>
+<tr>
+<td style="white-space:nowrap">
+<code>protocol</code>
+<br>
+<em>
+string
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>Protocol may be used to specify (or override) the protocol used to reach this Service.
+Values may be h2 or h2c. If omitted, protocol-selection falls back on Service annotations.</p>
+</td>
+</tr>
+<tr>
+<td style="white-space:nowrap">
+<code>loadBalancerPolicy</code>
+<br>
+<em>
+<a href="#projectsesame.io/v1.LoadBalancerPolicy">
+LoadBalancerPolicy
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>The policy for load balancing GRPC service requests. Note that the
+<code>Cookie</code> and <code>RequestHash</code> load balancing strategies cannot be used
+here.</p>
+</td>
+</tr>
+<tr>
+<td style="white-space:nowrap">
+<code>timeoutPolicy</code>
+<br>
+<em>
+<a href="#projectsesame.io/v1.TimeoutPolicy">
+TimeoutPolicy
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>The timeout policy for requests to the services.</p>
+</td>
+</tr>
+<tr>
+<td style="white-space:nowrap">
+<code>protocolVersion</code>
+<br>
+<em>
+<a href="#projectsesame.io/v1alpha1.ExtensionProtocolVersion">
+ExtensionProtocolVersion
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>This field sets the version of the GRPC protocol that Envoy uses to
+send requests to the extension service. Since Sesame always uses the
+v3 Envoy API, this is currently fixed at &ldquo;v3&rdquo;. However, other
+protocol options will be available in future.</p>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td style="white-space:nowrap">
+<code>status</code>
+<br>
+<em>
+<a href="#projectsesame.io/v1alpha1.ExtensionServiceStatus">
+ExtensionServiceStatus
+</a>
+</em>
+</td>
+<td>
+</td>
+</tr>
+</tbody>
+</table>
 <h3 id="projectsesame.io/v1alpha1.SesameConfiguration">SesameConfiguration
 </h3>
 <p>
@@ -3948,187 +4129,6 @@ SesameDeploymentStatus
 </tr>
 </tbody>
 </table>
-<h3 id="projectsesame.io/v1alpha1.ExtensionService">ExtensionService
-</h3>
-<p>
-<p>ExtensionService is the schema for the Sesame extension services API.
-An ExtensionService resource binds a network service to the Sesame
-API so that Sesame API features can be implemented by collaborating
-components.</p>
-</p>
-<table class="table table-striped table-borderless" style="border:none">
-<thead class="border-bottom">
-<tr>
-<th>Field</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody class="border-top">
-<tr>
-<td>
-<code>apiVersion</code>
-<br>
-string</td>
-<td>
-<code>
-projectsesame.io/v1alpha1
-</code>
-</td>
-</tr>
-<tr>
-<td>
-<code>kind</code>
-<br>
-string
-</td>
-<td><code>ExtensionService</code></td>
-</tr>
-<tr>
-<td style="white-space:nowrap">
-<code>metadata</code>
-<br>
-<em>
-<a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#objectmeta-v1-meta">
-Kubernetes meta/v1.ObjectMeta
-</a>
-</em>
-</td>
-<td>
-Refer to the Kubernetes API documentation for the fields of the
-<code>metadata</code> field.
-</td>
-</tr>
-<tr>
-<td style="white-space:nowrap">
-<code>spec</code>
-<br>
-<em>
-<a href="#projectsesame.io/v1alpha1.ExtensionServiceSpec">
-ExtensionServiceSpec
-</a>
-</em>
-</td>
-<td>
-<br>
-<br>
-<table style="border:none">
-<tr>
-<td style="white-space:nowrap">
-<code>services</code>
-<br>
-<em>
-<a href="#projectsesame.io/v1alpha1.ExtensionServiceTarget">
-[]ExtensionServiceTarget
-</a>
-</em>
-</td>
-<td>
-<p>Services specifies the set of Kubernetes Service resources that
-receive GRPC extension API requests.
-If no weights are specified for any of the entries in
-this array, traffic will be spread evenly across all the
-services.
-Otherwise, traffic is balanced proportionally to the
-Weight field in each entry.</p>
-</td>
-</tr>
-<tr>
-<td style="white-space:nowrap">
-<code>validation</code>
-<br>
-<em>
-<a href="#projectsesame.io/v1.UpstreamValidation">
-UpstreamValidation
-</a>
-</em>
-</td>
-<td>
-<em>(Optional)</em>
-<p>UpstreamValidation defines how to verify the backend service&rsquo;s certificate</p>
-</td>
-</tr>
-<tr>
-<td style="white-space:nowrap">
-<code>protocol</code>
-<br>
-<em>
-string
-</em>
-</td>
-<td>
-<em>(Optional)</em>
-<p>Protocol may be used to specify (or override) the protocol used to reach this Service.
-Values may be h2 or h2c. If omitted, protocol-selection falls back on Service annotations.</p>
-</td>
-</tr>
-<tr>
-<td style="white-space:nowrap">
-<code>loadBalancerPolicy</code>
-<br>
-<em>
-<a href="#projectsesame.io/v1.LoadBalancerPolicy">
-LoadBalancerPolicy
-</a>
-</em>
-</td>
-<td>
-<em>(Optional)</em>
-<p>The policy for load balancing GRPC service requests. Note that the
-<code>Cookie</code> and <code>RequestHash</code> load balancing strategies cannot be used
-here.</p>
-</td>
-</tr>
-<tr>
-<td style="white-space:nowrap">
-<code>timeoutPolicy</code>
-<br>
-<em>
-<a href="#projectsesame.io/v1.TimeoutPolicy">
-TimeoutPolicy
-</a>
-</em>
-</td>
-<td>
-<em>(Optional)</em>
-<p>The timeout policy for requests to the services.</p>
-</td>
-</tr>
-<tr>
-<td style="white-space:nowrap">
-<code>protocolVersion</code>
-<br>
-<em>
-<a href="#projectsesame.io/v1alpha1.ExtensionProtocolVersion">
-ExtensionProtocolVersion
-</a>
-</em>
-</td>
-<td>
-<em>(Optional)</em>
-<p>This field sets the version of the GRPC protocol that Envoy uses to
-send requests to the extension service. Since Sesame always uses the
-v3 Envoy API, this is currently fixed at &ldquo;v3&rdquo;. However, other
-protocol options will be available in future.</p>
-</td>
-</tr>
-</table>
-</td>
-</tr>
-<tr>
-<td style="white-space:nowrap">
-<code>status</code>
-<br>
-<em>
-<a href="#projectsesame.io/v1alpha1.ExtensionServiceStatus">
-ExtensionServiceStatus
-</a>
-</em>
-</td>
-<td>
-</td>
-</tr>
-</tbody>
-</table>
 <h3 id="projectsesame.io/v1alpha1.AccessLogFields">AccessLogFields
 (<code>[]string</code> alias)</h3>
 <p>
@@ -4194,317 +4194,6 @@ in the IPv4 family.
 Note: This only applies to externalName clusters.</p>
 <p>See <a href="https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/cluster/v3/cluster.proto.html#envoy-v3-api-enum-config-cluster-v3-cluster-dnslookupfamily">https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/cluster/v3/cluster.proto.html#envoy-v3-api-enum-config-cluster-v3-cluster-dnslookupfamily</a>
 for more information.</p>
-</td>
-</tr>
-</tbody>
-</table>
-<h3 id="projectsesame.io/v1alpha1.SesameConfigurationSpec">SesameConfigurationSpec
-</h3>
-<p>
-(<em>Appears on:</em>
-<a href="#projectsesame.io/v1alpha1.SesameConfiguration">SesameConfiguration</a>,
-<a href="#projectsesame.io/v1alpha1.SesameDeploymentSpec">SesameDeploymentSpec</a>)
-</p>
-<p>
-<p>SesameConfigurationSpec represents a configuration of a Sesame controller.
-It contains most of all the options that can be customized, the
-other remaining options being command line flags.</p>
-</p>
-<table class="table table-striped table-borderless" style="border:none">
-<thead class="border-bottom">
-<tr>
-<th>Field</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody class="border-top">
-<tr>
-<td style="white-space:nowrap">
-<code>xdsServer</code>
-<br>
-<em>
-<a href="#projectsesame.io/v1alpha1.XDSServerConfig">
-XDSServerConfig
-</a>
-</em>
-</td>
-<td>
-<em>(Optional)</em>
-<p>XDSServer contains parameters for the xDS server.</p>
-</td>
-</tr>
-<tr>
-<td style="white-space:nowrap">
-<code>ingress</code>
-<br>
-<em>
-<a href="#projectsesame.io/v1alpha1.IngressConfig">
-IngressConfig
-</a>
-</em>
-</td>
-<td>
-<em>(Optional)</em>
-<p>Ingress contains parameters for ingress options.</p>
-</td>
-</tr>
-<tr>
-<td style="white-space:nowrap">
-<code>debug</code>
-<br>
-<em>
-<a href="#projectsesame.io/v1alpha1.DebugConfig">
-DebugConfig
-</a>
-</em>
-</td>
-<td>
-<em>(Optional)</em>
-<p>Debug contains parameters to enable debug logging
-and debug interfaces inside Sesame.</p>
-</td>
-</tr>
-<tr>
-<td style="white-space:nowrap">
-<code>health</code>
-<br>
-<em>
-<a href="#projectsesame.io/v1alpha1.HealthConfig">
-HealthConfig
-</a>
-</em>
-</td>
-<td>
-<em>(Optional)</em>
-<p>Health defines the endpoints Sesame uses to serve health checks.</p>
-</td>
-</tr>
-<tr>
-<td style="white-space:nowrap">
-<code>envoy</code>
-<br>
-<em>
-<a href="#projectsesame.io/v1alpha1.EnvoyConfig">
-EnvoyConfig
-</a>
-</em>
-</td>
-<td>
-<em>(Optional)</em>
-<p>Envoy contains parameters for Envoy as well
-as how to optionally configure a managed Envoy fleet.</p>
-</td>
-</tr>
-<tr>
-<td style="white-space:nowrap">
-<code>gateway</code>
-<br>
-<em>
-<a href="#projectsesame.io/v1alpha1.GatewayConfig">
-GatewayConfig
-</a>
-</em>
-</td>
-<td>
-<em>(Optional)</em>
-<p>Gateway contains parameters for the gateway-api Gateway that Sesame
-is configured to serve traffic.</p>
-</td>
-</tr>
-<tr>
-<td style="white-space:nowrap">
-<code>httpproxy</code>
-<br>
-<em>
-<a href="#projectsesame.io/v1alpha1.HTTPProxyConfig">
-HTTPProxyConfig
-</a>
-</em>
-</td>
-<td>
-<em>(Optional)</em>
-<p>HTTPProxy defines parameters on HTTPProxy.</p>
-</td>
-</tr>
-<tr>
-<td style="white-space:nowrap">
-<code>enableExternalNameService</code>
-<br>
-<em>
-bool
-</em>
-</td>
-<td>
-<em>(Optional)</em>
-<p>EnableExternalNameService allows processing of ExternalNameServices
-Defaults to disabled for security reasons.</p>
-</td>
-</tr>
-<tr>
-<td style="white-space:nowrap">
-<code>rateLimitService</code>
-<br>
-<em>
-<a href="#projectsesame.io/v1alpha1.RateLimitServiceConfig">
-RateLimitServiceConfig
-</a>
-</em>
-</td>
-<td>
-<em>(Optional)</em>
-<p>RateLimitService optionally holds properties of the Rate Limit Service
-to be used for global rate limiting.</p>
-</td>
-</tr>
-<tr>
-<td style="white-space:nowrap">
-<code>policy</code>
-<br>
-<em>
-<a href="#projectsesame.io/v1alpha1.PolicyConfig">
-PolicyConfig
-</a>
-</em>
-</td>
-<td>
-<em>(Optional)</em>
-<p>Policy specifies default policy applied if not overridden by the user</p>
-</td>
-</tr>
-<tr>
-<td style="white-space:nowrap">
-<code>metrics</code>
-<br>
-<em>
-<a href="#projectsesame.io/v1alpha1.MetricsConfig">
-MetricsConfig
-</a>
-</em>
-</td>
-<td>
-<em>(Optional)</em>
-<p>Metrics defines the endpoint Sesame uses to serve metrics.</p>
-</td>
-</tr>
-</tbody>
-</table>
-<h3 id="projectsesame.io/v1alpha1.SesameConfigurationStatus">SesameConfigurationStatus
-</h3>
-<p>
-(<em>Appears on:</em>
-<a href="#projectsesame.io/v1alpha1.SesameConfiguration">SesameConfiguration</a>)
-</p>
-<p>
-<p>SesameConfigurationStatus defines the observed state of a SesameConfiguration resource.</p>
-</p>
-<table class="table table-striped table-borderless" style="border:none">
-<thead class="border-bottom">
-<tr>
-<th>Field</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody class="border-top">
-<tr>
-<td style="white-space:nowrap">
-<code>conditions</code>
-<br>
-<em>
-<a href="#projectsesame.io/v1.DetailedCondition">
-[]DetailedCondition
-</a>
-</em>
-</td>
-<td>
-<em>(Optional)</em>
-<p>Conditions contains the current status of the Sesame resource.</p>
-<p>Sesame will update a single condition, <code>Valid</code>, that is in normal-true polarity.</p>
-<p>Sesame will not modify any other Conditions set in this block,
-in case some other controller wants to add a Condition.</p>
-</td>
-</tr>
-</tbody>
-</table>
-<h3 id="projectsesame.io/v1alpha1.SesameDeploymentSpec">SesameDeploymentSpec
-</h3>
-<p>
-(<em>Appears on:</em>
-<a href="#projectsesame.io/v1alpha1.SesameDeployment">SesameDeployment</a>)
-</p>
-<p>
-<p>SesameDeploymentSpec defines the parameters of how a Sesame
-instance should be configured.</p>
-</p>
-<table class="table table-striped table-borderless" style="border:none">
-<thead class="border-bottom">
-<tr>
-<th>Field</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody class="border-top">
-<tr>
-<td style="white-space:nowrap">
-<code>replicas</code>
-<br>
-<em>
-int32
-</em>
-</td>
-<td>
-<p>Replicas is the desired number of Sesame replicas. If unset,
-defaults to 2.</p>
-</td>
-</tr>
-<tr>
-<td style="white-space:nowrap">
-<code>config</code>
-<br>
-<em>
-<a href="#projectsesame.io/v1alpha1.SesameConfigurationSpec">
-SesameConfigurationSpec
-</a>
-</em>
-</td>
-<td>
-<p>Config is the config that the instances of Sesame are to utilize.</p>
-</td>
-</tr>
-</tbody>
-</table>
-<h3 id="projectsesame.io/v1alpha1.SesameDeploymentStatus">SesameDeploymentStatus
-</h3>
-<p>
-(<em>Appears on:</em>
-<a href="#projectsesame.io/v1alpha1.SesameDeployment">SesameDeployment</a>)
-</p>
-<p>
-<p>SesameDeploymentStatus defines the observed state of a SesameDeployment resource.</p>
-</p>
-<table class="table table-striped table-borderless" style="border:none">
-<thead class="border-bottom">
-<tr>
-<th>Field</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody class="border-top">
-<tr>
-<td style="white-space:nowrap">
-<code>conditions</code>
-<br>
-<em>
-<a href="#projectsesame.io/v1.DetailedCondition">
-[]DetailedCondition
-</a>
-</em>
-</td>
-<td>
-<em>(Optional)</em>
-<p>Conditions contains the current status of the Sesame resource.</p>
-<p>Sesame will update a single condition, <code>Valid</code>, that is in normal-true polarity.</p>
-<p>Sesame will not modify any other Conditions set in this block,
-in case some other controller wants to add a Condition.</p>
 </td>
 </tr>
 </tbody>
@@ -5281,7 +4970,7 @@ string
 </td>
 <td>
 <p>ControllerName is used to determine whether Sesame should reconcile a
-GatewayClass. The string takes the form of &ldquo;projectsesame.io/<namespace>/Sesame&rdquo;.
+GatewayClass. The string takes the form of &ldquo;projectsesame.io/<namespace>/sesame&rdquo;.
 If unset, the gatewayclass controller will not be started.</p>
 </td>
 </tr>
@@ -5403,8 +5092,8 @@ map[string]string
 </h3>
 <p>
 (<em>Appears on:</em>
-<a href="#projectsesame.io/v1alpha1.SesameConfigurationSpec">SesameConfigurationSpec</a>,
-<a href="#projectsesame.io/v1alpha1.EnvoyConfig">EnvoyConfig</a>)
+<a href="#projectsesame.io/v1alpha1.EnvoyConfig">EnvoyConfig</a>, 
+<a href="#projectsesame.io/v1alpha1.SesameConfigurationSpec">SesameConfigurationSpec</a>)
 </p>
 <p>
 <p>HealthConfig defines the endpoints to enable health checks.</p>
@@ -5501,8 +5190,8 @@ string
 </h3>
 <p>
 (<em>Appears on:</em>
-<a href="#projectsesame.io/v1alpha1.SesameConfigurationSpec">SesameConfigurationSpec</a>,
-<a href="#projectsesame.io/v1alpha1.EnvoyConfig">EnvoyConfig</a>)
+<a href="#projectsesame.io/v1alpha1.EnvoyConfig">EnvoyConfig</a>, 
+<a href="#projectsesame.io/v1alpha1.SesameConfigurationSpec">SesameConfigurationSpec</a>)
 </p>
 <p>
 <p>MetricsConfig defines the metrics endpoint.</p>
@@ -5619,8 +5308,8 @@ string
 </h3>
 <p>
 (<em>Appears on:</em>
-<a href="#projectsesame.io/v1alpha1.EnvoyConfig">EnvoyConfig</a>,
-<a href="#projectsesame.io/v1alpha1.HTTPProxyConfig">HTTPProxyConfig</a>,
+<a href="#projectsesame.io/v1alpha1.EnvoyConfig">EnvoyConfig</a>, 
+<a href="#projectsesame.io/v1alpha1.HTTPProxyConfig">HTTPProxyConfig</a>, 
 <a href="#projectsesame.io/v1alpha1.RateLimitServiceConfig">RateLimitServiceConfig</a>)
 </p>
 <p>
@@ -5841,6 +5530,317 @@ headers X-RateLimit-Limit, X-RateLimit-Remaining, and X-RateLimit-Reset
 (as defined by the IETF Internet-Draft linked below), on responses
 to clients when the Rate Limit Service is consulted for a request.</p>
 <p>ref. <a href="https://tools.ietf.org/id/draft-polli-ratelimit-headers-03.html">https://tools.ietf.org/id/draft-polli-ratelimit-headers-03.html</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3 id="projectsesame.io/v1alpha1.SesameConfigurationSpec">SesameConfigurationSpec
+</h3>
+<p>
+(<em>Appears on:</em>
+<a href="#projectsesame.io/v1alpha1.SesameConfiguration">SesameConfiguration</a>, 
+<a href="#projectsesame.io/v1alpha1.SesameDeploymentSpec">SesameDeploymentSpec</a>)
+</p>
+<p>
+<p>SesameConfigurationSpec represents a configuration of a Sesame controller.
+It contains most of all the options that can be customized, the
+other remaining options being command line flags.</p>
+</p>
+<table class="table table-striped table-borderless" style="border:none">
+<thead class="border-bottom">
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody class="border-top">
+<tr>
+<td style="white-space:nowrap">
+<code>xdsServer</code>
+<br>
+<em>
+<a href="#projectsesame.io/v1alpha1.XDSServerConfig">
+XDSServerConfig
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>XDSServer contains parameters for the xDS server.</p>
+</td>
+</tr>
+<tr>
+<td style="white-space:nowrap">
+<code>ingress</code>
+<br>
+<em>
+<a href="#projectsesame.io/v1alpha1.IngressConfig">
+IngressConfig
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>Ingress contains parameters for ingress options.</p>
+</td>
+</tr>
+<tr>
+<td style="white-space:nowrap">
+<code>debug</code>
+<br>
+<em>
+<a href="#projectsesame.io/v1alpha1.DebugConfig">
+DebugConfig
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>Debug contains parameters to enable debug logging
+and debug interfaces inside Sesame.</p>
+</td>
+</tr>
+<tr>
+<td style="white-space:nowrap">
+<code>health</code>
+<br>
+<em>
+<a href="#projectsesame.io/v1alpha1.HealthConfig">
+HealthConfig
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>Health defines the endpoints Sesame uses to serve health checks.</p>
+</td>
+</tr>
+<tr>
+<td style="white-space:nowrap">
+<code>envoy</code>
+<br>
+<em>
+<a href="#projectsesame.io/v1alpha1.EnvoyConfig">
+EnvoyConfig
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>Envoy contains parameters for Envoy as well
+as how to optionally configure a managed Envoy fleet.</p>
+</td>
+</tr>
+<tr>
+<td style="white-space:nowrap">
+<code>gateway</code>
+<br>
+<em>
+<a href="#projectsesame.io/v1alpha1.GatewayConfig">
+GatewayConfig
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>Gateway contains parameters for the gateway-api Gateway that Sesame
+is configured to serve traffic.</p>
+</td>
+</tr>
+<tr>
+<td style="white-space:nowrap">
+<code>httpproxy</code>
+<br>
+<em>
+<a href="#projectsesame.io/v1alpha1.HTTPProxyConfig">
+HTTPProxyConfig
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>HTTPProxy defines parameters on HTTPProxy.</p>
+</td>
+</tr>
+<tr>
+<td style="white-space:nowrap">
+<code>enableExternalNameService</code>
+<br>
+<em>
+bool
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>EnableExternalNameService allows processing of ExternalNameServices
+Defaults to disabled for security reasons.</p>
+</td>
+</tr>
+<tr>
+<td style="white-space:nowrap">
+<code>rateLimitService</code>
+<br>
+<em>
+<a href="#projectsesame.io/v1alpha1.RateLimitServiceConfig">
+RateLimitServiceConfig
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>RateLimitService optionally holds properties of the Rate Limit Service
+to be used for global rate limiting.</p>
+</td>
+</tr>
+<tr>
+<td style="white-space:nowrap">
+<code>policy</code>
+<br>
+<em>
+<a href="#projectsesame.io/v1alpha1.PolicyConfig">
+PolicyConfig
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>Policy specifies default policy applied if not overridden by the user</p>
+</td>
+</tr>
+<tr>
+<td style="white-space:nowrap">
+<code>metrics</code>
+<br>
+<em>
+<a href="#projectsesame.io/v1alpha1.MetricsConfig">
+MetricsConfig
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>Metrics defines the endpoint Sesame uses to serve metrics.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3 id="projectsesame.io/v1alpha1.SesameConfigurationStatus">SesameConfigurationStatus
+</h3>
+<p>
+(<em>Appears on:</em>
+<a href="#projectsesame.io/v1alpha1.SesameConfiguration">SesameConfiguration</a>)
+</p>
+<p>
+<p>SesameConfigurationStatus defines the observed state of a SesameConfiguration resource.</p>
+</p>
+<table class="table table-striped table-borderless" style="border:none">
+<thead class="border-bottom">
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody class="border-top">
+<tr>
+<td style="white-space:nowrap">
+<code>conditions</code>
+<br>
+<em>
+<a href="#projectsesame.io/v1.DetailedCondition">
+[]DetailedCondition
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>Conditions contains the current status of the Sesame resource.</p>
+<p>Sesame will update a single condition, <code>Valid</code>, that is in normal-true polarity.</p>
+<p>Sesame will not modify any other Conditions set in this block,
+in case some other controller wants to add a Condition.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3 id="projectsesame.io/v1alpha1.SesameDeploymentSpec">SesameDeploymentSpec
+</h3>
+<p>
+(<em>Appears on:</em>
+<a href="#projectsesame.io/v1alpha1.SesameDeployment">SesameDeployment</a>)
+</p>
+<p>
+<p>SesameDeploymentSpec defines the parameters of how a Sesame
+instance should be configured.</p>
+</p>
+<table class="table table-striped table-borderless" style="border:none">
+<thead class="border-bottom">
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody class="border-top">
+<tr>
+<td style="white-space:nowrap">
+<code>replicas</code>
+<br>
+<em>
+int32
+</em>
+</td>
+<td>
+<p>Replicas is the desired number of Sesame replicas. If unset,
+defaults to 2.</p>
+</td>
+</tr>
+<tr>
+<td style="white-space:nowrap">
+<code>config</code>
+<br>
+<em>
+<a href="#projectsesame.io/v1alpha1.SesameConfigurationSpec">
+SesameConfigurationSpec
+</a>
+</em>
+</td>
+<td>
+<p>Config is the config that the instances of Sesame are to utilize.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3 id="projectsesame.io/v1alpha1.SesameDeploymentStatus">SesameDeploymentStatus
+</h3>
+<p>
+(<em>Appears on:</em>
+<a href="#projectsesame.io/v1alpha1.SesameDeployment">SesameDeployment</a>)
+</p>
+<p>
+<p>SesameDeploymentStatus defines the observed state of a SesameDeployment resource.</p>
+</p>
+<table class="table table-striped table-borderless" style="border:none">
+<thead class="border-bottom">
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody class="border-top">
+<tr>
+<td style="white-space:nowrap">
+<code>conditions</code>
+<br>
+<em>
+<a href="#projectsesame.io/v1.DetailedCondition">
+[]DetailedCondition
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>Conditions contains the current status of the Sesame resource.</p>
+<p>Sesame will update a single condition, <code>Valid</code>, that is in normal-true polarity.</p>
+<p>Sesame will not modify any other Conditions set in this block,
+in case some other controller wants to add a Condition.</p>
 </td>
 </tr>
 </tbody>
@@ -6077,7 +6077,7 @@ XDSServerType
 </em>
 </td>
 <td>
-<p>Defines the XDSServer to use for <code>Sesame serve</code>.</p>
+<p>Defines the XDSServer to use for <code>sesame serve</code>.</p>
 </td>
 </tr>
 <tr>

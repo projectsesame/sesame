@@ -33,9 +33,8 @@ import (
 	resource "github.com/envoyproxy/go-control-plane/pkg/resource/v3"
 	"github.com/golang/protobuf/proto"
 	"github.com/golang/protobuf/ptypes/any"
-	Sesame_api_v1 "github.com/projectsesame/sesame/apis/projectsesame/v1"
+	sesame_api_v1 "github.com/projectsesame/sesame/apis/projectsesame/v1"
 	"github.com/projectsesame/sesame/apis/projectsesame/v1alpha1"
-	"github.com/projectsesame/sesame/internal/Sesame"
 	"github.com/projectsesame/sesame/internal/dag"
 	"github.com/projectsesame/sesame/internal/fixture"
 	"github.com/projectsesame/sesame/internal/k8s"
@@ -285,12 +284,12 @@ type StatusResult struct {
 	*Sesame
 
 	Err  error
-	Have *Sesame_api_v1.HTTPProxyStatus
+	Have *sesame_api_v1.HTTPProxyStatus
 }
 
 // Equals asserts that the status result is not an error and matches
 // the wanted status exactly.
-func (s *StatusResult) Equals(want Sesame_api_v1.HTTPProxyStatus) *Sesame {
+func (s *StatusResult) Equals(want sesame_api_v1.HTTPProxyStatus) *Sesame {
 	s.T.Helper()
 
 	// We should never get an error fetching the status for an
@@ -305,7 +304,7 @@ func (s *StatusResult) Equals(want Sesame_api_v1.HTTPProxyStatus) *Sesame {
 
 // Like asserts that the status result is not an error and matches
 // non-empty fields in the wanted status.
-func (s *StatusResult) Like(want Sesame_api_v1.HTTPProxyStatus) *Sesame {
+func (s *StatusResult) Like(want sesame_api_v1.HTTPProxyStatus) *Sesame {
 	s.T.Helper()
 
 	// We should never get an error fetching the status for an
@@ -316,15 +315,15 @@ func (s *StatusResult) Like(want Sesame_api_v1.HTTPProxyStatus) *Sesame {
 
 	if len(want.CurrentStatus) > 0 {
 		assert.Equal(s.T,
-			Sesame_api_v1.HTTPProxyStatus{CurrentStatus: want.CurrentStatus},
-			Sesame_api_v1.HTTPProxyStatus{CurrentStatus: s.Have.CurrentStatus},
+			sesame_api_v1.HTTPProxyStatus{CurrentStatus: want.CurrentStatus},
+			sesame_api_v1.HTTPProxyStatus{CurrentStatus: s.Have.CurrentStatus},
 		)
 	}
 
 	if len(want.Description) > 0 {
 		assert.Equal(s.T,
-			Sesame_api_v1.HTTPProxyStatus{Description: want.Description},
-			Sesame_api_v1.HTTPProxyStatus{Description: s.Have.Description},
+			sesame_api_v1.HTTPProxyStatus{Description: want.Description},
+			sesame_api_v1.HTTPProxyStatus{Description: s.Have.Description},
 		)
 	}
 
@@ -336,7 +335,7 @@ func (s *StatusResult) Like(want Sesame_api_v1.HTTPProxyStatus) *Sesame {
 func (s *StatusResult) HasError(condType string, reason, message string) *Sesame {
 	assert.Equal(s.T, s.Have.CurrentStatus, string(status.ProxyStatusInvalid))
 	assert.Equal(s.T, s.Have.Description, `At least one error present, see Errors for details`)
-	validCond := s.Have.GetConditionFor(Sesame_api_v1.ValidConditionType)
+	validCond := s.Have.GetConditionFor(sesame_api_v1.ValidConditionType)
 	assert.NotNil(s.T, validCond)
 
 	subCond, ok := validCond.GetError(condType)
