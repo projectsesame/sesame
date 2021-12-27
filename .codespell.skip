@@ -7,7 +7,7 @@
 *.jpg
 *.ico
 *.svg
-./site/themes/Sesame/static/fonts/README.md
+./site/themes/contour/static/fonts/README.md
 ./vendor
 ./site/public
 ./hack/actions/check-changefile-exists.go

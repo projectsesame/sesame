@@ -1,6 +1,6 @@
 /.git
 /vendor
 /hack
-/Sesame
+/contour
 *.test
 /site
