@@ -20,9 +20,8 @@ import (
 	"context"
 	"time"
 
-	. "github.com/onsi/ginkgo"
-	Sesamev1 "github.com/projectsesame/sesame/apis/projectsesame/v1"
-	Sesamev1alpha1 "github.com/projectsesame/sesame/apis/projectsesame/v1alpha1"
+	sesamev1 "github.com/projectsesame/sesame/apis/projectsesame/v1"
+	sesamev1alpha1 "github.com/projectsesame/sesame/apis/projectsesame/v1alpha1"
 	"github.com/projectsesame/sesame/test/e2e"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -42,13 +41,13 @@ func testprojectsesameResourcesRBAC(namespace string) {
 		f.Certs.CreateSelfSignedCert(otherNS, "delegated-cert", "delegated-cert", "rbac-test.projectsesame.io")
 
 		// HTTPProxy and TLSCertificateDelegation
-		t := &Sesamev1.TLSCertificateDelegation{
+		t := &sesamev1.TLSCertificateDelegation{
 			ObjectMeta: metav1.ObjectMeta{
 				Namespace: otherNS,
 				Name:      "rbac",
 			},
-			Spec: Sesamev1.TLSCertificateDelegationSpec{
-				Delegations: []Sesamev1.CertificateDelegation{
+			Spec: sesamev1.TLSCertificateDelegationSpec{
+				Delegations: []sesamev1.CertificateDelegation{
 					{
 						SecretName:       "delegated-cert",
 						TargetNamespaces: []string{namespace},
@@ -58,21 +57,21 @@ func testprojectsesameResourcesRBAC(namespace string) {
 		}
 		require.NoError(f.T(), f.Client.Create(context.TODO(), t))
 
-		p := &Sesamev1.HTTPProxy{
+		p := &sesamev1.HTTPProxy{
 			ObjectMeta: metav1.ObjectMeta{
 				Namespace: namespace,
 				Name:      "rbac",
 			},
-			Spec: Sesamev1.HTTPProxySpec{
-				VirtualHost: &Sesamev1.VirtualHost{
+			Spec: sesamev1.HTTPProxySpec{
+				VirtualHost: &sesamev1.VirtualHost{
 					Fqdn: "rbac-test.projectsesame.io",
-					TLS: &Sesamev1.TLS{
+					TLS: &sesamev1.TLS{
 						SecretName: otherNS + "/delegated-cert",
 					},
 				},
-				Routes: []Sesamev1.Route{
+				Routes: []sesamev1.Route{
 					{
-						Services: []Sesamev1.Service{
+						Services: []sesamev1.Service{
 							{Name: "invalid-service", Port: 80},
 						},
 					},
@@ -107,13 +106,13 @@ func testprojectsesameResourcesRBAC(namespace string) {
 		assert.Truef(f.T(), ok, "expected %d response code, got %d", 200, res.StatusCode)
 
 		// ExtensionService
-		e := &Sesamev1alpha1.ExtensionService{
+		e := &sesamev1alpha1.ExtensionService{
 			ObjectMeta: metav1.ObjectMeta{
 				Namespace: namespace,
 				Name:      "rbac",
 			},
-			Spec: Sesamev1alpha1.ExtensionServiceSpec{
-				Services: []Sesamev1alpha1.ExtensionServiceTarget{
+			Spec: sesamev1alpha1.ExtensionServiceSpec{
+				Services: []sesamev1alpha1.ExtensionServiceTarget{
 					{Name: "invalid-service", Port: 80},
 				},
 			},

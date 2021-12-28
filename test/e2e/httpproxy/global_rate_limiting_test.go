@@ -19,8 +19,7 @@ package httpproxy
 import (
 	"context"
 
-	. "github.com/onsi/ginkgo"
-	Sesamev1 "github.com/projectsesame/sesame/apis/projectsesame/v1"
+	sesamev1 "github.com/projectsesame/sesame/apis/projectsesame/v1"
 	"github.com/projectsesame/sesame/test/e2e"
 	"github.com/stretchr/testify/require"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -34,18 +33,18 @@ func testGlobalRateLimitingVirtualHostNonTLS(namespace string) {
 
 		f.Fixtures.Echo.Deploy(namespace, "echo")
 
-		p := &Sesamev1.HTTPProxy{
+		p := &sesamev1.HTTPProxy{
 			ObjectMeta: metav1.ObjectMeta{
 				Namespace: namespace,
 				Name:      "globalratelimitvhostnontls",
 			},
-			Spec: Sesamev1.HTTPProxySpec{
-				VirtualHost: &Sesamev1.VirtualHost{
+			Spec: sesamev1.HTTPProxySpec{
+				VirtualHost: &sesamev1.VirtualHost{
 					Fqdn: "globalratelimitvhostnontls.projectsesame.io",
 				},
-				Routes: []Sesamev1.Route{
+				Routes: []sesamev1.Route{
 					{
-						Services: []Sesamev1.Service{
+						Services: []sesamev1.Service{
 							{
 								Name: "echo",
 								Port: 80,
@@ -72,13 +71,13 @@ func testGlobalRateLimitingVirtualHostNonTLS(namespace string) {
 			}
 
 			// Add a global rate limit policy on the virtual host.
-			p.Spec.VirtualHost.RateLimitPolicy = &Sesamev1.RateLimitPolicy{
-				Global: &Sesamev1.GlobalRateLimitPolicy{
-					Descriptors: []Sesamev1.RateLimitDescriptor{
+			p.Spec.VirtualHost.RateLimitPolicy = &sesamev1.RateLimitPolicy{
+				Global: &sesamev1.GlobalRateLimitPolicy{
+					Descriptors: []sesamev1.RateLimitDescriptor{
 						{
-							Entries: []Sesamev1.RateLimitDescriptorEntry{
+							Entries: []sesamev1.RateLimitDescriptorEntry{
 								{
-									GenericKey: &Sesamev1.GenericKeyDescriptor{
+									GenericKey: &sesamev1.GenericKeyDescriptor{
 										Value: "vhostlimit",
 									},
 								},
@@ -117,18 +116,18 @@ func testGlobalRateLimitingRouteNonTLS(namespace string) {
 
 		f.Fixtures.Echo.Deploy(namespace, "echo")
 
-		p := &Sesamev1.HTTPProxy{
+		p := &sesamev1.HTTPProxy{
 			ObjectMeta: metav1.ObjectMeta{
 				Namespace: namespace,
 				Name:      "globalratelimitroutenontls",
 			},
-			Spec: Sesamev1.HTTPProxySpec{
-				VirtualHost: &Sesamev1.VirtualHost{
+			Spec: sesamev1.HTTPProxySpec{
+				VirtualHost: &sesamev1.VirtualHost{
 					Fqdn: "globalratelimitroutenontls.projectsesame.io",
 				},
-				Routes: []Sesamev1.Route{
+				Routes: []sesamev1.Route{
 					{
-						Services: []Sesamev1.Service{
+						Services: []sesamev1.Service{
 							{
 								Name: "echo",
 								Port: 80,
@@ -136,13 +135,13 @@ func testGlobalRateLimitingRouteNonTLS(namespace string) {
 						},
 					},
 					{
-						Services: []Sesamev1.Service{
+						Services: []sesamev1.Service{
 							{
 								Name: "echo",
 								Port: 80,
 							},
 						},
-						Conditions: []Sesamev1.MatchCondition{
+						Conditions: []sesamev1.MatchCondition{
 							{
 								Prefix: "/unlimited",
 							},
@@ -168,13 +167,13 @@ func testGlobalRateLimitingRouteNonTLS(namespace string) {
 				return err
 			}
 
-			p.Spec.Routes[0].RateLimitPolicy = &Sesamev1.RateLimitPolicy{
-				Global: &Sesamev1.GlobalRateLimitPolicy{
-					Descriptors: []Sesamev1.RateLimitDescriptor{
+			p.Spec.Routes[0].RateLimitPolicy = &sesamev1.RateLimitPolicy{
+				Global: &sesamev1.GlobalRateLimitPolicy{
+					Descriptors: []sesamev1.RateLimitDescriptor{
 						{
-							Entries: []Sesamev1.RateLimitDescriptorEntry{
+							Entries: []sesamev1.RateLimitDescriptorEntry{
 								{
-									GenericKey: &Sesamev1.GenericKeyDescriptor{
+									GenericKey: &sesamev1.GenericKeyDescriptor{
 										Key:   "route_limit_key",
 										Value: "routelimit",
 									},
@@ -225,21 +224,21 @@ func testGlobalRateLimitingVirtualHostTLS(namespace string) {
 		f.Fixtures.Echo.Deploy(namespace, "echo")
 		f.Certs.CreateSelfSignedCert(namespace, "echo-cert", "echo", "globalratelimitvhosttls.projectsesame.io")
 
-		p := &Sesamev1.HTTPProxy{
+		p := &sesamev1.HTTPProxy{
 			ObjectMeta: metav1.ObjectMeta{
 				Namespace: namespace,
 				Name:      "globalratelimitvhosttls",
 			},
-			Spec: Sesamev1.HTTPProxySpec{
-				VirtualHost: &Sesamev1.VirtualHost{
+			Spec: sesamev1.HTTPProxySpec{
+				VirtualHost: &sesamev1.VirtualHost{
 					Fqdn: "globalratelimitvhosttls.projectsesame.io",
-					TLS: &Sesamev1.TLS{
+					TLS: &sesamev1.TLS{
 						SecretName: "echo",
 					},
 				},
-				Routes: []Sesamev1.Route{
+				Routes: []sesamev1.Route{
 					{
-						Services: []Sesamev1.Service{
+						Services: []sesamev1.Service{
 							{
 								Name: "echo",
 								Port: 80,
@@ -266,13 +265,13 @@ func testGlobalRateLimitingVirtualHostTLS(namespace string) {
 				return err
 			}
 
-			p.Spec.VirtualHost.RateLimitPolicy = &Sesamev1.RateLimitPolicy{
-				Global: &Sesamev1.GlobalRateLimitPolicy{
-					Descriptors: []Sesamev1.RateLimitDescriptor{
+			p.Spec.VirtualHost.RateLimitPolicy = &sesamev1.RateLimitPolicy{
+				Global: &sesamev1.GlobalRateLimitPolicy{
+					Descriptors: []sesamev1.RateLimitDescriptor{
 						{
-							Entries: []Sesamev1.RateLimitDescriptorEntry{
+							Entries: []sesamev1.RateLimitDescriptorEntry{
 								{
-									GenericKey: &Sesamev1.GenericKeyDescriptor{
+									GenericKey: &sesamev1.GenericKeyDescriptor{
 										Value: "tlsvhostlimit",
 									},
 								},
@@ -312,21 +311,21 @@ func testGlobalRateLimitingRouteTLS(namespace string) {
 		f.Fixtures.Echo.Deploy(namespace, "echo")
 		f.Certs.CreateSelfSignedCert(namespace, "echo-cert", "echo", "globalratelimitroutetls.projectsesame.io")
 
-		p := &Sesamev1.HTTPProxy{
+		p := &sesamev1.HTTPProxy{
 			ObjectMeta: metav1.ObjectMeta{
 				Namespace: namespace,
 				Name:      "globalratelimitroutetls",
 			},
-			Spec: Sesamev1.HTTPProxySpec{
-				VirtualHost: &Sesamev1.VirtualHost{
+			Spec: sesamev1.HTTPProxySpec{
+				VirtualHost: &sesamev1.VirtualHost{
 					Fqdn: "globalratelimitroutetls.projectsesame.io",
-					TLS: &Sesamev1.TLS{
+					TLS: &sesamev1.TLS{
 						SecretName: "echo",
 					},
 				},
-				Routes: []Sesamev1.Route{
+				Routes: []sesamev1.Route{
 					{
-						Services: []Sesamev1.Service{
+						Services: []sesamev1.Service{
 							{
 								Name: "echo",
 								Port: 80,
@@ -334,13 +333,13 @@ func testGlobalRateLimitingRouteTLS(namespace string) {
 						},
 					},
 					{
-						Services: []Sesamev1.Service{
+						Services: []sesamev1.Service{
 							{
 								Name: "echo",
 								Port: 80,
 							},
 						},
-						Conditions: []Sesamev1.MatchCondition{
+						Conditions: []sesamev1.MatchCondition{
 							{
 								Prefix: "/unlimited",
 							},
@@ -366,13 +365,13 @@ func testGlobalRateLimitingRouteTLS(namespace string) {
 				return err
 			}
 
-			p.Spec.Routes[0].RateLimitPolicy = &Sesamev1.RateLimitPolicy{
-				Global: &Sesamev1.GlobalRateLimitPolicy{
-					Descriptors: []Sesamev1.RateLimitDescriptor{
+			p.Spec.Routes[0].RateLimitPolicy = &sesamev1.RateLimitPolicy{
+				Global: &sesamev1.GlobalRateLimitPolicy{
+					Descriptors: []sesamev1.RateLimitDescriptor{
 						{
-							Entries: []Sesamev1.RateLimitDescriptorEntry{
+							Entries: []sesamev1.RateLimitDescriptorEntry{
 								{
-									GenericKey: &Sesamev1.GenericKeyDescriptor{
+									GenericKey: &sesamev1.GenericKeyDescriptor{
 										Value: "tlsroutelimit",
 									},
 								},

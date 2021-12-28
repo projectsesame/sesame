@@ -17,8 +17,7 @@
 package httpproxy
 
 import (
-	. "github.com/onsi/ginkgo"
-	Sesamev1 "github.com/projectsesame/sesame/apis/projectsesame/v1"
+	sesamev1 "github.com/projectsesame/sesame/apis/projectsesame/v1"
 	"github.com/projectsesame/sesame/test/e2e"
 	"github.com/stretchr/testify/assert"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -32,44 +31,44 @@ func testPathConditionMatch(namespace string) {
 		f.Fixtures.Echo.Deploy(namespace, "echo-slash-noprefix")
 		f.Fixtures.Echo.Deploy(namespace, "echo-slash-default")
 
-		p := &Sesamev1.HTTPProxy{
+		p := &sesamev1.HTTPProxy{
 			ObjectMeta: metav1.ObjectMeta{
 				Namespace: namespace,
 				Name:      "path-conditions",
 			},
-			Spec: Sesamev1.HTTPProxySpec{
-				VirtualHost: &Sesamev1.VirtualHost{
+			Spec: sesamev1.HTTPProxySpec{
+				VirtualHost: &sesamev1.VirtualHost{
 					Fqdn: "pathconditions.projectsesame.io",
 				},
-				Routes: []Sesamev1.Route{
+				Routes: []sesamev1.Route{
 					{
-						Services: []Sesamev1.Service{
+						Services: []sesamev1.Service{
 							{
 								Name: "echo-slash-prefix",
 								Port: 80,
 							},
 						},
-						Conditions: []Sesamev1.MatchCondition{
+						Conditions: []sesamev1.MatchCondition{
 							{
 								Prefix: "/path/prefix/",
 							},
 						},
 					},
 					{
-						Services: []Sesamev1.Service{
+						Services: []sesamev1.Service{
 							{
 								Name: "echo-slash-noprefix",
 								Port: 80,
 							},
 						},
-						Conditions: []Sesamev1.MatchCondition{
+						Conditions: []sesamev1.MatchCondition{
 							{
 								Prefix: "/path/prefix",
 							},
 						},
 					},
 					{
-						Services: []Sesamev1.Service{
+						Services: []sesamev1.Service{
 							{
 								Name: "echo-slash-default",
 								Port: 80,

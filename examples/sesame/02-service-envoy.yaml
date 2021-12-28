@@ -25,4 +25,5 @@ spec:
     targetPort: 8443
   selector:
     app: envoy
-  type: LoadBalancer
+  #type: LoadBalancer
+  type: NodePort

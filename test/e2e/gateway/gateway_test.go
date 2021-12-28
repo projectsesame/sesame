@@ -22,10 +22,8 @@ import (
 	"math/big"
 	"testing"
 
-	Sesame_api_v1alpha1 "github.com/projectsesame/sesame/apis/projectsesame/v1alpha1"
+	sesame_api_v1alpha1 "github.com/projectsesame/sesame/apis/projectsesame/v1alpha1"
 
-	. "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
 	"github.com/onsi/gomega/gexec"
 	"github.com/projectsesame/sesame/internal/gatewayapi"
 	"github.com/projectsesame/sesame/pkg/config"
@@ -58,7 +56,7 @@ var _ = Describe("Gateway API", func() {
 	var (
 		SesameCmd            *gexec.Session
 		SesameConfig         *config.Parameters
-		SesameConfiguration  *Sesame_api_v1alpha1.SesameConfiguration
+		SesameConfiguration  *sesame_api_v1alpha1.SesameConfiguration
 		SesameConfigFile     string
 		additionalSesameArgs []string
 
@@ -82,7 +80,7 @@ var _ = Describe("Gateway API", func() {
 
 					// Update sesame configuration to point to specified gateway.
 					SesameConfiguration = e2e.DefaultSesameConfiguration()
-					SesameConfiguration.Spec.Gateway = &Sesame_api_v1alpha1.GatewayConfig{
+					SesameConfiguration.Spec.Gateway = &sesame_api_v1alpha1.GatewayConfig{
 						ControllerName: string(gatewayClass.Spec.ControllerName),
 					}
 

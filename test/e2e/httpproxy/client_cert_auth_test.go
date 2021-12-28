@@ -23,8 +23,7 @@ import (
 
 	certmanagerv1 "github.com/jetstack/cert-manager/pkg/apis/certmanager/v1"
 	certmanagermetav1 "github.com/jetstack/cert-manager/pkg/apis/meta/v1"
-	. "github.com/onsi/ginkgo"
-	Sesamev1 "github.com/projectsesame/sesame/apis/projectsesame/v1"
+	sesamev1 "github.com/projectsesame/sesame/apis/projectsesame/v1"
 	"github.com/projectsesame/sesame/test/e2e"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -277,21 +276,21 @@ func testClientCertAuth(namespace string) {
 		f.Certs.CreateCertAndWaitFor(clientCertInvalid, certIsReady)
 
 		// This proxy does not require client certificate auth.
-		noAuthProxy := &Sesamev1.HTTPProxy{
+		noAuthProxy := &sesamev1.HTTPProxy{
 			ObjectMeta: metav1.ObjectMeta{
 				Namespace: namespace,
 				Name:      "echo-no-auth",
 			},
-			Spec: Sesamev1.HTTPProxySpec{
-				VirtualHost: &Sesamev1.VirtualHost{
+			Spec: sesamev1.HTTPProxySpec{
+				VirtualHost: &sesamev1.VirtualHost{
 					Fqdn: "echo-no-auth.projectsesame.io",
-					TLS: &Sesamev1.TLS{
+					TLS: &sesamev1.TLS{
 						SecretName: "echo-no-auth",
 					},
 				},
-				Routes: []Sesamev1.Route{
+				Routes: []sesamev1.Route{
 					{
-						Services: []Sesamev1.Service{
+						Services: []sesamev1.Service{
 							{
 								Name: "echo-no-auth",
 								Port: 80,
@@ -304,24 +303,24 @@ func testClientCertAuth(namespace string) {
 		f.CreateHTTPProxyAndWaitFor(noAuthProxy, e2e.HTTPProxyValid)
 
 		// This proxy requires client certificate auth.
-		authProxy := &Sesamev1.HTTPProxy{
+		authProxy := &sesamev1.HTTPProxy{
 			ObjectMeta: metav1.ObjectMeta{
 				Namespace: namespace,
 				Name:      "echo-with-auth",
 			},
-			Spec: Sesamev1.HTTPProxySpec{
-				VirtualHost: &Sesamev1.VirtualHost{
+			Spec: sesamev1.HTTPProxySpec{
+				VirtualHost: &sesamev1.VirtualHost{
 					Fqdn: "echo-with-auth.projectsesame.io",
-					TLS: &Sesamev1.TLS{
+					TLS: &sesamev1.TLS{
 						SecretName: "echo-with-auth",
-						ClientValidation: &Sesamev1.DownstreamValidation{
+						ClientValidation: &sesamev1.DownstreamValidation{
 							CACertificate: "echo-with-auth",
 						},
 					},
 				},
-				Routes: []Sesamev1.Route{
+				Routes: []sesamev1.Route{
 					{
-						Services: []Sesamev1.Service{
+						Services: []sesamev1.Service{
 							{
 								Name: "echo-with-auth",
 								Port: 80,
@@ -334,24 +333,24 @@ func testClientCertAuth(namespace string) {
 		f.CreateHTTPProxyAndWaitFor(authProxy, e2e.HTTPProxyValid)
 
 		// This proxy does not verify client certs.
-		authSkipVerifyProxy := &Sesamev1.HTTPProxy{
+		authSkipVerifyProxy := &sesamev1.HTTPProxy{
 			ObjectMeta: metav1.ObjectMeta{
 				Namespace: namespace,
 				Name:      "echo-with-auth-skip-verify",
 			},
-			Spec: Sesamev1.HTTPProxySpec{
-				VirtualHost: &Sesamev1.VirtualHost{
+			Spec: sesamev1.HTTPProxySpec{
+				VirtualHost: &sesamev1.VirtualHost{
 					Fqdn: "echo-with-auth-skip-verify.projectsesame.io",
-					TLS: &Sesamev1.TLS{
+					TLS: &sesamev1.TLS{
 						SecretName: "echo-with-auth-skip-verify",
-						ClientValidation: &Sesamev1.DownstreamValidation{
+						ClientValidation: &sesamev1.DownstreamValidation{
 							SkipClientCertValidation: true,
 						},
 					},
 				},
-				Routes: []Sesamev1.Route{
+				Routes: []sesamev1.Route{
 					{
-						Services: []Sesamev1.Service{
+						Services: []sesamev1.Service{
 							{
 								Name: "echo-with-auth-skip-verify",
 								Port: 80,
@@ -364,25 +363,25 @@ func testClientCertAuth(namespace string) {
 		f.CreateHTTPProxyAndWaitFor(authSkipVerifyProxy, e2e.HTTPProxyValid)
 
 		// This proxy requires a client certificate but does not verify it.
-		authSkipVerifyWithCAProxy := &Sesamev1.HTTPProxy{
+		authSkipVerifyWithCAProxy := &sesamev1.HTTPProxy{
 			ObjectMeta: metav1.ObjectMeta{
 				Namespace: namespace,
 				Name:      "echo-with-auth-skip-verify-with-ca",
 			},
-			Spec: Sesamev1.HTTPProxySpec{
-				VirtualHost: &Sesamev1.VirtualHost{
+			Spec: sesamev1.HTTPProxySpec{
+				VirtualHost: &sesamev1.VirtualHost{
 					Fqdn: "echo-with-auth-skip-verify-with-ca.projectsesame.io",
-					TLS: &Sesamev1.TLS{
+					TLS: &sesamev1.TLS{
 						SecretName: "echo-with-auth-skip-verify-with-ca",
-						ClientValidation: &Sesamev1.DownstreamValidation{
+						ClientValidation: &sesamev1.DownstreamValidation{
 							SkipClientCertValidation: true,
 							CACertificate:            "echo-with-auth",
 						},
 					},
 				},
-				Routes: []Sesamev1.Route{
+				Routes: []sesamev1.Route{
 					{
-						Services: []Sesamev1.Service{
+						Services: []sesamev1.Service{
 							{
 								Name: "echo-with-auth-skip-verify-with-ca",
 								Port: 80,

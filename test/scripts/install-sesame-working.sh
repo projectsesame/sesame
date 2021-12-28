@@ -79,7 +79,7 @@ for file in ${REPO}/examples/sesame/02-job-certgen.yaml ${REPO}/examples/sesame/
   # Set the image tag to $VERSION to unambiguously use the image
   # we built above.
   run::sed \
-    "-es|image: ghcr.io/projectsesame/Sesame:.*$|image: ghcr.io/projectsesame/Sesame:${VERSION}|" \
+    "-es|image: ghcr.io/projectsesame/sesame:.*$|image: ghcr.io/projectsesame/sesame:${VERSION}|" \
     "$file"
 
   ${KUBECTL} apply -f "$file"
@@ -159,7 +159,7 @@ metadata:
   namespace: projectsesame
 data:
   ratelimit-config.yaml: |
-    domain: Sesame
+    domain: sesame
     descriptors:
       - key: generic_key
         value: vhostlimit

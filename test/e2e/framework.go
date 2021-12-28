@@ -29,8 +29,8 @@ import (
 	certmanagerv1 "github.com/jetstack/cert-manager/pkg/apis/certmanager/v1"
 	"github.com/onsi/ginkgo"
 	"github.com/onsi/gomega/gexec"
-	Sesamev1 "github.com/projectsesame/sesame/apis/projectsesame/v1"
-	Sesamev1alpha1 "github.com/projectsesame/sesame/apis/projectsesame/v1alpha1"
+	sesamev1 "github.com/projectsesame/sesame/apis/projectsesame/v1"
+	sesamev1alpha1 "github.com/projectsesame/sesame/apis/projectsesame/v1alpha1"
 	"github.com/stretchr/testify/require"
 	corev1 "k8s.io/api/core/v1"
 	apiextensions_v1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
@@ -90,8 +90,8 @@ func NewFramework(inClusterTestSuite bool) *Framework {
 
 	scheme := runtime.NewScheme()
 	require.NoError(t, kubescheme.AddToScheme(scheme))
-	require.NoError(t, Sesamev1.AddToScheme(scheme))
-	require.NoError(t, Sesamev1alpha1.AddToScheme(scheme))
+	require.NoError(t, sesamev1.AddToScheme(scheme))
+	require.NoError(t, sesamev1alpha1.AddToScheme(scheme))
 	require.NoError(t, gatewayapi_v1alpha2.AddToScheme(scheme))
 	require.NoError(t, certmanagerv1.AddToScheme(scheme))
 	require.NoError(t, apiextensions_v1.AddToScheme(scheme))
@@ -249,16 +249,16 @@ func (f *Framework) Test(body TestBody) {
 }
 
 // CreateHTTPProxy creates the provided HTTPProxy and returns any relevant error.
-func (f *Framework) CreateHTTPProxy(proxy *Sesamev1.HTTPProxy) error {
+func (f *Framework) CreateHTTPProxy(proxy *sesamev1.HTTPProxy) error {
 	return f.Client.Create(context.TODO(), proxy)
 }
 
 // CreateHTTPProxyAndWaitFor creates the provided HTTPProxy in the Kubernetes API
 // and then waits for the specified condition to be true.
-func (f *Framework) CreateHTTPProxyAndWaitFor(proxy *Sesamev1.HTTPProxy, condition func(*Sesamev1.HTTPProxy) bool) (*Sesamev1.HTTPProxy, bool) {
+func (f *Framework) CreateHTTPProxyAndWaitFor(proxy *sesamev1.HTTPProxy, condition func(*sesamev1.HTTPProxy) bool) (*sesamev1.HTTPProxy, bool) {
 	require.NoError(f.t, f.Client.Create(context.TODO(), proxy))
 
-	res := &Sesamev1.HTTPProxy{}
+	res := &sesamev1.HTTPProxy{}
 
 	if err := wait.PollImmediate(f.RetryInterval, f.RetryTimeout, func() (bool, error) {
 		if err := f.Client.Get(context.TODO(), client.ObjectKeyFromObject(proxy), res); err != nil {
@@ -460,7 +460,7 @@ func UsingSesameConfigCRD() bool {
 
 // HTTPProxyValid returns true if the proxy has a .status.currentStatus
 // of "valid".
-func HTTPProxyValid(proxy *Sesamev1.HTTPProxy) bool {
+func HTTPProxyValid(proxy *sesamev1.HTTPProxy) bool {
 
 	if proxy == nil {
 		return false
@@ -477,13 +477,13 @@ func HTTPProxyValid(proxy *Sesamev1.HTTPProxy) bool {
 
 // HTTPProxyInvalid returns true if the proxy has a .status.currentStatus
 // of "valid".
-func HTTPProxyInvalid(proxy *Sesamev1.HTTPProxy) bool {
+func HTTPProxyInvalid(proxy *sesamev1.HTTPProxy) bool {
 	return proxy != nil && proxy.Status.CurrentStatus == "invalid"
 }
 
 // HTTPProxyErrors provides a pretty summary of any Errors on the HTTPProxy Valid condition.
 // If there are no errors, the return value will be empty.
-func HTTPProxyErrors(proxy *Sesamev1.HTTPProxy) string {
+func HTTPProxyErrors(proxy *sesamev1.HTTPProxy) string {
 	cond := proxy.Status.GetConditionFor("Valid")
 	errors := cond.Errors
 	if len(errors) > 0 {
@@ -495,7 +495,7 @@ func HTTPProxyErrors(proxy *Sesamev1.HTTPProxy) string {
 
 // DetailedConditionInvalid returns true if the provided detailed condition
 // list contains a condition of type "Valid" and status "False".
-func DetailedConditionInvalid(conditions []Sesamev1.DetailedCondition) bool {
+func DetailedConditionInvalid(conditions []sesamev1.DetailedCondition) bool {
 	for _, c := range conditions {
 		if c.Condition.Type == "Valid" {
 			return c.Condition.Status == "False"

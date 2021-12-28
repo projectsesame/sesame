@@ -9,6 +9,7 @@ fi
 
 if command -v docker >/dev/null; then
 	exec docker run \
+	  --env GOPROXY=https://goproxy.cn,direct \
 		--rm \
 		--volume $(pwd):/app \
 		--workdir /app \
