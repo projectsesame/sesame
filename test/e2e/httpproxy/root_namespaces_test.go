@@ -18,7 +18,7 @@ package httpproxy
 
 import (
 	. "github.com/onsi/ginkgo"
-	contourv1 "github.com/projectcontour/sesame/apis/projectsesame/v1"
+	Sesamev1 "github.com/projectsesame/sesame/apis/projectsesame/v1"
 	"github.com/projectsesame/sesame/test/e2e"
 	"github.com/stretchr/testify/require"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -29,18 +29,18 @@ func testRootNamespaces(namespaces []string) e2e.NamespacedTestBody {
 		Specify("root HTTPProxies outside of root namespaces are not configured", func() {
 			for _, ns := range namespaces {
 				deployEchoServer(f.T(), f.Client, ns, "echo")
-				p := &contourv1.HTTPProxy{
+				p := &Sesamev1.HTTPProxy{
 					ObjectMeta: metav1.ObjectMeta{
 						Namespace: ns,
 						Name:      "root-proxy",
 					},
-					Spec: contourv1.HTTPProxySpec{
-						VirtualHost: &contourv1.VirtualHost{
+					Spec: Sesamev1.HTTPProxySpec{
+						VirtualHost: &Sesamev1.VirtualHost{
 							Fqdn: "root-proxy-" + ns + ".projectsesame.io",
 						},
-						Routes: []contourv1.Route{
+						Routes: []Sesamev1.Route{
 							{
-								Services: []contourv1.Service{
+								Services: []Sesamev1.Service{
 									{
 										Name: "echo",
 										Port: 80,
@@ -61,18 +61,18 @@ func testRootNamespaces(namespaces []string) e2e.NamespacedTestBody {
 			}
 
 			deployEchoServer(f.T(), f.Client, testNS, "echo")
-			p := &contourv1.HTTPProxy{
+			p := &Sesamev1.HTTPProxy{
 				ObjectMeta: metav1.ObjectMeta{
 					Namespace: testNS,
 					Name:      "root-proxy",
 				},
-				Spec: contourv1.HTTPProxySpec{
-					VirtualHost: &contourv1.VirtualHost{
+				Spec: Sesamev1.HTTPProxySpec{
+					VirtualHost: &Sesamev1.VirtualHost{
 						Fqdn: "root-proxy-" + testNS + ".projectsesame.io",
 					},
-					Routes: []contourv1.Route{
+					Routes: []Sesamev1.Route{
 						{
-							Services: []contourv1.Service{
+							Services: []Sesamev1.Service{
 								{
 									Name: "echo",
 									Port: 80,
@@ -87,7 +87,7 @@ func testRootNamespaces(namespaces []string) e2e.NamespacedTestBody {
 	}
 }
 
-func httpProxyRootNotAllowedInNS(proxy *contourv1.HTTPProxy) bool {
+func httpProxyRootNotAllowedInNS(proxy *Sesamev1.HTTPProxy) bool {
 	if proxy == nil {
 		return false
 	}

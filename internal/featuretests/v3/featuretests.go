@@ -33,11 +33,8 @@ import (
 	resource "github.com/envoyproxy/go-control-plane/pkg/resource/v3"
 	"github.com/golang/protobuf/proto"
 	"github.com/golang/protobuf/ptypes/any"
-	contour_api_v1 "github.com/projectcontour/sesame/apis/projectsesame/v1"
-	contour_xds_v3 "github.com/projectcontour/sesame/internal/xds/v3"
-	xdscache_v3 "github.com/projectcontour/sesame/internal/xdscache/v3"
+	sesame_api_v1 "github.com/projectsesame/sesame/apis/projectsesame/v1"
 	"github.com/projectsesame/sesame/apis/projectsesame/v1alpha1"
-	"github.com/projectsesame/sesame/internal/contour"
 	"github.com/projectsesame/sesame/internal/dag"
 	"github.com/projectsesame/sesame/internal/fixture"
 	"github.com/projectsesame/sesame/internal/k8s"
@@ -47,7 +44,9 @@ import (
 	"github.com/projectsesame/sesame/internal/status"
 	"github.com/projectsesame/sesame/internal/workgroup"
 	"github.com/projectsesame/sesame/internal/xds"
+	Sesame_xds_v3 "github.com/projectsesame/sesame/internal/xds/v3"
 	"github.com/projectsesame/sesame/internal/xdscache"
+	xdscache_v3 "github.com/projectsesame/sesame/internal/xdscache/v3"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
@@ -65,7 +64,7 @@ const (
 	secretType   = resource.SecretType
 )
 
-func setup(t *testing.T, opts ...interface{}) (cache.ResourceEventHandler, *Contour, func()) {
+func setup(t *testing.T, opts ...interface{}) (cache.ResourceEventHandler, *Sesame, func()) {
 	t.Parallel()
 
 	log := fixture.NewTestLogger(t)
@@ -126,14 +125,14 @@ func setup(t *testing.T, opts ...interface{}) (cache.ResourceEventHandler, *Cont
 	}
 
 	statusUpdateCacher := &k8s.StatusUpdateCacher{}
-	eh := contour.NewEventHandler(contour.EventHandlerConfig{
+	eh := Sesame.NewEventHandler(Sesame.EventHandlerConfig{
 		Logger:        log,
 		StatusUpdater: statusUpdateCacher,
 		//nolint:gosec
 		HoldoffDelay: time.Duration(rand.Intn(100)) * time.Millisecond,
 		//nolint:gosec
 		HoldoffMaxDelay: time.Duration(rand.Intn(500)) * time.Millisecond,
-		Observer: contour.NewRebuildMetricsObserver(
+		Observer: Sesame.NewRebuildMetricsObserver(
 			metrics.NewMetrics(registry),
 			dag.ComposeObservers(xdscache.ObserversOf(resources)...),
 		),
@@ -144,7 +143,7 @@ func setup(t *testing.T, opts ...interface{}) (cache.ResourceEventHandler, *Cont
 	require.NoError(t, err)
 
 	srv := xds.NewServer(registry)
-	contour_xds_v3.RegisterServer(contour_xds_v3.NewContourServer(log, xdscache.ResourcesOf(resources)...), srv)
+	Sesame_xds_v3.RegisterServer(Sesame_xds_v3.NewSesameServer(log, xdscache.ResourcesOf(resources)...), srv)
 
 	var g workgroup.Group
 
@@ -174,7 +173,7 @@ func setup(t *testing.T, opts ...interface{}) (cache.ResourceEventHandler, *Cont
 		done <- g.Run(ctx)
 	}()
 
-	return rh, &Contour{
+	return rh, &Sesame{
 			T:                 t,
 			ClientConn:        cc,
 			statusUpdateCache: statusUpdateCacher,
@@ -282,15 +281,15 @@ type grpcStream interface {
 }
 
 type StatusResult struct {
-	*Contour
+	*Sesame
 
 	Err  error
-	Have *contour_api_v1.HTTPProxyStatus
+	Have *sesame_api_v1.HTTPProxyStatus
 }
 
 // Equals asserts that the status result is not an error and matches
 // the wanted status exactly.
-func (s *StatusResult) Equals(want contour_api_v1.HTTPProxyStatus) *Contour {
+func (s *StatusResult) Equals(want sesame_api_v1.HTTPProxyStatus) *Sesame {
 	s.T.Helper()
 
 	// We should never get an error fetching the status for an
@@ -300,12 +299,12 @@ func (s *StatusResult) Equals(want contour_api_v1.HTTPProxyStatus) *Contour {
 	}
 
 	assert.Equal(s.T, want, *s.Have)
-	return s.Contour
+	return s.Sesame
 }
 
 // Like asserts that the status result is not an error and matches
 // non-empty fields in the wanted status.
-func (s *StatusResult) Like(want contour_api_v1.HTTPProxyStatus) *Contour {
+func (s *StatusResult) Like(want sesame_api_v1.HTTPProxyStatus) *Sesame {
 	s.T.Helper()
 
 	// We should never get an error fetching the status for an
@@ -316,27 +315,27 @@ func (s *StatusResult) Like(want contour_api_v1.HTTPProxyStatus) *Contour {
 
 	if len(want.CurrentStatus) > 0 {
 		assert.Equal(s.T,
-			contour_api_v1.HTTPProxyStatus{CurrentStatus: want.CurrentStatus},
-			contour_api_v1.HTTPProxyStatus{CurrentStatus: s.Have.CurrentStatus},
+			sesame_api_v1.HTTPProxyStatus{CurrentStatus: want.CurrentStatus},
+			sesame_api_v1.HTTPProxyStatus{CurrentStatus: s.Have.CurrentStatus},
 		)
 	}
 
 	if len(want.Description) > 0 {
 		assert.Equal(s.T,
-			contour_api_v1.HTTPProxyStatus{Description: want.Description},
-			contour_api_v1.HTTPProxyStatus{Description: s.Have.Description},
+			sesame_api_v1.HTTPProxyStatus{Description: want.Description},
+			sesame_api_v1.HTTPProxyStatus{Description: s.Have.Description},
 		)
 	}
 
-	return s.Contour
+	return s.Sesame
 }
 
 // HasError asserts that there is an error on the Valid Condition in the proxy
 // that matches the given values.
-func (s *StatusResult) HasError(condType string, reason, message string) *Contour {
+func (s *StatusResult) HasError(condType string, reason, message string) *Sesame {
 	assert.Equal(s.T, s.Have.CurrentStatus, string(status.ProxyStatusInvalid))
 	assert.Equal(s.T, s.Have.Description, `At least one error present, see Errors for details`)
-	validCond := s.Have.GetConditionFor(contour_api_v1.ValidConditionType)
+	validCond := s.Have.GetConditionFor(sesame_api_v1.ValidConditionType)
 	assert.NotNil(s.T, validCond)
 
 	subCond, ok := validCond.GetError(condType)
@@ -346,28 +345,28 @@ func (s *StatusResult) HasError(condType string, reason, message string) *Contou
 	assert.Equal(s.T, reason, subCond.Reason)
 	assert.Equal(s.T, message, subCond.Message)
 
-	return s.Contour
+	return s.Sesame
 }
 
 // IsValid asserts that the proxy's CurrentStatus field is equal to "valid".
-func (s *StatusResult) IsValid() *Contour {
+func (s *StatusResult) IsValid() *Sesame {
 	s.T.Helper()
 
 	assert.Equal(s.T, status.ProxyStatusValid, status.ProxyStatus(s.Have.CurrentStatus))
 
-	return s.Contour
+	return s.Sesame
 }
 
 // IsInvalid asserts that the proxy's CurrentStatus field is equal to "invalid".
-func (s *StatusResult) IsInvalid() *Contour {
+func (s *StatusResult) IsInvalid() *Sesame {
 	s.T.Helper()
 
 	assert.Equal(s.T, status.ProxyStatusInvalid, status.ProxyStatus(s.Have.CurrentStatus))
 
-	return s.Contour
+	return s.Sesame
 }
 
-type Contour struct {
+type Sesame struct {
 	*grpc.ClientConn
 	*testing.T
 
@@ -376,18 +375,18 @@ type Contour struct {
 
 // Status returns a StatusResult object that can be used to assert
 // on object status fields.
-func (c *Contour) Status(obj interface{}) *StatusResult {
+func (c *Sesame) Status(obj interface{}) *StatusResult {
 	s, err := c.statusUpdateCache.GetStatus(obj)
 
 	return &StatusResult{
-		Contour: c,
-		Err:     err,
-		Have:    s,
+		Sesame: c,
+		Err:    err,
+		Have:   s,
 	}
 }
 
 // NoStatus asserts that the given object did not get any status set.
-func (c *Contour) NoStatus(obj interface{}) *Contour {
+func (c *Sesame) NoStatus(obj interface{}) *Sesame {
 	if _, err := c.statusUpdateCache.GetStatus(obj); err == nil {
 		c.T.Errorf("found cached object status, wanted no status")
 	}
@@ -395,7 +394,7 @@ func (c *Contour) NoStatus(obj interface{}) *Contour {
 	return c
 }
 
-func (c *Contour) Request(typeurl string, names ...string) *Response {
+func (c *Sesame) Request(typeurl string, names ...string) *Response {
 	c.Helper()
 	var st grpcStream
 	ctx, cancel := context.WithCancel(context.Background())
@@ -434,12 +433,12 @@ func (c *Contour) Request(typeurl string, names ...string) *Response {
 		ResourceNames: names,
 	})
 	return &Response{
-		Contour:           c,
+		Sesame:            c,
 		DiscoveryResponse: resp,
 	}
 }
 
-func (c *Contour) sendRequest(stream grpcStream, req *envoy_discovery_v3.DiscoveryRequest) *envoy_discovery_v3.DiscoveryResponse {
+func (c *Sesame) sendRequest(stream grpcStream, req *envoy_discovery_v3.DiscoveryRequest) *envoy_discovery_v3.DiscoveryResponse {
 	err := stream.Send(req)
 	require.NoError(c, err)
 	resp, err := stream.Recv()
@@ -448,16 +447,16 @@ func (c *Contour) sendRequest(stream grpcStream, req *envoy_discovery_v3.Discove
 }
 
 type Response struct {
-	*Contour
+	*Sesame
 	*envoy_discovery_v3.DiscoveryResponse
 }
 
-// Equals tests that the response retrieved from Contour is equal to the supplied value.
+// Equals tests that the response retrieved from Sesame is equal to the supplied value.
 // TODO(youngnick) This function really should be copied to an `EqualResources` function.
-func (r *Response) Equals(want *envoy_discovery_v3.DiscoveryResponse) *Contour {
+func (r *Response) Equals(want *envoy_discovery_v3.DiscoveryResponse) *Sesame {
 	r.Helper()
 
 	protobuf.RequireEqual(r.T, want.Resources, r.DiscoveryResponse.Resources)
 
-	return r.Contour
+	return r.Sesame
 }

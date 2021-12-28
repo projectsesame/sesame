@@ -19,7 +19,7 @@ package e2e
 import (
 	"context"
 
-	contour_api_v1alpha1 "github.com/projectcontour/sesame/apis/projectsesame/v1alpha1"
+	Sesame_api_v1alpha1 "github.com/projectsesame/sesame/apis/projectsesame/v1alpha1"
 
 	"github.com/onsi/ginkgo"
 	"github.com/stretchr/testify/require"
@@ -326,35 +326,35 @@ func (e *EchoSecure) Deploy(ns, name string) func() {
 	}
 }
 
-// DefaultContourConfiguration returns a default SesameConfiguration object.
-func DefaultContourConfiguration() *contour_api_v1alpha1.ContourConfiguration {
-	return &contour_api_v1alpha1.ContourConfiguration{
+// DefaultSesameConfiguration returns a default SesameConfiguration object.
+func DefaultSesameConfiguration() *Sesame_api_v1alpha1.SesameConfiguration {
+	return &Sesame_api_v1alpha1.SesameConfiguration{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "ingress",
 			Namespace: "projectsesame",
 		},
-		Spec: contour_api_v1alpha1.ContourConfigurationSpec{
-			Debug: contour_api_v1alpha1.DebugConfig{
+		Spec: Sesame_api_v1alpha1.SesameConfigurationSpec{
+			Debug: Sesame_api_v1alpha1.DebugConfig{
 				Address:                 "127.0.0.1",
 				Port:                    6060,
-				DebugLogLevel:           contour_api_v1alpha1.InfoLog,
+				DebugLogLevel:           Sesame_api_v1alpha1.InfoLog,
 				KubernetesDebugLogLevel: 0,
 			},
-			Health: contour_api_v1alpha1.HealthConfig{
+			Health: Sesame_api_v1alpha1.HealthConfig{
 				Address: "0.0.0.0",
 				Port:    8000,
 			},
-			Envoy: contour_api_v1alpha1.EnvoyConfig{
-				DefaultHTTPVersions: []contour_api_v1alpha1.HTTPVersionType{
+			Envoy: Sesame_api_v1alpha1.EnvoyConfig{
+				DefaultHTTPVersions: []Sesame_api_v1alpha1.HTTPVersionType{
 					"HTTP/1.1", "HTTP/2",
 				},
-				Listener: contour_api_v1alpha1.EnvoyListenerConfig{
+				Listener: Sesame_api_v1alpha1.EnvoyListenerConfig{
 					UseProxyProto:             false,
 					DisableAllowChunkedLength: false,
 					ConnectionBalancer:        "",
-					TLS: contour_api_v1alpha1.EnvoyTLS{
+					TLS: Sesame_api_v1alpha1.EnvoyTLS{
 						MinimumProtocolVersion: "1.2",
-						CipherSuites: []contour_api_v1alpha1.TLSCipherType{
+						CipherSuites: []Sesame_api_v1alpha1.TLSCipherType{
 							"[ECDHE-ECDSA-AES128-GCM-SHA256|ECDHE-ECDSA-CHACHA20-POLY1305]",
 							"[ECDHE-RSA-AES128-GCM-SHA256|ECDHE-RSA-CHACHA20-POLY1305]",
 							"ECDHE-ECDSA-AES256-GCM-SHA384",
@@ -362,43 +362,43 @@ func DefaultContourConfiguration() *contour_api_v1alpha1.ContourConfiguration {
 						},
 					},
 				},
-				Service: contour_api_v1alpha1.NamespacedName{
+				Service: Sesame_api_v1alpha1.NamespacedName{
 					Name:      "envoy",
 					Namespace: "projectsesame",
 				},
-				HTTPListener: contour_api_v1alpha1.EnvoyListener{
+				HTTPListener: Sesame_api_v1alpha1.EnvoyListener{
 					Address:   "0.0.0.0",
 					Port:      8080,
 					AccessLog: "/dev/stdout",
 				},
-				HTTPSListener: contour_api_v1alpha1.EnvoyListener{
+				HTTPSListener: Sesame_api_v1alpha1.EnvoyListener{
 					Address:   "0.0.0.0",
 					Port:      8443,
 					AccessLog: "/dev/stdout",
 				},
-				Health: contour_api_v1alpha1.HealthConfig{
+				Health: Sesame_api_v1alpha1.HealthConfig{
 					Address: "0.0.0.0",
 					Port:    8002,
 				},
-				Metrics: contour_api_v1alpha1.MetricsConfig{
+				Metrics: Sesame_api_v1alpha1.MetricsConfig{
 					Address: "0.0.0.0",
 					Port:    8002,
 				},
-				Logging: contour_api_v1alpha1.EnvoyLogging{
-					AccessLogFormat: contour_api_v1alpha1.EnvoyAccessLog,
+				Logging: Sesame_api_v1alpha1.EnvoyLogging{
+					AccessLogFormat: Sesame_api_v1alpha1.EnvoyAccessLog,
 				},
-				Cluster: contour_api_v1alpha1.ClusterParameters{
-					DNSLookupFamily: contour_api_v1alpha1.AutoClusterDNSFamily,
+				Cluster: Sesame_api_v1alpha1.ClusterParameters{
+					DNSLookupFamily: Sesame_api_v1alpha1.AutoClusterDNSFamily,
 				},
-				Network: contour_api_v1alpha1.NetworkParameters{
+				Network: Sesame_api_v1alpha1.NetworkParameters{
 					EnvoyAdminPort: 9001,
 				},
 			},
-			HTTPProxy: contour_api_v1alpha1.HTTPProxyConfig{
+			HTTPProxy: Sesame_api_v1alpha1.HTTPProxyConfig{
 				DisablePermitInsecure: false,
 			},
 			EnableExternalNameService: false,
-			Metrics: contour_api_v1alpha1.MetricsConfig{
+			Metrics: Sesame_api_v1alpha1.MetricsConfig{
 				Address: "0.0.0.0",
 				Port:    8000,
 			},

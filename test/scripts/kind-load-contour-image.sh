@@ -36,14 +36,14 @@ fi
 if [ "${LOAD_PREBUILT_IMAGE}" = "true" ]; then
     kind::cluster::load::archive "$(ls ${REPO}/image/sesame-*.tar)"
 else
-    # Build the current version of Contour.
+    # Build the current version of Sesame.
     VERSION="v$$"
-    make -C ${REPO} container IMAGE=ghcr.io/projectcontour/sesame VERSION=$VERSION
+    make -C ${REPO} container IMAGE=ghcr.io/projectsesame/sesame VERSION=$VERSION
 
     # Also tag as main since test suites will use this tag unless overridden.
-    docker tag ghcr.io/projectcontour/sesame:${VERSION} ghcr.io/projectcontour/sesame:main
+    docker tag ghcr.io/projectsesame/sesame:${VERSION} ghcr.io/projectsesame/sesame:main
 
-    # Push the Contour build image into the cluster.
-    kind::cluster::load::docker ghcr.io/projectcontour/sesame:${VERSION}
-    kind::cluster::load::docker ghcr.io/projectcontour/sesame:main
+    # Push the Sesame build image into the cluster.
+    kind::cluster::load::docker ghcr.io/projectsesame/sesame:${VERSION}
+    kind::cluster::load::docker ghcr.io/projectsesame/sesame:main
 fi

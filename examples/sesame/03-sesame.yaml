@@ -68,14 +68,14 @@ spec:
           initialDelaySeconds: 15
           periodSeconds: 10
         volumeMounts:
-          - name: contourcert
+          - name: sesamecert
             mountPath: /certs
             readOnly: true
           - name: sesame-config
             mountPath: /config
             readOnly: true
         env:
-        - name: CONTOUR_NAMESPACE
+        - name: SESAME_NAMESPACE
           valueFrom:
             fieldRef:
               apiVersion: v1
@@ -92,9 +92,9 @@ spec:
         runAsUser: 65534
         runAsGroup: 65534
       volumes:
-        - name: contourcert
+        - name: sesamecert
           secret:
-            secretName: contourcert
+            secretName: sesamecert
         - name: sesame-config
           configMap:
             name: sesame

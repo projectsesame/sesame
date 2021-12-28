@@ -3,7 +3,7 @@
 Status: Approved
 
 ## Abstract
-This document describes a design for performing request authorization for virtual hosts hosted by Contour.
+This document describes a design for performing request authorization for virtual hosts hosted by Sesame.
 
 ## Background
 
@@ -12,9 +12,9 @@ This document describes a design for performing request authorization for virtua
 - [#2325][9] Failures in External services configured in envoy should be visible to the application developer.
 
 ## Goals
-- Allow operators to integrate existing authorization services with Contour.
+- Allow operators to integrate existing authorization services with Sesame.
 - Allow arbitrary types of authentication and authorization to be supported.
-- Decouple Contour from external authorization, so it can evolve at an independent rate.
+- Decouple Sesame from external authorization, so it can evolve at an independent rate.
 - Integrate cleanly with the HTTPProxy API.
 
 ## Non Goals
@@ -33,13 +33,13 @@ This document describes a design for performing request authorization for virtua
 ## High-Level Design
 A new `ExtensionService` CRD adds a way to represent and track an authorization service.
 This CRD is relatively generic, so that it can be re-used for Envoy rate limiting and logging services.
-The core of the `ExtensionService` CRD is subset of the `projectcontour.v1.HTTPProxy` `Service` specification.
+The core of the `ExtensionService` CRD is subset of the `projectsesame.v1.HTTPProxy` `Service` specification.
 Re-using the `Service` type allows the operator to specify configuration in familiar and consistent terms, especially TLS configuration.
 
 Note that only the Envoy [GRPC authorization protocol][2] will be supported.
 The GRPC protocol is a superset of the HTTP protocol and requires less configuration.
 The drawback of only supporting the GRPC protocol is that many existing Envoy authorization servers only support the HTTP protocol.
-Until Contour adds support for the v3 Envoy API, only the version 2 of the GRPC authorization protocol can be configured.
+Until Sesame adds support for the v3 Envoy API, only the version 2 of the GRPC authorization protocol can be configured.
 
 Operators can bind an authorization service to a `HTTPProxy` using a new field in the `VirtualHost` struct.
 This field configures which `ExtensionService` resource to use, and allows the operator to set initial authorization policy.
@@ -49,14 +49,14 @@ Authorization policy can also be set on a `Route`, so that application owners ca
 
 ### ExtensionService Changes
 
-The `ExtensionService` CRD has API version `projectcontour.io/v1alpha1`.
+The `ExtensionService` CRD has API version `projectsesame.io/v1alpha1`.
 
 There are a number of benefits to creating a CRD to represent a supporting service:
 
-- The CRD directly generates an Envoy [Cluster][4] that Contour can use for any purpose.
-  This means that with a single new API, Contour can add support for authorization, rate limiting and logging support services.
-- A CRD gives Contour a way to communicate the operational status of the support service, which was a [desired][9] [goal][7].
-- A CRD allows the team operating the support service and the team operating Contour to collaborate more loosely.
+- The CRD directly generates an Envoy [Cluster][4] that Sesame can use for any purpose.
+  This means that with a single new API, Sesame can add support for authorization, rate limiting and logging support services.
+- A CRD gives Sesame a way to communicate the operational status of the support service, which was a [desired][9] [goal][7].
+- A CRD allows the team operating the support service and the team operating Sesame to collaborate more loosely.
 
 ```Go
 // SupportProtocolVersion is the version of the GRPC protocol used
@@ -75,7 +75,7 @@ type ExtensionService struct {
 }
 
 // ExtensionServiceStatus should follow the pattern being established in [#2642][10].
-// This field will updated by Contour.
+// This field will updated by Sesame.
 type ExtensionServiceStatus struct {
 	Conditions []Condition `json:"conditions"`
 }
@@ -83,17 +83,17 @@ type ExtensionServiceStatus struct {
 type ExtensionServiceSpec struct {
 	// +kubebuilder:validation:MinItems=1
 	// +kubebuilder:validation:Required
-	Services []contourv1.Service `json:"services"`
+	Services []Sesamev1.Service `json:"services"`
 
 	// The load balancing policy for sending requests to the service.
 	// +optional
-	LoadBalancerPolicy *contourv1.LoadBalancerPolicy `json:"loadBalancerPolicy,omitempty"`
+	LoadBalancerPolicy *Sesamev1.LoadBalancerPolicy `json:"loadBalancerPolicy,omitempty"`
 
 	// +optional
-	TimeoutPolicy *contourv1.TimeoutPolicy `json:"timeoutPolicy,omitempty"`
+	TimeoutPolicy *Sesamev1.TimeoutPolicy `json:"timeoutPolicy,omitempty"`
 
 	// This field sets the version of the GRPC protocol that Envoy uses to
-	// send requests to the support service. Since Contour always uses the
+	// send requests to the support service. Since Sesame always uses the
 	// v2 Envoy API, this is currently fixed at "v2". However, other
 	// protocol options will be available in future.
 	//
@@ -102,20 +102,20 @@ type ExtensionServiceSpec struct {
 }
 ```
 
-The `Conditions` field in `ExtensionServicesStatus` follows the standardized Contour structure (proposed in #2642).
-This type should be shared with other Contour API status types.
+The `Conditions` field in `ExtensionServicesStatus` follows the standardized Sesame structure (proposed in #2642).
+This type should be shared with other Sesame API status types.
 
-This document does not yet define how Contour monitors the support service.
-However, the presence of the `Conditions` field allows Contour to expose the status of the support service fairly directly.
-At minimum, Contour should observe the underlying Kubernetes Service and expose whether there are sufficient healthy Endpoints.
+This document does not yet define how Sesame monitors the support service.
+However, the presence of the `Conditions` field allows Sesame to expose the status of the support service fairly directly.
+At minimum, Sesame should observe the underlying Kubernetes Service and expose whether there are sufficient healthy Endpoints.
 This information, analogous to Deployments observing and exposing Pod status, can be published as a `Ready` condition.
 
 Each `ExtensionService` CRD generates a unique upstream Envoy [Cluster][4], which will emit standard Envoy metrics.
 Note that the Envoy cluster name can be non-obvious, so exposing it in status may be helpful.
 
-If the `Service` refers to a Kubernetes `ExternalName`, Contour should program Envoy to send the traffic to the external destination.
+If the `Service` refers to a Kubernetes `ExternalName`, Sesame should program Envoy to send the traffic to the external destination.
 
-The `ExtensionService` CRD re-uses the `Service` type from the `projectcontour.io/v1` API.
+The `ExtensionService` CRD re-uses the `Service` type from the `projectsesame.io/v1` API.
 However, the setting following fields can generate a validation errors:
 
 - `Protocol` may only be set to `h2` or `h2c` (the default should be `h2`).
@@ -127,21 +127,21 @@ ensuring that whoever creates the `ExtensionService` also has authority over the
 ### HTTPProxy Changes
 
 ```Go
-// ExtensionReference names a Contour extension resource (ExtensionService
+// ExtensionReference names a Sesame extension resource (ExtensionService
 // by default).
 type ExtensionExtensionReference struct {
 	// API version of the referent.
-        // If this field has no value, Contour will use a default of "projectsesame.io/v1alpha1".
+        // If this field has no value, Sesame will use a default of "projectsesame.io/v1alpha1".
 	// +optional
 	APIVersion string `json:"apiVersion,omitempty" protobuf:"bytes,5,opt,name=apiVersion"`
 	// Kind of the referent.
 	// More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-        // If this field has no value, Contour will use a default of "ExtensionService".
+        // If this field has no value, Sesame will use a default of "ExtensionService".
 	// +optional
 	Kind string `json:"kind,omitempty" protobuf:"bytes,1,opt,name=kind"`
 	// Namespace of the referent.
 	// More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/
-        // If this field has no value, Contour will use the namespace of the enclosing HTTPProxy resource.
+        // If this field has no value, Sesame will use the namespace of the enclosing HTTPProxy resource.
 	// +optional
 	Namespace string `json:"namespace,omitempty" protobuf:"bytes,2,opt,name=namespace"`
 	// Name of the referent.
@@ -179,7 +179,7 @@ type AuthorizationExtension struct {
         // If FailOpen is true, the client request is forwarded to the upstream service
         // even if the authorization server fails to respond. This field should not be
         // set in most cases. It is intended for use only while migrating applications
-        // from internal authorization to Contour external authorization.
+        // from internal authorization to Sesame external authorization.
         //
         // +optional
         FailOpen bool `json:"failOpen,omitempty"`
@@ -222,9 +222,9 @@ The `authPolicy.Context` entries from the root `HTTPProxy` are merged with the c
 Where the two policies have context keys in common, the key from the root `HTTPProxy` is overwritten.
 The merged `Context` entries are send to the authorization service as part of the check request.
 
-Contour should require authorization to be disabled on all routes that set `PermitInsecure` to true (see [Compatibility](#compatibility)).
+Sesame should require authorization to be disabled on all routes that set `PermitInsecure` to true (see [Compatibility](#compatibility)).
 
-Contour sets the following Envoy external authorization configurations that operators cannot configure:
+Sesame sets the following Envoy external authorization configurations that operators cannot configure:
 
 - TLS client certificates are always sent if they are present
 - The client request body is never sent
@@ -335,8 +335,8 @@ Once that happens, the client has to resend the original request and it will ent
 
 ## Alternatives Considered
 
-1. Contour could install itself as the authorization server.
-   This could remove some of the limitations of the Envoy configuration structure at the cost of more complexity in Contour.
+1. Sesame could install itself as the authorization server.
+   This could remove some of the limitations of the Envoy configuration structure at the cost of more complexity in Sesame.
 1. Integrate external authorization directly into `HTTPProxy`.
    This increases the complexity of the `HTTPProxy` structure and makes it difficult to re-use the same authorization service acrtoss multiple proxies.
    A separate CRD gives better opportunities to expose useful operational status.
@@ -345,36 +345,36 @@ Once that happens, the client has to resend the original request and it will ent
 ## Security Considerations
 
 - Most HTTP authorization protocols depend on HTTPS to keep headers and URL query parameters private.
-  Supporting only authorization on HTTPS, Contour reduces the changes of misconfiguring this.
+  Supporting only authorization on HTTPS, Sesame reduces the changes of misconfiguring this.
 - HTTPS sessions between Envoy and the authorization server are required.
   TLS validation can be configured if necessary (should be recommended),
 - Authorization services can run in separate Kubernetes namespaces with limited privilege.
 
 ## Compatibility
 
-Contour can currently support v2 of the Envoy GRPC authorization protocol.
-When Contour moves to v3 of the Envoy API, it can support both v2 and v3 authorization protocols.
+Sesame can currently support v2 of the Envoy GRPC authorization protocol.
+When Sesame moves to v3 of the Envoy API, it can support both v2 and v3 authorization protocols.
 
 The `ExtensionService` CRD supports GRPC authorization support services, but not HTTP ones.
 
 ### HTTPS Only
 
 As discussed in [#2459][3], the Envoy external authorization HTTP filter is configured on the HTTP Connection Manager.
-This means that the scope of how Contour can configure authorization depends on the structure of the HTTP configuration.
+This means that the scope of how Sesame can configure authorization depends on the structure of the HTTP configuration.
 For HTTP, there is only one HTTP Connection Manager that contains all the virtual hosts.
-Configuring a single authorization service for all the virtual hosts might be acceptable for some organizations, but it doesn't really fix the Contour multi-tenancy model.
-On the other hand, Contour configures HTTPS with a separate HTTP Connection Manager for each virtual host, so different authorization servers can naturally be attached to each HTTPS virtual host.
+Configuring a single authorization service for all the virtual hosts might be acceptable for some organizations, but it doesn't really fix the Sesame multi-tenancy model.
+On the other hand, Sesame configures HTTPS with a separate HTTP Connection Manager for each virtual host, so different authorization servers can naturally be attached to each HTTPS virtual host.
 
 The result of this is that authorization servers are not supported on HTTP.
-While it is convenient from an implementation perspective, this policy is also consistent with Contour's security-first posture.
+While it is convenient from an implementation perspective, this policy is also consistent with Sesame's security-first posture.
 Note that using the TLS fallback certificate (for non-SNI clients) has the same HTTP Connection Manager properties as HTTP, so authentication servers also cannot be configured on virtual hosts that share the fallback certificate.
 
 ### PermitInsecure
 
-If a `Route` has the `PermitInsecure` field set to true, Contour will program it into both the secure and insecure Envoy listeners.
+If a `Route` has the `PermitInsecure` field set to true, Sesame will program it into both the secure and insecure Envoy listeners.
 This means that the same `Route` will be authenticated differently depending on how the client accesses it.
 In this case, it may be impossible for the upstream service to reliably detect whether the request is authorized.
-To resolve this, Contour should require authorization to be disabled on all routes that set `PermitInsecure` to true.
+To resolve this, Sesame should require authorization to be disabled on all routes that set `PermitInsecure` to true.
 
 ### Fallback Certificates
 
@@ -386,9 +386,9 @@ There is no way to express that different virtual hosts can have different `ext_
 
 ## Implementation
 
-The Contour implementation provides a framework, but isn't useful until authorization services are available for the protocols that Contour operators need.
+The Sesame implementation provides a framework, but isn't useful until authorization services are available for the protocols that Sesame operators need.
 
-The Contour implementation is quite large, but can be separated into smaller stages:
+The Sesame implementation is quite large, but can be separated into smaller stages:
 
 - Support service CRD implementation
 - Support service monitoring and status
@@ -399,11 +399,11 @@ The Contour implementation is quite large, but can be separated into smaller sta
 Since the scope of authorization is quite large, documentation should be written as a new top level section.
 If the documentation is included in the main `httpproxy.md` page, it will be difficult to organize and consume.
 
-### Contour Authserver
+### Sesame Authserver
 
-The Contour project should host a simple server that can be used for testing and for simple authorization use cases.
+The Sesame project should host a simple server that can be used for testing and for simple authorization use cases.
 
-The `contour-authserver` server implements two authentication backends.
+The `Sesame-authserver` server implements two authentication backends.
 First, a no-op test server that authorizes every request.
 Second, a [HTTP basic authentication][1] server that authenticates request using htpasswd files stored as Kubernetes secrets.
 
@@ -414,7 +414,7 @@ Writing an Envoy authorization proxy for these protocols is considerably more co
 There are existing implementations of all these protocols, though to my knowledge none are exposed through the Envoy GRPC.
 It should be possible to write an authorization proxy that integrates with specific implementations (e.g. [Dex](https://github.com/dexidp/dex)).
 
-One open issue for OIDC is whether Contour ought to program the Envoy [JWT][6] filter.
+One open issue for OIDC is whether Sesame ought to program the Envoy [JWT][6] filter.
 Configuring this filter would substantially increase the required `HTTPProxy` API, and it's likely that the authorization server would still need to be invoked.
 This issue should be revisited after gaining some implementation experience.
 
@@ -466,7 +466,7 @@ spec:
 
 Next, deploy the authorization service.
 This is a test service that will just authorize all requests.
-The authorization service, it's TLS secret and service are all placed into the `contour-auth` namespace.
+The authorization service, it's TLS secret and service are all placed into the `Sesame-auth` namespace.
 
 ```yaml
 apiVersion: v1
@@ -555,7 +555,7 @@ spec:
 ```
 
 Now we can create a `ExtensionService` to expose the test authentication service to
-Contour.
+Sesame.
 
 ```yaml
 apiVersion: projectsesame.io/v1alpha1
@@ -614,32 +614,32 @@ This design fully abstracts the configuration of the authorization service and t
 It does not provide any in-band configuration for popular authorization protocols like OIDC and SAML,
 nor does it give any guidance on how to configure those.
 
-Keeping Contour oblivious to the type of authorization means that:
+Keeping Sesame oblivious to the type of authorization means that:
 
 1. Operators can implement any kind of authorization protocol
-2. The authorization systems can evolve at a different rate than Contour
-3. Authorization servers can be hosted in the Contour project by separate maintainers
+2. The authorization systems can evolve at a different rate than Sesame
+3. Authorization servers can be hosted in the Sesame project by separate maintainers
 
 It also means that:
 
 1. Configuration is necessarily more complex and involves more components
-1. Some client authorization protocols may not be supported by Contour
+1. Some client authorization protocols may not be supported by Sesame
 
 ***Decision:*** This design is a necessary building block.
-The Contour project should build on it to support what users need in production.
+The Sesame project should build on it to support what users need in production.
 
 ## Which Client Authorization Protocols to Support
 
-The Contour project should give operators practically useful authorization capabilities.
+The Sesame project should give operators practically useful authorization capabilities.
 This means that the project should build and support one or more authorization servers that will be useful to a wide audience.
 
-***Decision:*** The Contour project should ensure that there is a well-supported path for OIDC and OAuth2 [#2664][11].
+***Decision:*** The Sesame project should ensure that there is a well-supported path for OIDC and OAuth2 [#2664][11].
 Other authorization protocols can be addressed based on demand.
 
 ## Deployment Implications
 
 Adding authorization servers as a separate component increases the number of deployment options.
-Contour does not have a supported installer, and this would exacerbate that need.
+Sesame does not have a supported installer, and this would exacerbate that need.
 
 ## GRPC Dependency
 
@@ -654,11 +654,11 @@ We can help contribute Envoy GRPC support to existing authorization servers.
 
 ## No Authorization Intermediaries
 
-In contrast to [#1014](https://github.com/projectsesame/sesame/pull/1014), Contour itself is not in the authorization path.
+In contrast to [#1014](https://github.com/projectsesame/sesame/pull/1014), Sesame itself is not in the authorization path.
 This results in some restrictions (as noted above), and prevents the implementation of very fine-grained authorization (e.g different
 client authorization protocols per path).
-However, this approach means that the Contour changes are relatively limited.
-There is enough API that an external server can still remove any restrictions, but it will not feel like a native part of the Contour API.
+However, this approach means that the Sesame changes are relatively limited.
+There is enough API that an external server can still remove any restrictions, but it will not feel like a native part of the Sesame API.
 
 ***Decision:*** Maintainer consensus was that this trade-off is OK.
 
@@ -672,7 +672,7 @@ Adding a JWT validation stanza to the `AuthorizationExtension` struct would be p
 
 ## ExtensionServiceReference kind field
 
-Contour doesn't need to support arbitrary types of support service resources.
+Sesame doesn't need to support arbitrary types of support service resources.
 The design here includes a `Kind` field because it is modeled after `TypedLocalObjectReference`.
 
 ***Decision:*** Keep the API version and Kind fields, but make them optional and default them internally.
@@ -685,7 +685,7 @@ The `ExtensionService` status field is where this information would be exposed, 
 Candidates could be:
 1. Status of the underlying `Service`
 1. Envoy metrics from the underlying `Cluster`
-1. Health check status (from Envoy or Contour)
+1. Health check status (from Envoy or Sesame)
 
 ***Decision:*** Follow the Status standards being established in [#2642][10].
 

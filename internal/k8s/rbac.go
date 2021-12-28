@@ -17,8 +17,8 @@ package k8s
 // +kubebuilder:rbac:groups="networking.k8s.io",resources=ingressclasses,verbs=get;list;watch
 // +kubebuilder:rbac:groups="networking.k8s.io",resources=ingresses/status,verbs=create;get;update
 
-// +kubebuilder:rbac:groups="projectsesame.io",resources=httpproxies;tlscertificatedelegations;extensionservices;contourconfigurations,verbs=get;list;watch
-// +kubebuilder:rbac:groups="projectsesame.io",resources=httpproxies/status;extensionservices/status;contourconfigurations/status,verbs=create;get;update
+// +kubebuilder:rbac:groups="projectsesame.io",resources=httpproxies;tlscertificatedelegations;extensionservices;Sesameconfigurations,verbs=get;list;watch
+// +kubebuilder:rbac:groups="projectsesame.io",resources=httpproxies/status;extensionservices/status;Sesameconfigurations/status,verbs=create;get;update
 
 // +kubebuilder:rbac:groups="gateway.networking.k8s.io",resources=gatewayclasses;gateways;httproutes;tlsroutes;referencepolicies,verbs=get;list;watch
 // +kubebuilder:rbac:groups="gateway.networking.k8s.io",resources=gatewayclasses/status;gateways/status;httproutes/status;tlsroutes/status,verbs=update

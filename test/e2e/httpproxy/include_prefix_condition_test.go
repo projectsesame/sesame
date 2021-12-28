@@ -20,7 +20,7 @@ import (
 	"context"
 
 	. "github.com/onsi/ginkgo"
-	contourv1 "github.com/projectcontour/sesame/apis/projectsesame/v1"
+	Sesamev1 "github.com/projectsesame/sesame/apis/projectsesame/v1"
 	"github.com/projectsesame/sesame/test/e2e"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -43,15 +43,15 @@ func testIncludePrefixCondition(namespace string) {
 		f.Fixtures.Echo.Deploy(appNamespace, "echo-app")
 		f.Fixtures.Echo.Deploy(adminNamespace, "echo-admin")
 
-		appProxy := &contourv1.HTTPProxy{
+		appProxy := &Sesamev1.HTTPProxy{
 			ObjectMeta: metav1.ObjectMeta{
 				Namespace: appNamespace,
 				Name:      "echo-app",
 			},
-			Spec: contourv1.HTTPProxySpec{
-				Routes: []contourv1.Route{
+			Spec: Sesamev1.HTTPProxySpec{
+				Routes: []Sesamev1.Route{
 					{
-						Services: []contourv1.Service{
+						Services: []Sesamev1.Service{
 							{
 								Name: "echo-app",
 								Port: 80,
@@ -65,15 +65,15 @@ func testIncludePrefixCondition(namespace string) {
 		// it to be valid.
 		require.NoError(t, f.Client.Create(context.TODO(), appProxy))
 
-		adminProxy := &contourv1.HTTPProxy{
+		adminProxy := &Sesamev1.HTTPProxy{
 			ObjectMeta: metav1.ObjectMeta{
 				Namespace: adminNamespace,
 				Name:      "echo-admin",
 			},
-			Spec: contourv1.HTTPProxySpec{
-				Routes: []contourv1.Route{
+			Spec: Sesamev1.HTTPProxySpec{
+				Routes: []Sesamev1.Route{
 					{
-						Services: []contourv1.Service{
+						Services: []Sesamev1.Service{
 							{
 								Name: "echo-admin",
 								Port: 80,
@@ -87,20 +87,20 @@ func testIncludePrefixCondition(namespace string) {
 		// it to be valid.
 		require.NoError(t, f.Client.Create(context.TODO(), adminProxy))
 
-		baseProxy := &contourv1.HTTPProxy{
+		baseProxy := &Sesamev1.HTTPProxy{
 			ObjectMeta: metav1.ObjectMeta{
 				Namespace: namespace,
 				Name:      "echo",
 			},
-			Spec: contourv1.HTTPProxySpec{
-				VirtualHost: &contourv1.VirtualHost{
+			Spec: Sesamev1.HTTPProxySpec{
+				VirtualHost: &Sesamev1.VirtualHost{
 					Fqdn: "includeprefixcondition.projectsesame.io",
 				},
-				Includes: []contourv1.Include{
+				Includes: []Sesamev1.Include{
 					{
 						Name:      appProxy.Name,
 						Namespace: appProxy.Namespace,
-						Conditions: []contourv1.MatchCondition{
+						Conditions: []Sesamev1.MatchCondition{
 							{
 								Prefix: "/",
 							},
@@ -109,7 +109,7 @@ func testIncludePrefixCondition(namespace string) {
 					{
 						Name:      adminProxy.Name,
 						Namespace: adminProxy.Namespace,
-						Conditions: []contourv1.MatchCondition{
+						Conditions: []Sesamev1.MatchCondition{
 							{
 								Prefix: "/admin",
 							},

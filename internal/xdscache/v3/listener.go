@@ -409,7 +409,7 @@ func (c *ListenerCache) OnChange(root *dag.DAG) {
 				// only grants access to that host. See RFC 6066 for
 				// security advice. Note that we still use the generic
 				// metrics prefix to keep compatibility with previous
-				// Contour versions since the metrics prefix will be
+				// Sesame versions since the metrics prefix will be
 				// coded into monitoring dashboards.
 				cm := envoy_v3.HTTPConnectionManagerBuilder().
 					Codec(envoy_v3.CodecForVersions(cfg.DefaultHTTPVersions...)).
@@ -469,7 +469,7 @@ func (c *ListenerCache) OnChange(root *dag.DAG) {
 			// filter chain through the ENVOY_FALLBACK_ROUTECONFIG route configuration.
 			if vh.FallbackCertificate != nil && !envoy_v3.ContainsFallbackFilterChain(listeners[listener.Name].FilterChains) {
 				// Construct the downstreamTLSContext passing the configured fallbackCertificate. The TLS minProtocolVersion will use
-				// the value defined in the Contour Configuration file if defined.
+				// the value defined in the Sesame Configuration file if defined.
 				downstreamTLS = envoy_v3.DownstreamTLSContext(
 					vh.FallbackCertificate,
 					cfg.minTLSVersion(),

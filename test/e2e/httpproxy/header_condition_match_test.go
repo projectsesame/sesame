@@ -21,7 +21,7 @@ import (
 	"net/http"
 
 	. "github.com/onsi/ginkgo"
-	contourv1 "github.com/projectcontour/sesame/apis/projectsesame/v1"
+	Sesamev1 "github.com/projectsesame/sesame/apis/projectsesame/v1"
 	"github.com/projectsesame/sesame/test/e2e"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -43,26 +43,26 @@ func testHeaderConditionMatch(namespace string) {
 
 		// This HTTPProxy tests everything except the "notpresent" match type,
 		// which is tested separately below.
-		p := &contourv1.HTTPProxy{
+		p := &Sesamev1.HTTPProxy{
 			ObjectMeta: metav1.ObjectMeta{
 				Namespace: namespace,
 				Name:      "header-conditions",
 			},
-			Spec: contourv1.HTTPProxySpec{
-				VirtualHost: &contourv1.VirtualHost{
+			Spec: Sesamev1.HTTPProxySpec{
+				VirtualHost: &Sesamev1.VirtualHost{
 					Fqdn: "headerconditions.projectsesame.io",
 				},
-				Routes: []contourv1.Route{
+				Routes: []Sesamev1.Route{
 					{
-						Services: []contourv1.Service{
+						Services: []Sesamev1.Service{
 							{
 								Name: "echo-header-present",
 								Port: 80,
 							},
 						},
-						Conditions: []contourv1.MatchCondition{
+						Conditions: []Sesamev1.MatchCondition{
 							{
-								Header: &contourv1.HeaderMatchCondition{
+								Header: &Sesamev1.HeaderMatchCondition{
 									Name:    "Target-Present",
 									Present: true,
 								},
@@ -70,15 +70,15 @@ func testHeaderConditionMatch(namespace string) {
 						},
 					},
 					{
-						Services: []contourv1.Service{
+						Services: []Sesamev1.Service{
 							{
 								Name: "echo-header-contains",
 								Port: 80,
 							},
 						},
-						Conditions: []contourv1.MatchCondition{
+						Conditions: []Sesamev1.MatchCondition{
 							{
-								Header: &contourv1.HeaderMatchCondition{
+								Header: &Sesamev1.HeaderMatchCondition{
 									Name:     "Target-Contains",
 									Contains: "ContainsValue",
 								},
@@ -86,15 +86,15 @@ func testHeaderConditionMatch(namespace string) {
 						},
 					},
 					{
-						Services: []contourv1.Service{
+						Services: []Sesamev1.Service{
 							{
 								Name: "echo-header-notcontains",
 								Port: 80,
 							},
 						},
-						Conditions: []contourv1.MatchCondition{
+						Conditions: []Sesamev1.MatchCondition{
 							{
-								Header: &contourv1.HeaderMatchCondition{
+								Header: &Sesamev1.HeaderMatchCondition{
 									Name:        "Target-NotContains",
 									NotContains: "ContainsValue",
 								},
@@ -102,15 +102,15 @@ func testHeaderConditionMatch(namespace string) {
 						},
 					},
 					{
-						Services: []contourv1.Service{
+						Services: []Sesamev1.Service{
 							{
 								Name: "echo-header-exact",
 								Port: 80,
 							},
 						},
-						Conditions: []contourv1.MatchCondition{
+						Conditions: []Sesamev1.MatchCondition{
 							{
-								Header: &contourv1.HeaderMatchCondition{
+								Header: &Sesamev1.HeaderMatchCondition{
 									Name:  "Target-Exact",
 									Exact: "ExactValue",
 								},
@@ -118,15 +118,15 @@ func testHeaderConditionMatch(namespace string) {
 						},
 					},
 					{
-						Services: []contourv1.Service{
+						Services: []Sesamev1.Service{
 							{
 								Name: "echo-header-notexact",
 								Port: 80,
 							},
 						},
-						Conditions: []contourv1.MatchCondition{
+						Conditions: []Sesamev1.MatchCondition{
 							{
-								Header: &contourv1.HeaderMatchCondition{
+								Header: &Sesamev1.HeaderMatchCondition{
 									Name:     "Target-NotExact",
 									NotExact: "ExactValue",
 								},
@@ -234,17 +234,17 @@ func testHeaderConditionMatch(namespace string) {
 				return err
 			}
 
-			p.Spec.Routes = []contourv1.Route{
+			p.Spec.Routes = []Sesamev1.Route{
 				{
-					Services: []contourv1.Service{
+					Services: []Sesamev1.Service{
 						{
 							Name: "echo-header-present",
 							Port: 80,
 						},
 					},
-					Conditions: []contourv1.MatchCondition{
+					Conditions: []Sesamev1.MatchCondition{
 						{
-							Header: &contourv1.HeaderMatchCondition{
+							Header: &Sesamev1.HeaderMatchCondition{
 								Name:    "Target-Present",
 								Present: true,
 							},
@@ -252,15 +252,15 @@ func testHeaderConditionMatch(namespace string) {
 					},
 				},
 				{
-					Services: []contourv1.Service{
+					Services: []Sesamev1.Service{
 						{
 							Name: "echo-header-notpresent",
 							Port: 80,
 						},
 					},
-					Conditions: []contourv1.MatchCondition{
+					Conditions: []Sesamev1.MatchCondition{
 						{
-							Header: &contourv1.HeaderMatchCondition{
+							Header: &Sesamev1.HeaderMatchCondition{
 								Name:       "Target-Present",
 								NotPresent: true,
 							},

@@ -1,6 +1,6 @@
 ## TLS Certificate validation updates
 
-Contour now allows non-server certificates that do not have a CN or SAN set, which mostly fixes
+Sesame now allows non-server certificates that do not have a CN or SAN set, which mostly fixes
 [#2372](https://github.com/projectsesame/sesame/issues/2372) and [#3889](https://github.com/projectsesame/sesame/issues/3889).
 
 TLS documentation has been updated to make the rules for Secrets holding TLS information clearer.

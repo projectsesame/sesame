@@ -498,7 +498,7 @@ func TestStatusAddressUpdater_Gateway(t *testing.T) {
 				},
 			},
 		},
-		"Gateway not controlled by this Contour": {
+		"Gateway not controlled by this Sesame": {
 			status:                     ipLBStatus,
 			gatewayClassControllerName: "projectsesame.io/some-other-controller",
 			preop: &gatewayapi_v1alpha2.Gateway{

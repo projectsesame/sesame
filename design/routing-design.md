@@ -14,13 +14,13 @@ There are many different ways to apply routing to L7 HTTP ingress controllers. T
 
 ## Delegation
 
-Contour's delegation model is now akin to file inclusion. Consider programming languages that support an `#include` or `import` syntax as part of prepossessing their source code.
+Sesame's delegation model is now akin to file inclusion. Consider programming languages that support an `#include` or `import` syntax as part of prepossessing their source code.
 As the language's compiler or interpreter is processing the source code and encounters an include style syntax it branches to the file being included and processes it as if it's contents were in line in the parent document.
 
-Compare this to the way Contour builds its DAG. For each HTTPProxy record, Contour consults each route that has delegated to it, if it encounters a `includes:` key, Contour appends the contents to the delegate HTTPProxy record.
+Compare this to the way Sesame builds its DAG. For each HTTPProxy record, Sesame consults each route that has delegated to it, if it encounters a `includes:` key, Sesame appends the contents to the delegate HTTPProxy record.
 
-Additionally, Contour's delegation model follows how DNS is implemented. As the owner of a DNS domain, for example `.io`, I _delegate_ to another nameserver the responsibility for handing the subdomain `projectcontour.io`.
-Any nameserver can hold a record for `projectcontour.io`, but without the linkage from the parent `.io` TLD, its information is unreachable and non authoritative.
+Additionally, Sesame's delegation model follows how DNS is implemented. As the owner of a DNS domain, for example `.io`, I _delegate_ to another nameserver the responsibility for handing the subdomain `projectsesame.io`.
+Any nameserver can hold a record for `projectsesame.io`, but without the linkage from the parent `.io` TLD, its information is unreachable and non authoritative.
 Delegation can be applied to many different fields, not just vhost. 
 
 Each _root_ of a DAG starts at a virtual host, which describes properties such as the fully qualified name of the virtual host, TLS configuration, and possibly global access list details.
@@ -40,10 +40,10 @@ This allows teams to self-manage in a safe way portions of the http request. Use
 
 ##### Root HTTPProxies
 
-From the top, delegation is enforced through the use of `root HTTPProxy namespaces` which allow a cluster admin to carve off a set of namespaces where Contour's HTTPProxies will live.
+From the top, delegation is enforced through the use of `root HTTPProxy namespaces` which allow a cluster admin to carve off a set of namespaces where Sesame's HTTPProxies will live.
 Any root HTTPProxy found outside of these configured namespaces will be deemed invalid.
 
-Another design decision is that now TLS certificates, typically referenced via Kubernetes secrets, are placed inside these root HTTPProxy namespaces limiting the access required for Contour itself as well as not requiring these certs to exist in each team namespace.
+Another design decision is that now TLS certificates, typically referenced via Kubernetes secrets, are placed inside these root HTTPProxy namespaces limiting the access required for Sesame itself as well as not requiring these certs to exist in each team namespace.
 
 ##### Delegated HTTPProxies
 
@@ -72,7 +72,7 @@ Some use-cases for HTTPProxy delegation:
 
 ### Example
 
-The following example shows a root HTTPProxy that manages the host `projectcontour.io`.
+The following example shows a root HTTPProxy that manages the host `projectsesame.io`.
 It references a Kubernetes secret named `tls-cert` to allow for TLS termination.
 It delegates two paths to a set of teams in different namespaces.
 The path `/blog` is delegated to the HTTPProxy named `procon-teama` in the namespace `team-a`. The path `/community` is delegated to the HTTPProxy named `procon-teamb` in the namespace `team-b`.
@@ -80,7 +80,7 @@ The HTTPProxy named `procon-invalid` in the namespace `team-invalid` references 
 
 ## Routing Mechanisms
 
-As noted previously, there are various ways to make routing decisions. Contour was originally designed to support prefix path based routing; however, there are many other mechanisms that Contour could support.
+As noted previously, there are various ways to make routing decisions. Sesame was originally designed to support prefix path based routing; however, there are many other mechanisms that Sesame could support.
 It's important to note that these routing mechanisms are taking into consideration ***after*** the virtual host routing decision is made:
 
 - **Header:** Routing on an HTTP header that exists in the request (e.g. custom header, clientIP via header, HTTP method)
@@ -90,7 +90,7 @@ It's important to note that these routing mechanisms are taking into considerati
 
 ### Header Routing
 
-Routing via Header allows Contour to route traffic by more than just fqdn or path matching, but by also routing based upon a header which exists on the request.
+Routing via Header allows Sesame to route traffic by more than just fqdn or path matching, but by also routing based upon a header which exists on the request.
 
 #### Use Cases
 
@@ -139,7 +139,7 @@ Following the wildcard characters must be the string `/users`.
 4. More specific routes have higher priority over wildcard routes (see next section)
 
 #### Proper Delegation
-Since wildcard introduces uncertainty within the exact route that will match, some additional consideration needs to be applied when Contour determines if a route has proper delegation permissions.
+Since wildcard introduces uncertainty within the exact route that will match, some additional consideration needs to be applied when Sesame determines if a route has proper delegation permissions.
 
 For example if we had two includes which have similar path matches, we cannot determine who has authority:
 
@@ -156,7 +156,7 @@ includes:
 ``` 
 
 Another example of an issue if routes are defined on includes and conflict.
-The ordering that Contour places these into will result in the more specific route getting traffic (i.e. `/blog/tech/info`) before the wildcard route:
+The ordering that Sesame places these into will result in the more specific route getting traffic (i.e. `/blog/tech/info`) before the wildcard route:
 
 ```yaml
 spec:
@@ -323,9 +323,9 @@ Following are sample requests and which backends will handle the request:
 
 ### Path Matching
 
-Matching requests off of the HTTP request path is a core component of Contour.
+Matching requests off of the HTTP request path is a core component of Sesame.
 Path matching allows for applications to respond to specific portions of the request space.
-The following sections will outline the different path matching styles that Contour will support in HTTPProxy/v1alpha1.
+The following sections will outline the different path matching styles that Sesame will support in HTTPProxy/v1alpha1.
 
 #### Path Prefix
 
@@ -385,7 +385,7 @@ A wildcard match allows for a portion of a path to be dynamic.
 
 For example, we could define a wildcard style path: `/app2/*/foo`, but not `/app2/*`.
 If the path ends with `*` has too large of a match to allow for delegation.
-If this is encountered, Contour will set the status to be error for the corresponding HTTPProxy.
+If this is encountered, Sesame will set the status to be error for the corresponding HTTPProxy.
 
 ##### Root HTTPProxy:
 

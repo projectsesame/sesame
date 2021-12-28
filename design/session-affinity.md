@@ -2,11 +2,11 @@
 
 Status: _Accepted_
 
-This proposal describes how we will add session affinity support to Contour.
+This proposal describes how we will add session affinity support to Sesame.
 
 ## Goals
 
-- Support session affinity via a session cookie managed transparently by Contour.
+- Support session affinity via a session cookie managed transparently by Sesame.
 
 ## Non Goals
 
@@ -45,7 +45,7 @@ spec:
       strategy: Cookie
 ```
 As a route can specific multiple weighted backends, providing they choose `strategy: Cookie`, they will all be eligible for cookie based session affinity.
-Once a request has been served from service-a (or service-b) subsequent requests carrying Contour's session affinity cookie will always return to their nominated server regardless of weightings.
+Once a request has been served from service-a (or service-b) subsequent requests carrying Sesame's session affinity cookie will always return to their nominated server regardless of weightings.
 ```yaml
 apiVersion: sesame.heptio.com/v1beta1
 kind: IngressRoute
@@ -117,7 +117,7 @@ The `Route` helper, when presented with a Route that dispatches to one or more C
                HashPolicy: []*route.RouteAction_HashPolicy{{
                        PolicySpecifier: &route.RouteAction_HashPolicy_Cookie_{
                                Cookie: &route.RouteAction_HashPolicy_Cookie{
-                                       Name: "X-Contour-Session-Affinity",
+                                       Name: "X-Sesame-Session-Affinity",
                                        Ttl:  duration(0),
                                        Path: "/",
                                },
@@ -127,11 +127,11 @@ The `Route` helper, when presented with a Route that dispatches to one or more C
 
 ### Cookie design
 
-The cookie assigned by Contour will have the following properties; 
+The cookie assigned by Sesame will have the following properties; 
 
-- Name: `X-Contour-Session-Affinity`.
-Given there is no way to reuse a session cookie provided by the application (believe me, I spent days trying to do this) we always configure a cookie named `X-Contour-Session-Affinity`.
-The `X-Contour` prefix gives us a reasonable guarantee that we're not conflicting with an application set value.
+- Name: `X-Sesame-Session-Affinity`.
+Given there is no way to reuse a session cookie provided by the application (believe me, I spent days trying to do this) we always configure a cookie named `X-Sesame-Session-Affinity`.
+The `X-Sesame` prefix gives us a reasonable guarantee that we're not conflicting with an application set value.
 
  The cookie name is not user configurable because we cannot reliably use a cookie supplied by the application.
 See the following section on bootstrapping for more information.
@@ -199,6 +199,6 @@ Because of the difficulty in reliably preserving client IP addresses, and the un
 
 ## Security Considerations
 
-The `X-Contour-Session-Affinity` cookie contains no user identifiable data.
+The `X-Sesame-Session-Affinity` cookie contains no user identifiable data.
 It is a random string generated on the first request and serves only as input to the ring hash algorithm.
-Modifying the `X-Contour-Session-Affinity` cookie _could_ be used to route requests to a different pod in a service, but this is no different to presenting a request without a cookie.
+Modifying the `X-Sesame-Session-Affinity` cookie _could_ be used to route requests to a different pod in a service, but this is no different to presenting a request without a cookie.

@@ -15,20 +15,20 @@ This proposal describes how to add better support for identifying the status of 
 
 ## Background
 
-The Envoy process, the data path component of Contour, at times needs to be re-deployed.
+The Envoy process, the data path component of Sesame, at times needs to be re-deployed.
 This could be due to an upgrade, a change in configuration, or a node-failure forcing a redeployment.
 
-Contour currently implements a `preStop` hook in the container which signals to Envoy to begin draining connections.
+Sesame currently implements a `preStop` hook in the container which signals to Envoy to begin draining connections.
 Once Envoy begins draining, the readiness probe on the pod triggers to fail, which in turn causes that instance of Envoy to stop accepting new connections.
 
 The main problem is that the `preStop` hook (which sends the `/healthcheck/fail` request) does not wait until Envoy has drained all connections, so when the container
 is restarted, users can receive errors.
 
-This design looks to add a new component to Contour which will allow for a way to understand if open connections exist in Envoy before sending a `SIGTERM`.
+This design looks to add a new component to Sesame which will allow for a way to understand if open connections exist in Envoy before sending a `SIGTERM`.
 
 ## High-Level Design
 
-Implement a new sub-command to Contour named `envoy shutdown-manager` which will handle sending the healthcheck fail request 
+Implement a new sub-command to Sesame named `envoy shutdown-manager` which will handle sending the healthcheck fail request 
 to Envoy and then begin polling the http/https listeners for active connections from the `/stats` endpoint available on 
 `localhost:9001`.
 
@@ -40,7 +40,7 @@ This lifecycle hook blocks the process during this cleanup time and then returns
 
 ## Detailed Design
 
-- Implement new sub-command in Contour called `envoy shutdown-manager`
+- Implement new sub-command in Sesame called `envoy shutdown-manager`
 - This command will expose an http endpoint over a specific port (e.g. `8090`) and path `/shutdown`. 
 - A new container will be added to the Envoy Daemonset pod which will run this new sub-command
 - This new container as well as the Envoy container will be updated to use an http preStop hook (see example below)
@@ -96,13 +96,13 @@ spec:
       - args:
         - -c
         - /config/envoy.json
-        - --service-cluster $(CONTOUR_NAMESPACE)
+        - --service-cluster $(Sesame_NAMESPACE)
         - --service-node $(ENVOY_POD_NAME)
         - --log-level info
         command:
         - envoy
         env:
-        - name: CONTOUR_NAMESPACE
+        - name: Sesame_NAMESPACE
           valueFrom:
             fieldRef:
               apiVersion: v1
@@ -160,7 +160,7 @@ spec:
         command:
         - sesame
         env:
-        - name: CONTOUR_NAMESPACE
+        - name: Sesame_NAMESPACE
           valueFrom:
             fieldRef:
               apiVersion: v1

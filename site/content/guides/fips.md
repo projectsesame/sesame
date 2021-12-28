@@ -1,57 +1,57 @@
 ---
-title: FIPS 140-2 in Contour
+title: FIPS 140-2 in Sesame
 layout: page
 ---
 
 The [Federal Information Processing Standard (FIPS) 140-2][0] publication describes United States government approved security requirements for cryptographic modules.
 Software that is validated by an accredited [Cryptographic Module Validation Program (CVMP) laboratory][1] can be suitable for use in applications for US governmental departments or in industries subject to US Federal regulations.
 
-As a full application is not often tested by a CVMP laboratory, we cannot say that Contour is FIPS validated.
-Rather, Contour can be built and configured in a manner that adheres to the standards FIPS 140-2 establishes.
+As a full application is not often tested by a CVMP laboratory, we cannot say that Sesame is FIPS validated.
+Rather, Sesame can be built and configured in a manner that adheres to the standards FIPS 140-2 establishes.
 
-For a fully FIPS compliant deployment of Contour a few things are required:
-- Contour must be compiled with a FIPS validated cryptographic module
+For a fully FIPS compliant deployment of Sesame a few things are required:
+- Sesame must be compiled with a FIPS validated cryptographic module
 - Envoy must be compiled with a FIPS validated cryptographic module
-- Contour must be configured to use FIPS approved cryptographic algorithms
+- Sesame must be configured to use FIPS approved cryptographic algorithms
 
-This guide will run through an example of the process for building and configuring Contour and Envoy for adherence to FIPS 140-2.
-Specifically, we will show how Contour and Envoy can be built with the FIPS validated BoringCrypto module of BoringSSL and configured to use FIPS approved TLS ciphers.
+This guide will run through an example of the process for building and configuring Sesame and Envoy for adherence to FIPS 140-2.
+Specifically, we will show how Sesame and Envoy can be built with the FIPS validated BoringCrypto module of BoringSSL and configured to use FIPS approved TLS ciphers.
 
-Please note that this guide makes no guarantees about Contour FIPS 140-2 approval, validation, or the like.
+Please note that this guide makes no guarantees about Sesame FIPS 140-2 approval, validation, or the like.
 Interested parties should still evaluate the processes given as example here and the suitability for their purposes.
-The Contour project does not have any plans to distribute any binaries compiled in the manner described by this guide.
+The Sesame project does not have any plans to distribute any binaries compiled in the manner described by this guide.
 
 ## Notes on BoringCrypto
 
-This guide shows how Contour and Envoy can be built with [BoringSSL][2] as the cryptographic module.
+This guide shows how Sesame and Envoy can be built with [BoringSSL][2] as the cryptographic module.
 BoringSSL is Google's fork of OpenSSL and as a whole is not FIPS validated, but a specific core library called BoringCrypto is.
 For more detailed information about BoringCrypto see [this document][3].
 
-We are using BoringSSL/BoringCrypto in this example because Contour is written in Go and there is an open source [BoringCrypto flavor of Go][4] readily available.
+We are using BoringSSL/BoringCrypto in this example because Sesame is written in Go and there is an open source [BoringCrypto flavor of Go][4] readily available.
 In addition, Envoy uses BoringSSL at its core and already has well defined build processes for building in a FIPS compliant mode.
 
 One could possibly perform the same sort of operations with another library with FIPS 140-2 a validated cryptographic module (e.g. OpenSSL).
 However, that is out of the scope of this guide and interested users will have to come up with their own solutions for that use case, possibly using this document as a template.
 
-## Building Contour
+## Building Sesame
 
-In this section we will describe how the [`projectcontour/contour`][5] container image can be compiled and linked to BoringCrypto for FIPS compliance.
+In this section we will describe how the [`projectsesame/Sesame`][5] container image can be compiled and linked to BoringCrypto for FIPS compliance.
 We will be modifying the standard build process by setting up some dependencies and passing additional arguments to the same `make` target used to build the standard, non-FIPS image distributed by the project.
 
-You will need some software downloaded and installed on the computer you are performing the Contour FIPS build on:
-- Contour source code checked out to the version you would like to build
+You will need some software downloaded and installed on the computer you are performing the Sesame FIPS build on:
+- Sesame source code checked out to the version you would like to build
 - [GNU Make][6]
 - [Docker][7]
 
-The Contour [Dockerfile][8] uses a multistage build that performs compilation in an image that contains the necessary build tools and dependencies and then exports compiled artifacts to a final image.
-In order to minimize the `projectcontour/contour` image footprint, the final output image only consists of a single layer, containing a lone file: the statically compiled `contour` binary.
-The standard Contour build uses the upstream `golang` image as a build base, however we will have to swap that out to build Contour with BoringCrypto.
+The Sesame [Dockerfile][8] uses a multistage build that performs compilation in an image that contains the necessary build tools and dependencies and then exports compiled artifacts to a final image.
+In order to minimize the `projectsesame/Sesame` image footprint, the final output image only consists of a single layer, containing a lone file: the statically compiled `Sesame` binary.
+The standard Sesame build uses the upstream `golang` image as a build base, however we will have to swap that out to build Sesame with BoringCrypto.
 
 We can use the Google-provided Go implementation that has patches on top of standard Go to enable integrating BoringCrypto.
 This is available to us in the [`goboring/golang`][9] container image we can use as a build base.
-In addition, to ensure we can statically compile the `contour` binary when it is linked with the BoringCrypto C library, we must pass some additional arguments to the `make container` target.
+In addition, to ensure we can statically compile the `Sesame` binary when it is linked with the BoringCrypto C library, we must pass some additional arguments to the `make container` target.
 
-To perform the Contour image build with BoringCrypto, change directories to where you have the Contour source code checked out and run the following (replacing `<goboring-version-tag>` with the appropriate version of Go and BoringCrypto, see [here][10] for version specifics):
+To perform the Sesame image build with BoringCrypto, change directories to where you have the Sesame source code checked out and run the following (replacing `<goboring-version-tag>` with the appropriate version of Go and BoringCrypto, see [here][10] for version specifics):
 
 ```bash
 make container BUILD_CGO_ENABLED=1 BUILD_BASE_IMAGE=goboring/golang:<goboring-version-tag> BUILD_EXTRA_GO_LDFLAGS="-linkmode=external -extldflags=-static"
@@ -59,18 +59,18 @@ make container BUILD_CGO_ENABLED=1 BUILD_BASE_IMAGE=goboring/golang:<goboring-ve
 
 The command above can be broken down as follows:
 - `make container` invokes the container image build target
-- `BUILD_CGO_ENABLED=1` ensures `cgo` is enabled in the Contour compilation process
+- `BUILD_CGO_ENABLED=1` ensures `cgo` is enabled in the Sesame compilation process
 - `BUILD_BASE_IMAGE=goboring/golang:<goboring-version-tag>` ensures we use the BoringCrypto flavor of Go
 - `BUILD_EXTRA_GO_LDFLAGS` contains the additional linker flags we need to perform a static build
   - `-linkmode=external` tells the Go linker to use an external linker
   - `-extldflags=-static"` passes the `-static` flag to the external link to ensure a statically linked executable is produced
 
-The container image build process should fail before export of the `contour` binary to the final image if the compiled binary is not statically linked.
+The container image build process should fail before export of the `Sesame` binary to the final image if the compiled binary is not statically linked.
 
-To be fully sure the produced `contour` binary has been compiled with BoringCrypto you must remove the `-s` flag from the base Contour `Makefile` to stop stripping symbols and run through the build process above.
-Then you will be able to inspect the `contour` binary with `go tool nm` to check for symbols containing the string `_Cfunc__goboringcrypto_`.
+To be fully sure the produced `Sesame` binary has been compiled with BoringCrypto you must remove the `-s` flag from the base Sesame `Makefile` to stop stripping symbols and run through the build process above.
+Then you will be able to inspect the `Sesame` binary with `go tool nm` to check for symbols containing the string `_Cfunc__goboringcrypto_`.
 
-Once you have a `projectcontour/contour` image built, you can re-tag it if needed, push the image to a registry, and reference it in a Contour deployment to use it!
+Once you have a `projectsesame/Sesame` image built, you can re-tag it if needed, push the image to a registry, and reference it in a Sesame deployment to use it!
 
 ## Building Envoy
 
@@ -107,20 +107,20 @@ Once you have an image built, you can tag it as needed, push the image to a regi
 
 ## Configuring TLS Ciphers
 
-Now that we have Contour and Envoy compiled with BoringCrypto, we can turn our attention to ensuring encrypted communication paths in Contour are configured to use FIPS approved cryptographic algorithms.
+Now that we have Sesame and Envoy compiled with BoringCrypto, we can turn our attention to ensuring encrypted communication paths in Sesame are configured to use FIPS approved cryptographic algorithms.
 Using a FIPS flavor of Envoy will do most of the heavy lifting here without any user configuration needed.
 
 The critical communication paths and how they are set up to be FIPS compliant are enumerated below:
-- Contour -> k8s API
-  - Contour uses [`client-go`][14] to communicate with the k8s API
+- Sesame -> k8s API
+  - Sesame uses [`client-go`][14] to communicate with the k8s API
   - `client-go` uses the default Golang cipher suites configuration
   - When compiled with BoringCrypto Go, this set of ciphers is FIPS compliant and not configurable by users
-- Envoy -> Contour xDS Server, extension services, upstream services
+- Envoy -> Sesame xDS Server, extension services, upstream services
   - A FIPS compliant build of Envoy will choose FIPS approved TLS ciphers when negotiating TLS 1.2 as documented [here][15]
   - The set of ciphers is not configurable
 - TLS client -> Envoy
-  - As of [Contour 1.13.0][16], the ciphers Envoy will accept as a server when negotiating TLS 1.2 are configurable
-  - The [default set of ciphers Contour configures][17] includes some ciphers that are not FIPS approved
+  - As of [Sesame 1.13.0][16], the ciphers Envoy will accept as a server when negotiating TLS 1.2 are configurable
+  - The [default set of ciphers Sesame configures][17] includes some ciphers that are not FIPS approved
   - Users must configure FIPS approved ciphers from the list [here][15]
 
 [0]: https://csrc.nist.gov/publications/detail/fips/140/2/final
@@ -128,7 +128,7 @@ The critical communication paths and how they are set up to be FIPS compliant ar
 [2]: https://boringssl.googlesource.com/boringssl/
 [3]: https://boringssl.googlesource.com/boringssl/+/master/crypto/fipsmodule/FIPS.md
 [4]: https://go.googlesource.com/go/+/dev.boringcrypto/README.boringcrypto.md
-[5]: https://hub.docker.com/r/projectcontour/contour
+[5]: https://hub.docker.com/r/projectsesame/Sesame
 [6]: https://www.gnu.org/software/make/
 [7]: https://www.docker.com/
 [8]: {{< param github_url >}}/blob/main/Dockerfile

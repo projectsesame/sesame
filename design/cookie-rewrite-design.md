@@ -1,9 +1,9 @@
-# Cookie Rewriting in Contour
+# Cookie Rewriting in Sesame
 
 Status: Accepted
 
 ## Abstract
-This proposal describes how Contour will provide users the ability to rewrite HTTP cookie attributes.
+This proposal describes how Sesame will provide users the ability to rewrite HTTP cookie attributes.
 
 ## Background
 The `Set-Cookie` HTTP response header is used by an HTTP server to send a piece of data that a client can return to the server.
@@ -11,14 +11,14 @@ HTTP cookies can be used to correlate multiple requests from a single client, us
 Cookies are often used to implement a user "session."
 The `Set-Cookie` header must contain a cookie name and value to set, as well as attributes that determine how a client should determine whether it should send it along with a particular request.
 
-Contour's ["cookie" load balancing strategy](https://projectcontour.io/docs/v1.18.1/config/request-routing/#session-affinity) enables users to implement "session affinity" by configuring Envoy to generate a cookie that can be returned in subsequent requests to route to a consistent backend app instance.
-A commonly requested feature for Contour is to make attributes of this cookie configurable.
+Sesame's ["cookie" load balancing strategy](https://projectsesame.io/docs/v1.18.1/config/request-routing/#session-affinity) enables users to implement "session affinity" by configuring Envoy to generate a cookie that can be returned in subsequent requests to route to a consistent backend app instance.
+A commonly requested feature for Sesame is to make attributes of this cookie configurable.
 Users may want to apply security or other settings to ensure browsers treat these cookies appropriately.
-For example, the `SameSite` and `Secure` attributes are currently not set by Envoy when it generates the `X-Contour-Session-Affinity`.
+For example, the `SameSite` and `Secure` attributes are currently not set by Envoy when it generates the `X-Sesame-Session-Affinity`.
 
 In addition, some users may want to ensure certain attributes are set on application generated cookies.
 These attributes may be things an application may not be able to accurately set, without prior knowledge of how the application is deployed.
-For example, if Contour is in use to rewrite the path or hostname of a request before it reaches an application backend, the application may not be able to accurately set the `Path` and `Domain` attributes in a `Set-Cookie` response header.
+For example, if Sesame is in use to rewrite the path or hostname of a request before it reaches an application backend, the application may not be able to accurately set the `Path` and `Domain` attributes in a `Set-Cookie` response header.
 
 Envoy does not at the moment provide a native mechanism with which HTTP cookies can be modified.
 Envoy does of course provide the ability to write Lua code to implement custom logic for processing HTTP requests and responses.
@@ -27,7 +27,7 @@ However, the Envoy project does appear to be open to an API change to allow some
 
 ## Goals
 - Provide users ability to follow best practices in cookie attribute settings
-- Offer features in Contour/Envoy provided by other L7 proxies
+- Offer features in Sesame/Envoy provided by other L7 proxies
   - [Nginx](http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_cookie_domain)
   - [Apache HTTPD](http://httpd.apache.org/docs/2.2/mod/mod_proxy.html#proxypassreversecookiedomain)
 - Address various open issues related to cookie attributes
@@ -35,7 +35,7 @@ However, the Envoy project does appear to be open to an API change to allow some
   - https://github.com/projectsesame/sesame/issues/3142
 
 ## Non Goals
-- Provide full ability to configure Contour/Envoy with arbitrary Lua code
+- Provide full ability to configure Sesame/Envoy with arbitrary Lua code
 - Allow users to customize all aspects of an HTTP cookie (value, other attributes not mentioned below, etc.)
 
 ## High-Level Design
@@ -52,10 +52,10 @@ Initially, the added field for cookie rewriting will be added to the `Route` and
 Envoy provides configuration of Lua using the `typed_per_filter_config` on routes, virtual hosts, or weighted clusters.
 See [here](https://www.envoyproxy.io/docs/envoy/latest/configuration/http/http_filters/lua_filter#per-route-configuration) for more.
 
-Additionally, a future step may be to allow customization of the Contour/Envoy generated session affinity cookie directly in the "cookie" load balancing strategy.
+Additionally, a future step may be to allow customization of the Sesame/Envoy generated session affinity cookie directly in the "cookie" load balancing strategy.
 This design will initially require users to customize that via the general setting on the `HTTPProxy` `Route` element.
-We can possibly add some cookie manipulation parameters to the "cookie" load balancing strategy settings so the `X-Contour-Session-Affinity` cookie can be customized more cleanly.
-If/when we move/add the cookie-based hash to the request hash load balancing strategy we provide, we can provide cookie manipulation parameters there to customize any cookies generated by Contour/Envoy.
+We can possibly add some cookie manipulation parameters to the "cookie" load balancing strategy settings so the `X-Sesame-Session-Affinity` cookie can be customized more cleanly.
+If/when we move/add the cookie-based hash to the request hash load balancing strategy we provide, we can provide cookie manipulation parameters there to customize any cookies generated by Sesame/Envoy.
 See [this draft PR](https://github.com/projectsesame/sesame/pull/3993) for an example of how we can move cookie-hashing to the request hash load balancing strategy.
 We can include cookie manipulation parameters in the new `CookieHashOptions` struct.
 
@@ -146,7 +146,7 @@ We may choose to do everything with inline Lua or use the Lua filter's ability t
 In addition, parallel implementation on a [native Envoy feature](https://github.com/envoyproxy/envoy/issues/15612) may provide us the ability to remove Lua completely in the future.
 
 ### Cookie load balancing
-If/when we want to provide convenience fields to customize Contour/Envoy generated session affinity cookies, we can provide them in to the relevant configuration structs for those features.
+If/when we want to provide convenience fields to customize Sesame/Envoy generated session affinity cookies, we can provide them in to the relevant configuration structs for those features.
 Implementing that should be as simple as matching on the correct cookies and performing the same manipulations as described above.
 
 ## Alternatives Considered
@@ -164,14 +164,14 @@ However, this design does not limit us from adding the ability to manipulate the
 
 ### Always auto-rewrite Domain and Path attributes
 One alternative could be to always automatically rewrite the `Domain` and `Path` elements to the correct values.
-Hostname and path rewrite rules should be known by Contour and it could rewrite these values accordingly.
+Hostname and path rewrite rules should be known by Sesame and it could rewrite these values accordingly.
 
 However, if we do default to this, it may not work for all cases, e.g. as a site may be returning a cookie for a specific or more general path and rewriting it automatically could be incorrect.
 Rather than provide a restrictive API, we can start out with giving users full manual flexibility.
 We may look to add an option to do automatic rewrites if users desire.
 
 ## Security Considerations
-With this feature, we are allowing users to set security settings on cookies, which is an improvement on what Contour does today.
+With this feature, we are allowing users to set security settings on cookies, which is an improvement on what Sesame does today.
 
 In terms of security and other considerations around Lua scripting, we are not letting users supply Lua code, and should be generating Lua scripts scoped to this feature.
 Input will be validated before Lua code is generated so we should not allow arbitrary code to be passed to Envoy.
@@ -180,17 +180,17 @@ Input will be validated before Lua code is generated so we should not allow arbi
 Initially using the Envoy Lua filter, there should be no compatibility issues as this feature has existed for a while.
 
 If we do end up getting the Envoy native feature merged, we can wait to merge the Lua implementation until a couple releases with the Envoy feature.
-- In Contour version X, Envoy version Y we can implement feature with Lua.
-- In Contour version X+1, Envoy version Y+1 (with native feature), we will still implement this feature with Lua in Contour
-- In Contour version X+2, Envoy version Y+2, we can implement cookie reqriting with the Envoy native feature
+- In Sesame version X, Envoy version Y we can implement feature with Lua.
+- In Sesame version X+1, Envoy version Y+1 (with native feature), we will still implement this feature with Lua in Sesame
+- In Sesame version X+2, Envoy version Y+2, we can implement cookie reqriting with the Envoy native feature
 
 ## Open Issues
 
 ### Future Gateway API Extension
 An open question may be where this will fit into the Gateway API `HTTPRoute` configuration.
-Should this be an extension or some other mechanism which Contour can use to extend the base Gateway API fields?
+Should this be an extension or some other mechanism which Sesame can use to extend the base Gateway API fields?
 
 ### Global Cookie configuration
-Is it useful for a Contour administrator to be able to set a global policy on cookie attributes?
+Is it useful for a Sesame administrator to be able to set a global policy on cookie attributes?
 
 Is it useful for a `HTTPProxy` "tree" to have a global set of policies on cookie attributes?

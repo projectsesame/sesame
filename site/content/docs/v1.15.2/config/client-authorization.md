@@ -1,6 +1,6 @@
 # Client Authorization
 
-Contour supports integrating external servers to authorize client requests.
+Sesame supports integrating external servers to authorize client requests.
 
 Envoy implements external authorization in the [ext_authz][1] filter.
 This filter intercepts client requests and holds them while it sends a check
@@ -16,19 +16,19 @@ authorization of a HTTP request:
 </p>
 
 The [external authorization][7] guides demonstrates how to deploy HTTP basic
-authentication using Contour and [contour-authserver](https://github.com/projectsesame/sesame-authserver).
+authentication using Sesame and [Sesame-authserver](https://github.com/projectsesame/sesame-authserver).
 
 ## Extension Services
 
-The starting point for external authorization in Contour is the
+The starting point for external authorization in Sesame is the
 [ExtensionService][2] API.
 This API creates a cluster which Envoy can use to send requests to an external server.
 In principle, the Envoy cluster can be used for any purpose, but in this
 document we are concerned only with how to use it as an authorization service.
 
 An authorization service is a gRPC service that implements the Envoy [CheckRequest][3] protocol.
-Note that Contour requires the extension to implement the "v3" version of the protocol.
-Contour is compatible with any authorization server that implements this protocol.
+Note that Sesame requires the extension to implement the "v3" version of the protocol.
+Sesame is compatible with any authorization server that implements this protocol.
 
 The primary field of interest in the `ExtensionService` CRD is the
 `.spec.services` field.
@@ -54,7 +54,7 @@ requests to the endpoints within each Service.
 Since authorizing a client request may involve passing sensitive credentials
 from a HTTP request to the authorization service, the connection to the
 authorization server should be as secure as possible.
-Contour defaults the `.spec.protocol` field to "h2", which configures
+Sesame defaults the `.spec.protocol` field to "h2", which configures
 Envoy to use HTTP/2 over TLS for the authorization service connection.
 
 The [.spec.validation][4] field configures how Envoy should verify the TLS
@@ -85,7 +85,7 @@ and set the `.spec.services[].name` field to the name of the Service.
 
 ## Authorizing Virtual Hosts
 
-The [.spec.virtualhost.authorization][5] field in the Contour `HTTPProxy`
+The [.spec.virtualhost.authorization][5] field in the Sesame `HTTPProxy`
 API connects a virtual host to an authorization server that is bound by an
 `ExtensionService` object.
 Each virtual host can use a different `ExtensionService`, but only one
@@ -133,9 +133,9 @@ A route can overwrite the value for a context key by setting it in the
 context field of authorization policy for the route.
 
 [1]: https://www.envoyproxy.io/docs/envoy/latest/configuration/http/http_filters/ext_authz_filter
-[2]: api/#projectcontour.io/v1alpha1.ExtensionService
+[2]: api/#projectsesame.io/v1alpha1.ExtensionService
 [3]: https://www.envoyproxy.io/docs/envoy/latest/api-v3/service/auth/v3/external_auth.proto
-[4]: api/#projectcontour.io/v1.UpstreamValidation
-[5]: api/#projectcontour.io/v1.AuthorizationServer
-[6]: api/#projectcontour.io/v1.AuthorizationPolicy
+[4]: api/#projectsesame.io/v1.UpstreamValidation
+[5]: api/#projectsesame.io/v1.AuthorizationServer
+[6]: api/#projectsesame.io/v1.AuthorizationPolicy
 [7]: /guides/external-authorization.md

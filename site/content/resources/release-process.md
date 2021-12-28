@@ -1,5 +1,5 @@
 ---
-title: Contour Release Process
+title: Sesame Release Process
 layout: page
 ---
 
@@ -30,12 +30,12 @@ A minor release requires:
 Set environment variables for use in subsequent steps:
 
 ```bash
-export CONTOUR_RELEASE_VERSION=v1.11.0
-export CONTOUR_RELEASE_VERSION_MAJOR=1
-export CONTOUR_RELEASE_VERSION_MINOR=11
+export Sesame_RELEASE_VERSION=v1.11.0
+export Sesame_RELEASE_VERSION_MAJOR=1
+export Sesame_RELEASE_VERSION_MINOR=11
 
-export CONTOUR_UPSTREAM_REMOTE_NAME=upstream
-export CONTOUR_OPERATOR_UPSTREAM_REMOTE_NAME=upstream
+export Sesame_UPSTREAM_REMOTE_NAME=upstream
+export Sesame_OPERATOR_UPSTREAM_REMOTE_NAME=upstream
 ```
 
 ### Update the website with release-specific information
@@ -45,7 +45,7 @@ export CONTOUR_OPERATOR_UPSTREAM_REMOTE_NAME=upstream
 1. Generate a new set of versioned docs:
     
 ```bash
-go run ./hack/release/prepare-release.go $CONTOUR_RELEASE_VERSION
+go run ./hack/release/prepare-release.go $Sesame_RELEASE_VERSION
 ```
 
 1. Add the new release to the compatibility matrix (`site/content/resources/compatibility-matrix.md`).
@@ -59,31 +59,31 @@ go run ./hack/release/prepare-release.go $CONTOUR_RELEASE_VERSION
 1. Create a local release branch:
 
 ```bash
-git checkout -b release-${CONTOUR_RELEASE_VERSION_MAJOR}.${CONTOUR_RELEASE_VERSION_MINOR}
+git checkout -b release-${Sesame_RELEASE_VERSION_MAJOR}.${Sesame_RELEASE_VERSION_MINOR}
 ```
 
 1. Push the branch to `github.com/projectsesame/sesame`:
 
 ```bash
-git push --set-upstream ${CONTOUR_UPSTREAM_REMOTE_NAME} release-${CONTOUR_RELEASE_VERSION_MAJOR}.${CONTOUR_RELEASE_VERSION_MINOR}
+git push --set-upstream ${Sesame_UPSTREAM_REMOTE_NAME} release-${Sesame_RELEASE_VERSION_MAJOR}.${Sesame_RELEASE_VERSION_MINOR}
 ```
 
 1. Update the deployment YAML and create a local tag:
 
 ```bash
-./hack/release/make-release-tag.sh main $CONTOUR_RELEASE_VERSION
+./hack/release/make-release-tag.sh main $Sesame_RELEASE_VERSION
 ```
 
 1. Push the branch to `github.com/projectsesame/sesame`:
 
 ```bash
-git push ${CONTOUR_UPSTREAM_REMOTE_NAME} release-${CONTOUR_RELEASE_VERSION_MAJOR}.${CONTOUR_RELEASE_VERSION_MINOR}
+git push ${Sesame_UPSTREAM_REMOTE_NAME} release-${Sesame_RELEASE_VERSION_MAJOR}.${Sesame_RELEASE_VERSION_MINOR}
 ```
 
 1. Push the tag to `github.com/projectsesame/sesame`:
 
 ```bash
-git push ${CONTOUR_UPSTREAM_REMOTE_NAME} ${CONTOUR_RELEASE_VERSION}
+git push ${Sesame_UPSTREAM_REMOTE_NAME} ${Sesame_RELEASE_VERSION}
 ```
 
 ### Release the operator
@@ -92,31 +92,31 @@ git push ${CONTOUR_UPSTREAM_REMOTE_NAME} ${CONTOUR_RELEASE_VERSION}
 1. Create a local release branch:
 
 ```bash
-git checkout -b release-${CONTOUR_RELEASE_VERSION_MAJOR}.${CONTOUR_RELEASE_VERSION_MINOR}
+git checkout -b release-${Sesame_RELEASE_VERSION_MAJOR}.${Sesame_RELEASE_VERSION_MINOR}
 ```
 
 1. Push the branch to `github.com/projectsesame/sesame-operator`:
 
 ```bash
-git push --set-upstream ${CONTOUR_OPERATOR_UPSTREAM_REMOTE_NAME} release-${CONTOUR_RELEASE_VERSION_MAJOR}.${CONTOUR_RELEASE_VERSION_MINOR}
+git push --set-upstream ${Sesame_OPERATOR_UPSTREAM_REMOTE_NAME} release-${Sesame_RELEASE_VERSION_MAJOR}.${Sesame_RELEASE_VERSION_MINOR}
 ```
 
 1. Update the deployment YAML and create a local tag:
 
 ```bash
-./hack/release/make-release-tag.sh main $CONTOUR_RELEASE_VERSION
+./hack/release/make-release-tag.sh main $Sesame_RELEASE_VERSION
 ```
 
 1. Push the branch to `github.com/projectsesame/sesame-operator`:
 
 ```bash
-git push ${CONTOUR_OPERATOR_UPSTREAM_REMOTE_NAME} release-${CONTOUR_RELEASE_VERSION_MAJOR}.${CONTOUR_RELEASE_VERSION_MINOR}
+git push ${Sesame_OPERATOR_UPSTREAM_REMOTE_NAME} release-${Sesame_RELEASE_VERSION_MAJOR}.${Sesame_RELEASE_VERSION_MINOR}
 ```
 
 1. Push the tag to `github.com/projectsesame/sesame-operator`:
 
 ```bash
-git push ${CONTOUR_OPERATOR_UPSTREAM_REMOTE_NAME} ${CONTOUR_RELEASE_VERSION}
+git push ${Sesame_OPERATOR_UPSTREAM_REMOTE_NAME} ${Sesame_RELEASE_VERSION}
 ```
 
 ### Update quickstart YAML redirects
@@ -135,15 +135,15 @@ You can use [this template][3] as a basic structure to get started.
 Specific items to call out in the release notes:
 - Filter on the Github label `release-note` and Github milestone which should include any PRs which should be called out in the release notes.
 - Also filter on the Github label `release-note-action-required` and ensure these are mentioned specifically with emphasis there may be user action required.
-- Be sure to include a section that specifies the compatible kubernetes versions for this version of Contour.
+- Be sure to include a section that specifies the compatible kubernetes versions for this version of Sesame.
 
 ### Toot your horn
 
-- Post a blog entry to projectcontour.io
-- Post a note to the #contour channel on k8s slack, also update the /topic with the current release number
-- Post a note to the #project-contour channel on the vmware slack, also update the /topic with the current release number
-- Send an update to the [cncf-contour-users mailing list][4]
-- Send an update to the [cncf-contour-distributors-announce mailing list][5]
+- Post a blog entry to projectsesame.io
+- Post a note to the #Sesame channel on k8s slack, also update the /topic with the current release number
+- Post a note to the #project-Sesame channel on the vmware slack, also update the /topic with the current release number
+- Send an update to the [cncf-Sesame-users mailing list][4]
+- Send an update to the [cncf-Sesame-distributors-announce mailing list][5]
 
 ### File issues
 
@@ -172,19 +172,19 @@ A patch release requires:
 Set environment variables for use in subsequent steps:
 
 ```bash
-export CONTOUR_RELEASE_VERSION=v1.11.1
-export CONTOUR_RELEASE_VERSION_MAJOR=1
-export CONTOUR_RELEASE_VERSION_MINOR=11
-export CONTOUR_PREVIOUS_VERSION=v1.11.0
+export Sesame_RELEASE_VERSION=v1.11.1
+export Sesame_RELEASE_VERSION_MAJOR=1
+export Sesame_RELEASE_VERSION_MINOR=11
+export Sesame_PREVIOUS_VERSION=v1.11.0
 
-export CONTOUR_UPSTREAM_REMOTE_NAME=upstream
-export CONTOUR_OPERATOR_UPSTREAM_REMOTE_NAME=upstream
+export Sesame_UPSTREAM_REMOTE_NAME=upstream
+export Sesame_OPERATOR_UPSTREAM_REMOTE_NAME=upstream
 ```
 
 ### Cherry-pick relevant commits into release branch
 
 1. Get a list of commit SHAs from `main` to backport.
-1. Check out the release branch for the minor version you're patching (i.e. `release-${CONTOUR_RELEASE_VERSION_MAJOR}.${CONTOUR_RELEASE_VERSION_MINOR}`), ensure it's up to date, and ensure you have a clean working directory.
+1. Check out the release branch for the minor version you're patching (i.e. `release-${Sesame_RELEASE_VERSION_MAJOR}.${Sesame_RELEASE_VERSION_MINOR}`), ensure it's up to date, and ensure you have a clean working directory.
 1. Create a new local feature branch from the release branch.
 1. Cherry-pick each commit from Step 1, fixing any conflicts as needed:
 
@@ -202,7 +202,7 @@ git cherry-pick <SHA>
 1. Generate a new set of versioned docs:
     
 ```bash
-go run ./hack/release/prepare-release.go $CONTOUR_PREVIOUS_VERSION $CONTOUR_RELEASE_VERSION
+go run ./hack/release/prepare-release.go $Sesame_PREVIOUS_VERSION $Sesame_RELEASE_VERSION
 ```
 
 1. Add the new release to the compatibility matrix (`/site/_resources/compatibility-matrix.md`).
@@ -217,25 +217,25 @@ go run ./hack/release/prepare-release.go $CONTOUR_PREVIOUS_VERSION $CONTOUR_RELE
 1. Update the deployment YAML and create a local tag:
 
 ```bash
-./hack/release/make-release-tag.sh $CONTOUR_PREVIOUS_VERSION $CONTOUR_RELEASE_VERSION
+./hack/release/make-release-tag.sh $Sesame_PREVIOUS_VERSION $Sesame_RELEASE_VERSION
 ```
 
 1. Push the branch to `github.com/projectsesame/sesame`:
 
 ```bash
-git push ${CONTOUR_UPSTREAM_REMOTE_NAME} release-${CONTOUR_RELEASE_VERSION_MAJOR}.${CONTOUR_RELEASE_VERSION_MINOR}
+git push ${Sesame_UPSTREAM_REMOTE_NAME} release-${Sesame_RELEASE_VERSION_MAJOR}.${Sesame_RELEASE_VERSION_MINOR}
 ```
 
 1. Push the tag to `github.com/projectsesame/sesame`:
 
 ```bash
-git push ${CONTOUR_UPSTREAM_REMOTE_NAME} ${CONTOUR_RELEASE_VERSION}
+git push ${Sesame_UPSTREAM_REMOTE_NAME} ${Sesame_RELEASE_VERSION}
 ```
 
 ### Release the operator
 
 1. Get a list of commit SHAs from `main` to backport.
-1. Check out the release branch for the minor version you're patching (i.e. `release-${CONTOUR_RELEASE_VERSION_MAJOR}.${CONTOUR_RELEASE_VERSION_MINOR}`), ensure it's up to date, and ensure you have a clean working directory.
+1. Check out the release branch for the minor version you're patching (i.e. `release-${Sesame_RELEASE_VERSION_MAJOR}.${Sesame_RELEASE_VERSION_MINOR}`), ensure it's up to date, and ensure you have a clean working directory.
 1. Create a new local feature branch from the release branch.
 1. Cherry-pick each commit from Step 1, fixing any conflicts as needed:
 
@@ -251,19 +251,19 @@ git cherry-pick <SHA>
 1. Update the deployment YAML and create a local tag:
 
 ```bash
-./hack/release/make-release-tag.sh $CONTOUR_PREVIOUS_VERSION $CONTOUR_RELEASE_VERSION
+./hack/release/make-release-tag.sh $Sesame_PREVIOUS_VERSION $Sesame_RELEASE_VERSION
 ```
 
 1. Push the branch to `github.com/projectsesame/sesame-operator`:
 
 ```bash
-git push ${CONTOUR_OPERATOR_UPSTREAM_REMOTE_NAME} release-${CONTOUR_RELEASE_VERSION_MAJOR}.${CONTOUR_RELEASE_VERSION_MINOR}
+git push ${Sesame_OPERATOR_UPSTREAM_REMOTE_NAME} release-${Sesame_RELEASE_VERSION_MAJOR}.${Sesame_RELEASE_VERSION_MINOR}
 ```
 
 1. Push the tag to `github.com/projectsesame/sesame-operator`:
 
 ```bash
-git push ${CONTOUR_OPERATOR_UPSTREAM_REMOTE_NAME} ${CONTOUR_RELEASE_VERSION}
+git push ${Sesame_OPERATOR_UPSTREAM_REMOTE_NAME} ${Sesame_RELEASE_VERSION}
 ```
 
 ### Do the Github release and write release notes
@@ -275,14 +275,14 @@ You can use [this template][3] as a basic structure to get started.
 Specific items to call out in the release notes:
 - Filter on the Github label `release-note` and Github milestone which should include any PRs which should be called out in the release notes.
 - Also filter on the Github label `release-note-action-required` and ensure these are mentioned specifically with emphasis there may be user action required.
-- Be sure to include a section that specifies the compatible kubernetes versions for this version of Contour.
+- Be sure to include a section that specifies the compatible kubernetes versions for this version of Sesame.
 
 ### Toot your horn
 
-- Post a note to the #contour channel on k8s slack, also update the /topic with the current release number
-- Post a note to the #project-contour channel on the vmware slack, also update the /topic with the current release number
-- Send an update to the [cncf-contour-users mailing list][4]
-- Send an update to the [cncf-contour-distributors-announce mailing list][5]
+- Post a note to the #Sesame channel on k8s slack, also update the /topic with the current release number
+- Post a note to the #project-Sesame channel on the vmware slack, also update the /topic with the current release number
+- Send an update to the [cncf-Sesame-users mailing list][4]
+- Send an update to the [cncf-Sesame-distributors-announce mailing list][5]
 
 ### File issues
 
@@ -291,5 +291,5 @@ If you encountered any problems or areas for improvement while executing the rel
 [1]: #minor-release-process
 [2]: #patch-release-process
 [3]: {{< param github_url >}}/blob/main/hack/release/release-notes-template.md
-[4]: https://lists.cncf.io/g/cncf-contour-users/
-[5]: https://lists.cncf.io/g/cncf-contour-distributors-announce/
+[4]: https://lists.cncf.io/g/cncf-Sesame-users/
+[5]: https://lists.cncf.io/g/cncf-Sesame-distributors-announce/

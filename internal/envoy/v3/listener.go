@@ -345,7 +345,7 @@ func (b *httpConnectionManagerBuilder) Validate() error {
 
 	// If the router filter is not the last, the listener will be rejected by Envoy.
 	// More specifically, the last filter must be a terminating filter. The only one
-	// of these used by Contour is the router filter, which is set as the one
+	// of these used by Sesame is the router filter, which is set as the one
 	// with typeUrl `type.googleapis.com/envoy.extensions.filters.http.router.v3.Router`,
 	// which in this case is the one of type Router.
 	lastIndex := len(b.filters) - 1

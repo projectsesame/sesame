@@ -27,7 +27,7 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/onsi/gomega/gexec"
-	contour_api_v1alpha1 "github.com/projectcontour/sesame/apis/projectsesame/v1alpha1"
+	Sesame_api_v1alpha1 "github.com/projectsesame/sesame/apis/projectsesame/v1alpha1"
 	"github.com/projectsesame/sesame/pkg/config"
 	"github.com/projectsesame/sesame/test/e2e"
 	"github.com/stretchr/testify/require"
@@ -42,19 +42,19 @@ func TestHTTPProxy(t *testing.T) {
 }
 
 var _ = BeforeSuite(func() {
-	require.NoError(f.T(), f.Deployment.EnsureResourcesForLocalContour())
+	require.NoError(f.T(), f.Deployment.EnsureResourcesForLocalSesame())
 })
 
 var _ = AfterSuite(func() {
 	// Delete resources individually instead of deleting the entire sesame
 	// namespace as a performance optimization, because deleting non-empty
 	// namespaces can take up to a couple minutes to complete.
-	require.NoError(f.T(), f.Deployment.DeleteResourcesForLocalContour())
+	require.NoError(f.T(), f.Deployment.DeleteResourcesForLocalSesame())
 	gexec.CleanupBuildArtifacts()
 })
 
 // Contains specs that test that kubebuilder API validations
-// work as expected, and do not require a Contour instance to
+// work as expected, and do not require a Sesame instance to
 // be running.
 var _ = Describe("HTTPProxy API validation", func() {
 	f.NamespacedTest("httpproxy-required-field-validation", testRequiredFieldValidation)
@@ -66,34 +66,34 @@ var _ = Describe("HTTPProxy API validation", func() {
 
 var _ = Describe("HTTPProxy", func() {
 	var (
-		contourCmd            *gexec.Session
-		contourConfig         *config.Parameters
-		contourConfiguration  *contour_api_v1alpha1.ContourConfiguration
-		contourConfigFile     string
-		additionalContourArgs []string
+		SesameCmd            *gexec.Session
+		SesameConfig         *config.Parameters
+		SesameConfiguration  *Sesame_api_v1alpha1.SesameConfiguration
+		SesameConfigFile     string
+		additionalSesameArgs []string
 	)
 
 	BeforeEach(func() {
-		// Contour config file contents, can be modified in nested
+		// Sesame config file contents, can be modified in nested
 		// BeforeEach.
-		contourConfig = &config.Parameters{}
+		SesameConfig = &config.Parameters{}
 
-		// Contour configuration crd, can be modified in nested
+		// Sesame configuration crd, can be modified in nested
 		// BeforeEach.
-		contourConfiguration = e2e.DefaultContourConfiguration()
+		SesameConfiguration = e2e.DefaultSesameConfiguration()
 
 		// Default sesame serve command line arguments can be appended to in
 		// nested BeforeEach.
-		additionalContourArgs = []string{}
+		additionalSesameArgs = []string{}
 	})
 
 	// JustBeforeEach is called after each of the nested BeforeEach are
 	// called, so it is a final setup step before running a test.
-	// A nested BeforeEach may have modified Contour config, so we wait
-	// until here to start Contour.
+	// A nested BeforeEach may have modified Sesame config, so we wait
+	// until here to start Sesame.
 	JustBeforeEach(func() {
 		var err error
-		contourCmd, contourConfigFile, err = f.Deployment.StartLocalContour(contourConfig, contourConfiguration, additionalContourArgs...)
+		SesameCmd, SesameConfigFile, err = f.Deployment.StartLocalSesame(SesameConfig, SesameConfiguration, additionalSesameArgs...)
 		require.NoError(f.T(), err)
 
 		// Wait for Envoy to be healthy.
@@ -101,7 +101,7 @@ var _ = Describe("HTTPProxy", func() {
 	})
 
 	AfterEach(func() {
-		require.NoError(f.T(), f.Deployment.StopLocalContour(contourCmd, contourConfigFile))
+		require.NoError(f.T(), f.Deployment.StopLocalSesame(SesameCmd, SesameConfigFile))
 	})
 
 	f.NamespacedTest("httpproxy-request-redirect-policy", testRequestRedirectRule)
@@ -132,13 +132,13 @@ var _ = Describe("HTTPProxy", func() {
 	f.NamespacedTest("httpproxy-https-fallback-certificate", func(namespace string) {
 		Context("with fallback certificate", func() {
 			BeforeEach(func() {
-				contourConfig.TLS = config.TLSParameters{
+				SesameConfig.TLS = config.TLSParameters{
 					FallbackCertificate: config.NamespacedName{
 						Name:      "fallback-cert",
 						Namespace: namespace,
 					},
 				}
-				contourConfiguration.Spec.HTTPProxy.FallbackCertificate = &contour_api_v1alpha1.NamespacedName{
+				SesameConfiguration.Spec.HTTPProxy.FallbackCertificate = &Sesame_api_v1alpha1.NamespacedName{
 					Name:      "fallback-cert",
 					Namespace: namespace,
 				}
@@ -223,14 +223,14 @@ var _ = Describe("HTTPProxy", func() {
 				}
 				require.NoError(f.T(), f.Client.Create(context.TODO(), backendClientCert))
 
-				contourConfig.TLS = config.TLSParameters{
+				SesameConfig.TLS = config.TLSParameters{
 					ClientCertificate: config.NamespacedName{
 						Namespace: namespace,
 						Name:      "backend-client-cert",
 					},
 				}
 
-				contourConfiguration.Spec.Envoy.ClientCertificate = &contour_api_v1alpha1.NamespacedName{
+				SesameConfiguration.Spec.Envoy.ClientCertificate = &Sesame_api_v1alpha1.NamespacedName{
 					Name:      "backend-client-cert",
 					Namespace: namespace,
 				}
@@ -251,8 +251,8 @@ var _ = Describe("HTTPProxy", func() {
 	f.NamespacedTest("httpproxy-external-name-service-insecure", func(namespace string) {
 		Context("with ExternalName Services enabled", func() {
 			BeforeEach(func() {
-				contourConfig.EnableExternalNameService = true
-				contourConfiguration.Spec.EnableExternalNameService = true
+				SesameConfig.EnableExternalNameService = true
+				SesameConfiguration.Spec.EnableExternalNameService = true
 			})
 			testExternalNameServiceInsecure(namespace)
 		})
@@ -261,8 +261,8 @@ var _ = Describe("HTTPProxy", func() {
 	f.NamespacedTest("httpproxy-external-name-service-tls", func(namespace string) {
 		Context("with ExternalName Services enabled", func() {
 			BeforeEach(func() {
-				contourConfig.EnableExternalNameService = true
-				contourConfiguration.Spec.EnableExternalNameService = true
+				SesameConfig.EnableExternalNameService = true
+				SesameConfiguration.Spec.EnableExternalNameService = true
 			})
 			testExternalNameServiceTLS(namespace)
 		})
@@ -271,8 +271,8 @@ var _ = Describe("HTTPProxy", func() {
 	f.NamespacedTest("httpproxy-external-name-service-localhost", func(namespace string) {
 		Context("with ExternalName Services enabled", func() {
 			BeforeEach(func() {
-				contourConfig.EnableExternalNameService = true
-				contourConfiguration.Spec.EnableExternalNameService = true
+				SesameConfig.EnableExternalNameService = true
+				SesameConfiguration.Spec.EnableExternalNameService = true
 			})
 			testExternalNameServiceLocalhostInvalid(namespace)
 		})
@@ -286,13 +286,13 @@ var _ = Describe("HTTPProxy", func() {
 			return func(namespace string) {
 				Context("with rate limit service", func() {
 					BeforeEach(func() {
-						contourConfig.RateLimitService = config.RateLimitService{
+						SesameConfig.RateLimitService = config.RateLimitService{
 							ExtensionService: fmt.Sprintf("%s/%s", namespace, f.Deployment.RateLimitExtensionService.Name),
 							Domain:           "sesame",
 							FailOpen:         false,
 						}
-						contourConfiguration.Spec.RateLimitService = &contour_api_v1alpha1.RateLimitServiceConfig{
-							ExtensionService: contour_api_v1alpha1.NamespacedName{
+						SesameConfiguration.Spec.RateLimitService = &Sesame_api_v1alpha1.RateLimitServiceConfig{
+							ExtensionService: Sesame_api_v1alpha1.NamespacedName{
 								Name:      f.Deployment.RateLimitExtensionService.Name,
 								Namespace: namespace,
 							},
@@ -349,15 +349,15 @@ descriptors:
 
 		Context("rewriting cookies from globally rewritten headers", func() {
 			BeforeEach(func() {
-				contourConfig.Policy = config.PolicyParameters{
+				SesameConfig.Policy = config.PolicyParameters{
 					ResponseHeadersPolicy: config.HeadersPolicy{
 						Set: map[string]string{
 							"Set-Cookie": "global=foo",
 						},
 					},
 				}
-				contourConfiguration.Spec.Policy = &contour_api_v1alpha1.PolicyConfig{
-					ResponseHeadersPolicy: &contour_api_v1alpha1.HeadersPolicy{
+				SesameConfiguration.Spec.Policy = &Sesame_api_v1alpha1.PolicyConfig{
+					ResponseHeadersPolicy: &Sesame_api_v1alpha1.HeadersPolicy{
 						Set: map[string]string{
 							"Set-Cookie": "global=foo",
 						},
@@ -379,14 +379,14 @@ descriptors:
 			}
 
 			BeforeEach(func() {
-				if !e2e.UsingContourConfigCRD() {
+				if !e2e.UsingSesameConfigCRD() {
 					// Test only applies to sesame config CRD.
 					Skip("")
 				}
 				for _, ns := range rootNamespaces {
 					f.CreateNamespace(ns)
 				}
-				contourConfiguration.Spec.HTTPProxy.RootNamespaces = rootNamespaces
+				SesameConfiguration.Spec.HTTPProxy.RootNamespaces = rootNamespaces
 			})
 
 			AfterEach(func() {
@@ -405,14 +405,14 @@ descriptors:
 			}
 
 			BeforeEach(func() {
-				if e2e.UsingContourConfigCRD() {
+				if e2e.UsingSesameConfigCRD() {
 					// Test only applies to sesame configmap.
 					Skip("")
 				}
 				for _, ns := range rootNamespaces {
 					f.CreateNamespace(ns)
 				}
-				additionalContourArgs = []string{
+				additionalSesameArgs = []string{
 					"--root-namespaces=" + strings.Join(rootNamespaces, ","),
 				}
 			})

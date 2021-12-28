@@ -1,50 +1,50 @@
 # Contributing
 
 Thanks for taking the time to join our community and start contributing.
-These guidelines will help you get started with the Contour project.
+These guidelines will help you get started with the Sesame project.
 Please note that we require [DCO sign off](#dco-sign-off).  
 
 Read this document for additional website specific guildlines: [Site Contribution Guidelines](/SITE_CONTRIBUTION.md).
 Guidelines in this document still apply to website contributions.
 
-If you want to get more insight into how the Contour maintainer team approaches R&D, this [page](https://projectcontour.io/resources/how-we-work/) captures how we work on Contour.
+If you want to get more insight into how the Sesame maintainer team approaches R&D, this [page](https://projectsesame.io/resources/how-we-work/) captures how we work on Sesame.
 
 ## Building from source
 
-This section describes how to build Contour from source.
+This section describes how to build Sesame from source.
 
 ### Prerequisites
 
 1. *Install Go*
 
-    Contour requires [Go 1.16][1] or later.
+    Sesame requires [Go 1.16][1] or later.
 
 ### Fetch the source
 
-Contour uses [`go modules`][2] for dependency management.
+Sesame uses [`go modules`][2] for dependency management.
 
 1. [Fork][3] the repo
 
 2. Create a local clone
 
 ```
-git clone git@github.com:YOUR-USERNAME/contour.git
+git clone git@github.com:YOUR-USERNAME/Sesame.git
 ```
 
 ### Building
 
-To build Contour, run:
+To build Sesame, run:
 
 ```
 make
 ```
 
-This uses a `go install` and produces a `contour` binary in your `$GOPATH/bin` directory.
+This uses a `go install` and produces a `Sesame` binary in your `$GOPATH/bin` directory.
 
 
 ### Running the unit tests
 
-Once you have Contour building, you can run all the unit tests for the project:
+Once you have Sesame building, you can run all the unit tests for the project:
 
 ```
 make check
@@ -68,10 +68,10 @@ Note: The lint tasks require the [codespell](https://github.com/codespell-projec
 
 ### Local Development/Testing
 
-It's very helpful to be able to test out changes to Contour locally without building images and pushing into clusters.
+It's very helpful to be able to test out changes to Sesame locally without building images and pushing into clusters.
 
 To accomplish this, Envoy can be run inside a Kubernetes cluster, typically a `kind` cluster.
-Then Contour is run on your local machine and Envoy will be configured to look for Contour running on your machine vs running in the cluster.
+Then Sesame is run on your local machine and Envoy will be configured to look for Sesame running on your machine vs running in the cluster.
 
 1. Create a kind cluster
 
@@ -79,13 +79,13 @@ Then Contour is run on your local machine and Envoy will be configured to look f
 kind create cluster --config=./examples/kind/kind-expose-port.yaml --name=sesame
 ```
 
-2. Deploy Contour & Deps to cluster:
+2. Deploy Sesame & Deps to cluster:
 
 ```shell
 kubectl apply -f examples/sesame
 ```
 
-_Note: The Contour Deployment/Service can be deleted if desired since it's not used._
+_Note: The Sesame Deployment/Service can be deleted if desired since it's not used._
 
 3. Find IP of local machine (e.g. `ifconfig` or similar depending on your environment)
 
@@ -106,34 +106,34 @@ Change `initContainers:` to look like this updating the IP and removing the thre
     - --resources-dir=/config/resources
 ```
 
-5. Change your Contour code.
+5. Change your Sesame code.
 
-6. Build & start Contour allowing Envoy to connect and get its configuration. 
+6. Build & start Sesame allowing Envoy to connect and get its configuration. 
 ```shell
 make install && sesame serve --kubeconfig=$HOME/.kube/config --xds-address=0.0.0.0 --insecure 
 ```
 
-8. Test using the local kind cluster by deploying resources into that cluster. Many of our examples use `local.projectcontour.io` which is configured to point to `127.0.0.1` which allows requests to route to the local kind cluster for easy testing.
+8. Test using the local kind cluster by deploying resources into that cluster. Many of our examples use `local.projectsesame.io` which is configured to point to `127.0.0.1` which allows requests to route to the local kind cluster for easy testing.
 
 7. Make more changes and repeat step #6.
 
 ## Contribution workflow
 
 This section describes the process for contributing a bug fix or new feature.
-It follows from the previous section, so if you haven't set up your Go workspace and built Contour from source, do that first.
+It follows from the previous section, so if you haven't set up your Go workspace and built Sesame from source, do that first.
 
 ### Before you submit a pull request
 
 This project operates according to the _talk, then code_ rule.
 If you plan to submit a pull request for anything more than a typo or obvious bug fix, first you _should_ [raise an issue][6] to discuss your proposal, before submitting any code.
 
-Depending on the size of the feature you may be expected to first write a design proposal. Follow the [Proposal Process](https://github.com/projectcontour/community/blob/master/GOVERNANCE.md#proposal-process) documented in Contour's Governance.
+Depending on the size of the feature you may be expected to first write a design proposal. Follow the [Proposal Process](https://github.com/projectsesame/community/blob/master/GOVERNANCE.md#proposal-process) documented in Sesame's Governance.
 
 ### Issue and PR Triage
 
 #### Project Board
 
-In addition to maintaining the project repositories, project maintainers are responsible for maintaining the [project tracking board](https://github.com/orgs/projectcontour/projects/2).
+In addition to maintaining the project repositories, project maintainers are responsible for maintaining the [project tracking board](https://github.com/orgs/projectsesame/projects/2).
 This board is intended to organize work for the team as well as provide visibility into the status and priority of tracks of work, specific Issues, and PRs.
 The board is used in conjunction with Issue and PR labels.
 
@@ -147,13 +147,13 @@ Further columns represent decreasing priority, with "Prioritized Backlog" contai
 **Notes for maintainers and contributors**
 - If you are looking for work to pick up:
   - Look to the leftmost columns of the project board
-  - *New contributors* can use [this shortcut link](https://github.com/projectsesame/sesame/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22+label%3A%22help+wanted%22) to find good beginner Contour issues to work on and [this shortcut link](https://github.com/projectsesame/sesame-operator/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22+label%3A%22help+wanted%22) to find Operator issues
+  - *New contributors* can use [this shortcut link](https://github.com/projectsesame/sesame/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22+label%3A%22help+wanted%22) to find good beginner Sesame issues to work on and [this shortcut link](https://github.com/projectsesame/sesame-operator/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22+label%3A%22help+wanted%22) to find Operator issues
 - When a new Issue or PR is added, add it to the project board and make a best judgement on relative priority so we have a starting place in triage
 - When moving items between columns, please add a comment to the Issue or PR detailing why so we have context in triage sessions
 
 #### Community Meeting Triage
 
-The weekly Contour [community meeting](https://projectcontour.io/community/) provides some time for the maintainer team and community to collaborate on Issue and PR triage.
+The weekly Sesame [community meeting](https://projectsesame.io/community/) provides some time for the maintainer team and community to collaborate on Issue and PR triage.
 
 Community members can add links to specific items they would like to discuss to the [meeting notes](https://hackmd.io/84Xbl4WBTpm7OBhaOAsSiw).
 This time will be used for clarification, potential to bump priority in the queue of work items for the team, and the ability for contributors to provide more context to their contributions.
@@ -204,7 +204,7 @@ Signed-off-by: Your Name <you@youremail.com>
 #### Sample commit message
 
 ```
-internal/contour: Add quux functions
+internal/Sesame: Add quux functions
 
 To implement the quux functions from #xxyyz, we need to
 florble the greep dots, then ensure that the florble is
@@ -221,7 +221,7 @@ Signed-off-by: Your Name <you@youremail.com>
 Maintainers should prefer to merge pull requests with the [Squash and merge](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/about-pull-request-merges#squash-and-merge-your-pull-request-commits) option.
 This option is preferred for a number of reasons.
 First, it causes GitHub to insert the pull request number in the commit subject which makes it easier to track which PR changes landed in.
-Second, it gives maintainers an opportunity to edit the commit message to conform to Contour standards and general [good practice](https://chris.beams.io/posts/git-commit/).
+Second, it gives maintainers an opportunity to edit the commit message to conform to Sesame standards and general [good practice](https://chris.beams.io/posts/git-commit/).
 Finally, a one-to-one correspondence between pull requests and commits makes it easier to manage reverting changes and increases the reliability of bisecting the tree (since CI runs at a pull request granularity).
 
 At a maintainer's discretion, pull requests with multiple commits can be merged with the [Create a merge commit](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/about-pull-request-merges) option.
@@ -231,15 +231,15 @@ The maintainer should review commit messages for each commit and make sure that 
 ### Import Aliases
 
 Naming is one of the most difficult things in software engineering.
-Contour uses the following pattern to name imports when referencing packages from other packages.
+Sesame uses the following pattern to name imports when referencing packages from other packages.
 
 > thing_version: The name+package path of the thing and then the version separated by underscores
 
 Examples:
 
 ```
-contour_api_v1 "github.com/projectsesame/sesame/apis/projectcontour/v1"
-contour_api_v1alpha1 "github.com/projectsesame/sesame/apis/projectcontour/v1alpha1"
+Sesame_api_v1 "github.com/projectsesame/sesame/apis/projectsesame/v1"
+Sesame_api_v1alpha1 "github.com/projectsesame/sesame/apis/projectsesame/v1alpha1"
 envoy_v3 "github.com/projectsesame/sesame/internal/envoy/v3"
 xdscache_v3 "github.com/projectsesame/sesame/internal/xdscache/v3"
 ```   
@@ -249,16 +249,16 @@ xdscache_v3 "github.com/projectsesame/sesame/internal/xdscache/v3"
 Before a change is submitted it should pass all the pre commit CI jobs.
 If there are unrelated test failures the change can be merged so long as a reference to an issue that tracks the test failures is provided.
 
-Once a change lands in main it will be built and available at this tag, `ghcr.io/projectcontour/contour:main`.
-You can read more about the available contour images in the [tagging][7] document.
+Once a change lands in main it will be built and available at this tag, `ghcr.io/projectsesame/Sesame:main`.
+You can read more about the available Sesame images in the [tagging][7] document.
 
 ### Build an image
 
-To build an image of your change using Contour's `Dockerfile`, run these commands (replacing the repository host and tag with your own):
+To build an image of your change using Sesame's `Dockerfile`, run these commands (replacing the repository host and tag with your own):
 
 ```
-docker build -t ghcr.io/davecheney/contour:latest .
-docker push ghcr.io/davecheney/contour:latest
+docker build -t ghcr.io/davecheney/Sesame:latest .
+docker push ghcr.io/davecheney/Sesame:latest
 ```
 or, you can use the make helper, like so:
 
@@ -272,25 +272,25 @@ This will push to `:latest` in `ghcr.io/davecheney` obviously you'll also need t
 
 To verify your change by deploying the image you built, take one of the [deployment manifests][7], edit it to point to your new image, and deploy to your Kubernetes cluster.
 
-## Contour testing
+## Sesame testing
 
-This section provides some useful information and guidelines for working with Contour's tests.
+This section provides some useful information and guidelines for working with Sesame's tests.
 
 ### Glossary
 
 #### Config/Data Categories
-* **Kubernetes Config**: `HTTPProxy`, `Ingress` or [Gateway API][8] config that Contour watches and converts to Envoy config.
-* **DAG**: The internal Contour representation of L7 proxy concepts. Kubernetes config is first converted to DAG objects before being converted to Envoy config.
-* **Envoy Config**: Configuration that can be provided to Envoy via xDS. This is Contour's final output, generated directly from the DAG. 
+* **Kubernetes Config**: `HTTPProxy`, `Ingress` or [Gateway API][8] config that Sesame watches and converts to Envoy config.
+* **DAG**: The internal Sesame representation of L7 proxy concepts. Kubernetes config is first converted to DAG objects before being converted to Envoy config.
+* **Envoy Config**: Configuration that can be provided to Envoy via xDS. This is Sesame's final output, generated directly from the DAG. 
 
 #### Test Categories
 * **Unit Test**: A Go test for a particular function/package. In some cases, these test more than one package at a time.
-* **Feature Test**: A Go test in `internal/featuretests` that tests the translation of Kubernetes config to Envoy config, using a Contour event handler and xDS server. 
-* **End-To-End (E2E) Test**: A Go test in `test/e2e` that performs a full end-to-end test of Contour running in a cluster. Typically verifies the behavior of HTTP requests given a Kubernetes `HTTPProxy`, `Ingress` or Gateway API config.
+* **Feature Test**: A Go test in `internal/featuretests` that tests the translation of Kubernetes config to Envoy config, using a Sesame event handler and xDS server. 
+* **End-To-End (E2E) Test**: A Go test in `test/e2e` that performs a full end-to-end test of Sesame running in a cluster. Typically verifies the behavior of HTTP requests given a Kubernetes `HTTPProxy`, `Ingress` or Gateway API config.
 
 ### Summary of Major Test Suites
 
-The following table describes the major test suites covering the core Contour processing pipeline (Kubernetes config -> DAG -> Envoy config).
+The following table describes the major test suites covering the core Sesame processing pipeline (Kubernetes config -> DAG -> Envoy config).
 In general, changes to the core processing pipeline should be accompanied by new/updated test cases in each of these test suites.
 
 | Test Suite | Description |
@@ -299,8 +299,8 @@ In general, changes to the core processing pipeline should be accompanied by new
 | `internal/dag/status_test.go` | Tests invalid Kubernetes (`HTTPProxy`) configs, verifying their status/conditions. |
 | `internal/envoy/v3/*_test.go` | Tests conversion of DAG objects to Envoy config. |
 | `internal/xdscache/v3/*_test.go` (specifically the `Test[Cluster\|Listener\|Route\|Secret]Visit` functions) | Tests conversion of Kubernetes config to Envoy config. |
-| `internal/featuretests/v3/*_test.go` | Tests conversion of Kubernetes config to Envoy config, using a ~full Contour event handler and xDS server. |
-| `test/e2e/[httpproxy\|gateway\|ingress]` | E2E tests with Contour running in a cluster. Verifies behavior of HTTP requests for configured proxies. |
+| `internal/featuretests/v3/*_test.go` | Tests conversion of Kubernetes config to Envoy config, using a ~full Sesame event handler and xDS server. |
+| `test/e2e/[httpproxy\|gateway\|ingress]` | E2E tests with Sesame running in a cluster. Verifies behavior of HTTP requests for configured proxies. |
 
 
 ## DCO Sign off

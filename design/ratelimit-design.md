@@ -4,7 +4,7 @@ Status: Accepted
 
 ## Abstract
 
-This document proposes a design for supporting Envoy's L7 local and global rate limiting capabilities in Contour.
+This document proposes a design for supporting Envoy's L7 local and global rate limiting capabilities in Sesame.
 
 ## Background
 
@@ -15,7 +15,7 @@ Rate limiting is a means of protecting backend services against unwanted traffic
 - Enforcing usage quotas for different classes of clients, e.g. free vs. paid tiers
 - Controlling resource consumption/cost
 
-[Rate limiting support](https://github.com/projectsesame/sesame/issues/370) is a common feature request for Contour.
+[Rate limiting support](https://github.com/projectsesame/sesame/issues/370) is a common feature request for Sesame.
 An initial [design document](https://github.com/projectsesame/sesame/blob/e19372e147ffeb8044173bf9d4bce5721a4cdbfe/design/ratelimit-design.md) was proposed and accepted in early 2019, and an [implementation](https://github.com/projectsesame/sesame/pull/873) was drafted, but it was not merged due to competing priorities and became stale.
 There was also a more recent [design update PR](https://github.com/projectsesame/sesame/pull/2283) that was not merged.
 
@@ -39,10 +39,10 @@ This document focuses on the HTTP filters, as it's assumed that users will want 
 
 ## High-Level Design
 
-Contour will add support for Envoy's local **and** global rate limiting.
+Sesame will add support for Envoy's local **and** global rate limiting.
 Local rate limiting adds a lightweight, easy-to-configure way to prevent large overall spikes in traffic from degrading upstream services, that doesn't require deploying any additional services.
 Global rate limiting provides much more fine-grained control over when and how rate limits are applied based on client IP, header values, etc., but requires a separate RLS to be deployed and configured alongside Envoy.
-Local and global rate limiting differ significantly in functionality and deployment/operation, so Contour will not attempt to merge them into a single unified API.
+Local and global rate limiting differ significantly in functionality and deployment/operation, so Sesame will not attempt to merge them into a single unified API.
 Instead, each one will be exposed independently, and users can opt into one or both as needed.
 
 
@@ -51,18 +51,18 @@ A `RateLimitPolicy` can be defined for either a virtual host or a route.
 The `RateLimitPolicy` defines parameters for local and/or global rate limiting.
 
 
-For local rate limiting, the user defines the rate limit itself, as "requests per second" and "burst" parameters, which Contour translates into [token bucket](https://www.envoyproxy.io/docs/envoy/latest/api-v3/extensions/filters/http/local_ratelimit/v3/local_rate_limit.proto#envoy-v3-api-field-extensions-filters-http-local-ratelimit-v3-localratelimit-token-bucket) settings.
+For local rate limiting, the user defines the rate limit itself, as "requests per second" and "burst" parameters, which Sesame translates into [token bucket](https://www.envoyproxy.io/docs/envoy/latest/api-v3/extensions/filters/http/local_ratelimit/v3/local_rate_limit.proto#envoy-v3-api-field-extensions-filters-http-local-ratelimit-v3-localratelimit-token-bucket) settings.
 
 
 For global rate limiting, the user defines the descriptors to be generated and sent to the external RLS.
 Descriptors contain entries including things like: the client IP, the value of a particular header, the destination cluster, etc.
 The external RLS makes the rate limit decision based on the descriptors, and returns either a 200 or a 429 to Envoy.
 The operator of the external RLS must configure it with actual rate limits for different descriptors.
-Each RLS implementation may have its own configuration format and mechanism for defining rate limits for descriptors, so Contour cannot provide a generic API for defining these.
+Each RLS implementation may have its own configuration format and mechanism for defining rate limits for descriptors, so Sesame cannot provide a generic API for defining these.
 
 
 For global rate limiting, an `ExtensionService` is defined to map to an external Rate Limit Service.
-The RLS is defined in the Contour config file, which will be used by any `HTTPProxies` that define a global rate limit policy.
+The RLS is defined in the Sesame config file, which will be used by any `HTTPProxies` that define a global rate limit policy.
 
 ## Detailed Design
 
@@ -184,8 +184,8 @@ spec:
           ...
 ```
 
-### Contour Configuration
-If using global rate limiting, anexternal RLS can be configured in the Contour config file.
+### Sesame Configuration
+If using global rate limiting, anexternal RLS can be configured in the Sesame config file.
 This RLS will be used for all virtual hosts that defines a global rate limit policy.
 
 ```yaml
@@ -220,14 +220,14 @@ Note that if an individual `HTTPProxy` does not define any global rate limit pol
 
 ### Rate Limit Status
 
-Contour users will want to be able to observe the status of rate limiting: can the external RLS be connected to?
+Sesame users will want to be able to observe the status of rate limiting: can the external RLS be connected to?
 Are requests being rate-limited?
 
 Envoy provides many statistics for observing the status of rate limiting.
 Local rate limiting statistics are described [here](https://www.envoyproxy.io/docs/envoy/latest/configuration/http/http_filters/local_rate_limit_filter#statistics).
 Global rate limiting statistics are described [here](https://www.envoyproxy.io/docs/envoy/latest/configuration/http/http_filters/rate_limit_filter#statistics).
 
-Like other Envoy statistics, these are exposed in Prometheus-compatible format and can be [scraped and visualized using Grafana/etc.](https://projectcontour.io/guides/prometheus/)
+Like other Envoy statistics, these are exposed in Prometheus-compatible format and can be [scraped and visualized using Grafana/etc.](https://projectsesame.io/guides/prometheus/)
 
 ## Alternatives Considered
 
@@ -238,10 +238,10 @@ A CRD could be used -- either `HTTPProxy` or a stand-alone one -- to define actu
 This option was discarded (for now) because we have potential users who are interested in using other rate limiting services, so just providing an integration with the Lyft implementation is not sufficient. 
 Future work could still be done to enable rate limits to be defined via CRD (as part of `HTTPProxy`, or stand-alone) and automatically configured with 1+ underlying RLS implementations.
 
-### Contour as external RLS
-Contour could function as an external RLS itself.
-This would put Contour in the data path for requests.
-It would simplify deployment and configuration for the user, at a cost of significant additional complexity for Contour.
+### Sesame as external RLS
+Sesame could function as an external RLS itself.
+This would put Sesame in the data path for requests.
+It would simplify deployment and configuration for the user, at a cost of significant additional complexity for Sesame.
 
 ### Unique RLS per TLS virtual host
 It may be desirable for each virtual host to be able to configure a different RLS.
@@ -285,7 +285,7 @@ We opted not to implement this for now because we haven't had users ask for the 
 This alternative could be implemented as a new feature in the future, if we get information from users that this is necessary.
 
 ## Compatibility
-Rate limiting (both local and global) will be an optional, opt-in feature for Contour users.
+Rate limiting (both local and global) will be an optional, opt-in feature for Sesame users.
 
 ### Comparison with other Ingress controllers
 

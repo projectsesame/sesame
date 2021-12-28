@@ -91,9 +91,9 @@ type serveContext struct {
 
 type ServerConfig struct {
 	// sesame's xds service parameters
-	xdsAddr                         string
-	xdsPort                         int
-	caFile, contourCert, contourKey string
+	xdsAddr                       string
+	xdsPort                       int
+	caFile, SesameCert, SesameKey string
 }
 
 // newServeContext returns a serveContext initialized to defaults.
@@ -118,11 +118,11 @@ func newServeContext() *serveContext {
 		PermitInsecureGRPC:    false,
 		DisableLeaderElection: false,
 		ServerConfig: ServerConfig{
-			xdsAddr:     "127.0.0.1",
-			xdsPort:     8001,
-			caFile:      "",
-			contourCert: "",
-			contourKey:  "",
+			xdsAddr:    "127.0.0.1",
+			xdsPort:    8001,
+			caFile:     "",
+			SesameCert: "",
+			SesameKey:  "",
 		},
 	}
 }
@@ -130,7 +130,7 @@ func newServeContext() *serveContext {
 // grpcOptions returns a slice of grpc.ServerOptions.
 // if ctx.PermitInsecureGRPC is false, the option set will
 // include TLS configuration.
-func grpcOptions(log logrus.FieldLogger, contourXDSConfig *sesame_api_v1alpha1.TLS) []grpc.ServerOption {
+func grpcOptions(log logrus.FieldLogger, SesameXDSConfig *sesame_api_v1alpha1.TLS) []grpc.ServerOption {
 	opts := []grpc.ServerOption{
 		// By default the Go grpc library defaults to a value of ~100 streams per
 		// connection. This number is likely derived from the HTTP/2 spec:
@@ -151,8 +151,8 @@ func grpcOptions(log logrus.FieldLogger, contourXDSConfig *sesame_api_v1alpha1.T
 			Timeout: 20 * time.Second,
 		}),
 	}
-	if contourXDSConfig != nil && !contourXDSConfig.Insecure {
-		tlsconfig := tlsconfig(log, contourXDSConfig)
+	if SesameXDSConfig != nil && !SesameXDSConfig.Insecure {
+		tlsconfig := tlsconfig(log, SesameXDSConfig)
 		creds := credentials.NewTLS(tlsconfig)
 		opts = append(opts, grpc.Creds(creds))
 	}
@@ -161,8 +161,8 @@ func grpcOptions(log logrus.FieldLogger, contourXDSConfig *sesame_api_v1alpha1.T
 
 // tlsconfig returns a new *tls.Config. If the TLS parameters passed are not properly configured
 // for tls communication, tlsconfig returns nil.
-func tlsconfig(log logrus.FieldLogger, contourXDSTLS *sesame_api_v1alpha1.TLS) *tls.Config {
-	err := verifyTLSFlags(contourXDSTLS)
+func tlsconfig(log logrus.FieldLogger, SesameXDSTLS *sesame_api_v1alpha1.TLS) *tls.Config {
+	err := verifyTLSFlags(SesameXDSTLS)
 	if err != nil {
 		log.WithError(err).Fatal("failed to verify TLS flags")
 	}
@@ -170,22 +170,22 @@ func tlsconfig(log logrus.FieldLogger, contourXDSTLS *sesame_api_v1alpha1.TLS) *
 	// Define a closure that lazily loads certificates and key at TLS handshake
 	// to ensure that latest certificates are used in case they have been rotated.
 	loadConfig := func() (*tls.Config, error) {
-		if contourXDSTLS == nil {
+		if SesameXDSTLS == nil {
 			return nil, nil
 		}
-		cert, err := tls.LoadX509KeyPair(contourXDSTLS.CertFile, contourXDSTLS.KeyFile)
+		cert, err := tls.LoadX509KeyPair(SesameXDSTLS.CertFile, SesameXDSTLS.KeyFile)
 		if err != nil {
 			return nil, err
 		}
 
-		ca, err := ioutil.ReadFile(contourXDSTLS.CAFile)
+		ca, err := ioutil.ReadFile(SesameXDSTLS.CAFile)
 		if err != nil {
 			return nil, err
 		}
 
 		certPool := x509.NewCertPool()
 		if ok := certPool.AppendCertsFromPEM(ca); !ok {
-			return nil, fmt.Errorf("unable to append certificate in %s to CA pool", contourXDSTLS.CAFile)
+			return nil, fmt.Errorf("unable to append certificate in %s to CA pool", SesameXDSTLS.CAFile)
 		}
 
 		return &tls.Config{
@@ -212,12 +212,12 @@ func tlsconfig(log logrus.FieldLogger, contourXDSTLS *sesame_api_v1alpha1.TLS) *
 }
 
 // verifyTLSFlags indicates if the TLS flags are set up correctly.
-func verifyTLSFlags(contourXDSTLS *sesame_api_v1alpha1.TLS) error {
-	if contourXDSTLS.CAFile == "" && contourXDSTLS.CertFile == "" && contourXDSTLS.KeyFile == "" {
+func verifyTLSFlags(SesameXDSTLS *sesame_api_v1alpha1.TLS) error {
+	if SesameXDSTLS.CAFile == "" && SesameXDSTLS.CertFile == "" && SesameXDSTLS.KeyFile == "" {
 		return errors.New("no TLS parameters and --insecure not supplied. You must supply one or the other")
 	}
 	// If one of the three TLS commands is not empty, they all must be not empty
-	if !(contourXDSTLS.CAFile != "" && contourXDSTLS.CertFile != "" && contourXDSTLS.KeyFile != "") {
+	if !(SesameXDSTLS.CAFile != "" && SesameXDSTLS.CertFile != "" && SesameXDSTLS.KeyFile != "") {
 		return errors.New("you must supply all three TLS parameters - --sesame-cafile, --sesame-cert-file, --sesame-key-file, or none of them")
 	}
 
@@ -387,7 +387,7 @@ func (ctx *serveContext) convertToSesameConfigurationSpec() sesame_api_v1alpha1.
 		}
 	}
 
-	contourMetrics := sesame_api_v1alpha1.MetricsConfig{
+	SesameMetrics := sesame_api_v1alpha1.MetricsConfig{
 		Address: ctx.metricsAddr,
 		Port:    ctx.metricsPort,
 	}
@@ -404,11 +404,11 @@ func (ctx *serveContext) convertToSesameConfigurationSpec() sesame_api_v1alpha1.
 	// but here we cannot know anymore if value in ctx.nnn are defaults from
 	// newServeContext() or from command line arguments. Therefore metrics
 	// configuration from config file takes precedence over command line.
-	setMetricsFromConfig(ctx.Config.Metrics.Sesame, &contourMetrics)
+	setMetricsFromConfig(ctx.Config.Metrics.Sesame, &SesameMetrics)
 	setMetricsFromConfig(ctx.Config.Metrics.Envoy, &envoyMetrics)
 
 	// Convert serveContext to a SesameConfiguration
-	contourConfiguration := sesame_api_v1alpha1.SesameConfigurationSpec{
+	SesameConfiguration := sesame_api_v1alpha1.SesameConfigurationSpec{
 		Ingress: ingress,
 		Debug: sesame_api_v1alpha1.DebugConfig{
 			Address:                 ctx.debugAddr,
@@ -474,7 +474,7 @@ func (ctx *serveContext) convertToSesameConfigurationSpec() sesame_api_v1alpha1.
 		EnableExternalNameService: ctx.Config.EnableExternalNameService,
 		RateLimitService:          rateLimitService,
 		Policy:                    policy,
-		Metrics:                   contourMetrics,
+		Metrics:                   SesameMetrics,
 	}
 
 	xdsServerType := sesame_api_v1alpha1.SesameServerType
@@ -482,19 +482,19 @@ func (ctx *serveContext) convertToSesameConfigurationSpec() sesame_api_v1alpha1.
 		xdsServerType = sesame_api_v1alpha1.EnvoyServerType
 	}
 
-	contourConfiguration.XDSServer = sesame_api_v1alpha1.XDSServerConfig{
+	SesameConfiguration.XDSServer = sesame_api_v1alpha1.XDSServerConfig{
 		Type:    xdsServerType,
 		Address: ctx.xdsAddr,
 		Port:    ctx.xdsPort,
 		TLS: &sesame_api_v1alpha1.TLS{
 			CAFile:   ctx.caFile,
-			CertFile: ctx.contourCert,
-			KeyFile:  ctx.contourKey,
+			CertFile: ctx.SesameCert,
+			KeyFile:  ctx.SesameKey,
 			Insecure: ctx.PermitInsecureGRPC,
 		},
 	}
 
-	return contourConfiguration
+	return SesameConfiguration
 }
 
 func setMetricsFromConfig(src config.MetricsServerParameters, dst *sesame_api_v1alpha1.MetricsConfig) {

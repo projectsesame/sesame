@@ -21,17 +21,17 @@ However only the backend is authenticated and the backend is not able to authent
 Since the backend has no means to differentiate between clients, any client within the cluster network is able to access backend's resources.
 This could potentially include vulnerable software which might be running within the cluster and remotely exploited to access the backend.
 
-After external client certificate validation was introduced to Contour 1.4.0, it makes sense to allow configuring client certificates for the TLS connection between Envoy and backends.
+After external client certificate validation was introduced to Sesame 1.4.0, it makes sense to allow configuring client certificates for the TLS connection between Envoy and backends.
 This completes securing the end-to-end connection all the way from the external client to the backend.
 
-Securing the connection between Envoy and backend can have similar importance as securing the xDS TLS connection between Contour and Envoy.
+Securing the connection between Envoy and backend can have similar importance as securing the xDS TLS connection between Sesame and Envoy.
 
 ## High-Level Design
 
 Configuring the client certificate shall follow the same configuration pattern as `fallback-certificate`.
 The client certificate and key are stored in Secret of type `tls` in PEM format.
 The client certificate file `tls.crt` shall contain the client certificate as the first PEM block, followed by optional chain of CA certificates, up to but not including the root CA certificate.
-New configuration option is added to the Contour configuration file in the optional `tls.envoy-client-certificate` location.
+New configuration option is added to the Sesame configuration file in the optional `tls.envoy-client-certificate` location.
 The value of the option refers to a Secret.
 The reference contains the namespace and the Secret name e.g. `namespace/name`.
 
@@ -44,7 +44,7 @@ Note that since only single client certificate is supported, the secret is the s
 When `CommonTlsContext` is constructed for the upstream connection, the client certificate is added using `SdsSecretConfig`, that is, the secret is streamed over SDS.
 Updates in `SecretCache` triggers secrets to be streamed to Envoy, which will reload the updated certificates and keys.
 
-When client certificate is defined in Contour configuration, it can be added to all Envoy clusters regardless if it will be used or not.
+When client certificate is defined in Sesame configuration, it can be added to all Envoy clusters regardless if it will be used or not.
 Envoy will send the client certificate only when the backend requests the client to present its certificate during the TLS handshake.
 
 When [external authorization](external-authorization-design.md) is implemented in the future, the gRPC connection to the external authorization server shall also be protected by client authentication by the same principle laid out in this document.

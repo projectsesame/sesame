@@ -4,14 +4,14 @@ Status: Draft
 
 ## Abstract
 
-This document describes a design and schema for adding Conditions to HTTPProxy’s `status` section. The purpose of these Conditions is to allow a HTTPProxy user to have an accurate view of what the HTTPProxy is configuring Contour to do.
+This document describes a design and schema for adding Conditions to HTTPProxy’s `status` section. The purpose of these Conditions is to allow a HTTPProxy user to have an accurate view of what the HTTPProxy is configuring Sesame to do.
 
 ## Background
 
 HTTPProxy historically has had a very basic `status` section, which indicated whether it was “valid” or “invalid”, in the Validity field, and a reason, in the Description field.
 Because HTTPProxy models a complex domain, there are many ways in which a configuration can be invalid, and it’s helpful to the user to be able to expose more than a single one at once.
 
-In addition, it’s possible for a HTTPProxy or set of HTTPProxies to produce a partially-valid configuration, where Contour will configure Envoy with *part* of the desired config, but not all. The status should be able to represent this.
+In addition, it’s possible for a HTTPProxy or set of HTTPProxies to produce a partially-valid configuration, where Sesame will configure Envoy with *part* of the desired config, but not all. The status should be able to represent this.
 
 The Kubernetes API standard way to represent states in an extensible way is via a `conditions` stanza, defined in the [API conventions](https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md), but with additional conversation ongoing at time of writing in PR [#4521](https://github.com/kubernetes/community/pull/4521). As a result of this, we've tried to steer a middle path here, and add only one top-level condition, with a similar behavior to existing conditions (that is, Ready). In addition, [KEP-1623](https://github.com/kubernetes/enhancements/tree/master/keps/sig-api-machinery/1623-standardize-conditions) has been moved to implementable, so what Conditions we do add will conform to that schema.
 
@@ -108,9 +108,9 @@ type SubCondition struct {
 // `warnings` holds information about sub-conditions which are not fatal to that condition and do not force the state to be False.
 // Remember that Conditions have a type, a status, and a reason.
 // The type is the type of the condition, the most important one in this CRD set is `Valid`.
-// In the case of `Valid`, `status: true` means that the object is has been ingested into Contour with no errors.
+// In the case of `Valid`, `status: true` means that the object is has been ingested into Sesame with no errors.
 // `warnings` may still be present, and will be indicated in the Reason field.
-// `Valid`, `status: false` means that the object has had one or more fatal errors during processing into Contour.
+// `Valid`, `status: false` means that the object has had one or more fatal errors during processing into Sesame.
 //  The details of the errors will be present under the `errors` field.
 type DetailedCondition struct {
   Condition
@@ -260,7 +260,7 @@ TLSError
 
 TLSFallbackError
 "Spec.Virtualhost.TLS fallback & client validation are incompatible together"
-"Spec.Virtualhost.TLS enabled fallback but the fallback Certificate Secret is not configured in Contour configuration file"
+"Spec.Virtualhost.TLS enabled fallback but the fallback Certificate Secret is not configured in Sesame configuration file"
 "Spec.Virtualhost.TLS Secret %q fallback certificate is invalid: %s", b.FallbackCertificate, err
 "Spec.VirtualHost.TLS fallback Secret %q is not configured for certificate delegation", b.FallbackCertificate
 

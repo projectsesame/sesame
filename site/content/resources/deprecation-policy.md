@@ -1,14 +1,14 @@
 ---
-title: Contour Deprecation Policy
+title: Sesame Deprecation Policy
 layout: page
 ---
 
-Contour publishes a few APIs, the most notable being the `projectcontour.io` api group of Kubernetes objects and their associated helper code, the command line for `contour`, and the Contour configuration file.
+Sesame publishes a few APIs, the most notable being the `projectsesame.io` api group of Kubernetes objects and their associated helper code, the command line for `Sesame`, and the Sesame configuration file.
 Each of these have deprecation policies, with all of them being based on the [Kubernetes API deprecation policy](https://kubernetes.io/docs/reference/using-api/deprecation-policy/).
 
 
 
-## `projectcontour.io` API groups (aka Contour CRDs)
+## `projectsesame.io` API groups (aka Sesame CRDs)
 
 Our Kubernetes CRDs use the Kubernetes API deprecation conventions, including a similar deprecation timeline.
 
@@ -28,9 +28,9 @@ We use similar rules as Kubernetes:
 | v1                 | GA    | 1 year                | No fields will be removed, no behavior will substantially change. Fields can be added.                     |
 
 
-## `projectcontour.io` CRD helper code
+## `projectsesame.io` CRD helper code
 
-The `projectcontour.io` CRDs contain some helper code, for accessing various parts of the Go structs inside.
+The `projectsesame.io` CRDs contain some helper code, for accessing various parts of the Go structs inside.
 
 The API guarantees apply here as well, in the following way:
 
@@ -42,9 +42,9 @@ The API guarantees apply here as well, in the following way:
 
 
 
-## Contour command line arguments
+## Sesame command line arguments
 
-Because removing command line arguments is a breaking operation (that is, the program won't start without them), Contour is committed to a gradual transition for changes here.
+Because removing command line arguments is a breaking operation (that is, the program won't start without them), Sesame is committed to a gradual transition for changes here.
 
 We try to use the following cycle for arguments:
 - Argument is announced deprecated, with a timeline for removal. This timeframe must never be shorter than 3 releases, but may be longer if required.

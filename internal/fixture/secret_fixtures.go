@@ -26,7 +26,7 @@ var SecretRootsCert = &v1.Secret{
 	},
 }
 
-var SecretProjectContourCert = &v1.Secret{
+var SecretprojectsesameCert = &v1.Secret{
 	ObjectMeta: ObjectMeta("projectsesame/default-ssl-cert"),
 	Type:       v1.SecretTypeTLS,
 	Data:       SecretRootsCert.Data,

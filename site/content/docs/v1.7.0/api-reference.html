@@ -1,12 +1,12 @@
 <p>Packages:</p>
 <ul>
 <li>
-<a href="#projectcontour.io%2fv1">projectcontour.io/v1</a>
+<a href="#projectsesame.io%2fv1">projectsesame.io/v1</a>
 </li>
 </ul>
-<h2 id="projectcontour.io/v1">projectcontour.io/v1</h2>
+<h2 id="projectsesame.io/v1">projectsesame.io/v1</h2>
 <p>
-<p>This package holds the specification for the projectcontour.io Custom Resource Definitions (CRDs).</p>
+<p>This package holds the specification for the projectsesame.io Custom Resource Definitions (CRDs).</p>
 <p>In building this CRD, we&rsquo;ve inadvertently overloaded the word &ldquo;Condition&rdquo;, so we&rsquo;ve tried to make
 this spec clear as to which types of condition are which.</p>
 <p><code>MatchConditions</code> are used by <code>Routes</code> and <code>Includes</code> to specify rules to match requests against for either
@@ -17,11 +17,11 @@ state of the object and the world around it.</p>
 </p>
 Resource Types:
 <ul><li>
-<a href="#projectcontour.io/v1.HTTPProxy">HTTPProxy</a>
+<a href="#projectsesame.io/v1.HTTPProxy">HTTPProxy</a>
 </li><li>
-<a href="#projectcontour.io/v1.TLSCertificateDelegation">TLSCertificateDelegation</a>
+<a href="#projectsesame.io/v1.TLSCertificateDelegation">TLSCertificateDelegation</a>
 </li></ul>
-<h3 id="projectcontour.io/v1.HTTPProxy">HTTPProxy
+<h3 id="projectsesame.io/v1.HTTPProxy">HTTPProxy
 </h3>
 <p>
 <p>HTTPProxy is an Ingress CRD specification.</p>
@@ -41,7 +41,7 @@ Resource Types:
 string</td>
 <td>
 <code>
-projectcontour.io/v1
+projectsesame.io/v1
 </code>
 </td>
 </tr>
@@ -73,7 +73,7 @@ Refer to the Kubernetes API documentation for the fields of the
 <code>spec</code>
 <br>
 <em>
-<a href="#projectcontour.io/v1.HTTPProxySpec">
+<a href="#projectsesame.io/v1.HTTPProxySpec">
 HTTPProxySpec
 </a>
 </em>
@@ -87,7 +87,7 @@ HTTPProxySpec
 <code>virtualhost</code>
 <br>
 <em>
-<a href="#projectcontour.io/v1.VirtualHost">
+<a href="#projectsesame.io/v1.VirtualHost">
 VirtualHost
 </a>
 </em>
@@ -103,7 +103,7 @@ to be a &ldquo;root&rdquo; HTTPProxy.</p>
 <code>routes</code>
 <br>
 <em>
-<a href="#projectcontour.io/v1.Route">
+<a href="#projectsesame.io/v1.Route">
 []Route
 </a>
 </em>
@@ -118,7 +118,7 @@ to be a &ldquo;root&rdquo; HTTPProxy.</p>
 <code>tcpproxy</code>
 <br>
 <em>
-<a href="#projectcontour.io/v1.TCPProxy">
+<a href="#projectsesame.io/v1.TCPProxy">
 TCPProxy
 </a>
 </em>
@@ -133,7 +133,7 @@ TCPProxy
 <code>includes</code>
 <br>
 <em>
-<a href="#projectcontour.io/v1.Include">
+<a href="#projectsesame.io/v1.Include">
 []Include
 </a>
 </em>
@@ -152,7 +152,7 @@ possibly in another namespace.</p>
 <code>status</code>
 <br>
 <em>
-<a href="#projectcontour.io/v1.HTTPProxyStatus">
+<a href="#projectsesame.io/v1.HTTPProxyStatus">
 HTTPProxyStatus
 </a>
 </em>
@@ -164,7 +164,7 @@ HTTPProxyStatus
 </tr>
 </tbody>
 </table>
-<h3 id="projectcontour.io/v1.TLSCertificateDelegation">TLSCertificateDelegation
+<h3 id="projectsesame.io/v1.TLSCertificateDelegation">TLSCertificateDelegation
 </h3>
 <p>
 <p>TLSCertificateDelegation is an TLS Certificate Delegation CRD specification.
@@ -185,7 +185,7 @@ See design/tls-certificate-delegation.md for details.</p>
 string</td>
 <td>
 <code>
-projectcontour.io/v1
+projectsesame.io/v1
 </code>
 </td>
 </tr>
@@ -217,7 +217,7 @@ Refer to the Kubernetes API documentation for the fields of the
 <code>spec</code>
 <br>
 <em>
-<a href="#projectcontour.io/v1.TLSCertificateDelegationSpec">
+<a href="#projectsesame.io/v1.TLSCertificateDelegationSpec">
 TLSCertificateDelegationSpec
 </a>
 </em>
@@ -231,7 +231,7 @@ TLSCertificateDelegationSpec
 <code>delegations</code>
 <br>
 <em>
-<a href="#projectcontour.io/v1.CertificateDelegation">
+<a href="#projectsesame.io/v1.CertificateDelegation">
 []CertificateDelegation
 </a>
 </em>
@@ -247,7 +247,7 @@ TLSCertificateDelegationSpec
 <code>status</code>
 <br>
 <em>
-<a href="#projectcontour.io/v1.TLSCertificateDelegationStatus">
+<a href="#projectsesame.io/v1.TLSCertificateDelegationStatus">
 TLSCertificateDelegationStatus
 </a>
 </em>
@@ -258,11 +258,11 @@ TLSCertificateDelegationStatus
 </tr>
 </tbody>
 </table>
-<h3 id="projectcontour.io/v1.CertificateDelegation">CertificateDelegation
+<h3 id="projectsesame.io/v1.CertificateDelegation">CertificateDelegation
 </h3>
 <p>
 (<em>Appears on:</em>
-<a href="#projectcontour.io/v1.TLSCertificateDelegationSpec">TLSCertificateDelegationSpec</a>)
+<a href="#projectsesame.io/v1.TLSCertificateDelegationSpec">TLSCertificateDelegationSpec</a>)
 </p>
 <p>
 <p>CertificateDelegation maps the authority to reference a secret
@@ -306,11 +306,11 @@ the secret will be delegated to all namespaces.</p>
 </tr>
 </tbody>
 </table>
-<h3 id="projectcontour.io/v1.Condition">Condition
+<h3 id="projectsesame.io/v1.Condition">Condition
 </h3>
 <p>
 (<em>Appears on:</em>
-<a href="#projectcontour.io/v1.DetailedCondition">DetailedCondition</a>)
+<a href="#projectsesame.io/v1.DetailedCondition">DetailedCondition</a>)
 </p>
 <p>
 <p>Condition contains details for one aspect of the current state of this API Resource.</p>
@@ -355,7 +355,7 @@ useful (see .node.status.conditions), the ability to deconflict is important.</p
 <code>status</code>
 <br>
 <em>
-<a href="#projectcontour.io/v1.ConditionStatus">
+<a href="#projectsesame.io/v1.ConditionStatus">
 ConditionStatus
 </a>
 </em>
@@ -425,21 +425,21 @@ string
 </tr>
 </tbody>
 </table>
-<h3 id="projectcontour.io/v1.ConditionStatus">ConditionStatus
+<h3 id="projectsesame.io/v1.ConditionStatus">ConditionStatus
 (<code>string</code> alias)</h3>
 <p>
 (<em>Appears on:</em>
-<a href="#projectcontour.io/v1.Condition">Condition</a>, 
-<a href="#projectcontour.io/v1.SubCondition">SubCondition</a>)
+<a href="#projectsesame.io/v1.Condition">Condition</a>,
+<a href="#projectsesame.io/v1.SubCondition">SubCondition</a>)
 </p>
 <p>
 </p>
-<h3 id="projectcontour.io/v1.DetailedCondition">DetailedCondition
+<h3 id="projectsesame.io/v1.DetailedCondition">DetailedCondition
 </h3>
 <p>
 (<em>Appears on:</em>
-<a href="#projectcontour.io/v1.HTTPProxyStatus">HTTPProxyStatus</a>, 
-<a href="#projectcontour.io/v1.TLSCertificateDelegationStatus">TLSCertificateDelegationStatus</a>)
+<a href="#projectsesame.io/v1.HTTPProxyStatus">HTTPProxyStatus</a>,
+<a href="#projectsesame.io/v1.TLSCertificateDelegationStatus">TLSCertificateDelegationStatus</a>)
 </p>
 <p>
 <p>DetailedCondition is an extension of the normal Kubernetes conditions, with two extra
@@ -449,9 +449,9 @@ of the condition.</p>
 <p><code>warnings</code> holds information about sub-conditions which are not fatal to that condition and do not force the state to be False.</p>
 <p>Remember that Conditions have a type, a status, and a reason.</p>
 <p>The type is the type of the condition, the most important one in this CRD set is <code>Valid</code>.</p>
-<p>In the case of <code>Valid</code>, <code>status: true</code> means that the object is has been ingested into Contour with no errors.
+<p>In the case of <code>Valid</code>, <code>status: true</code> means that the object is has been ingested into Sesame with no errors.
 <code>warnings</code> may still be present, and will be indicated in the Reason field.</p>
-<p><code>Valid</code>, <code>status: false</code> means that the object has had one or more fatal errors during processing into Contour.
+<p><code>Valid</code>, <code>status: false</code> means that the object has had one or more fatal errors during processing into Sesame.
 The details of the errors will be present under the <code>errors</code> field.</p>
 <p>There should never be subconditions under <code>errors</code> when <code>status</code> is <code>true</code>.</p>
 </p>
@@ -468,7 +468,7 @@ The details of the errors will be present under the <code>errors</code> field.</
 <code>Condition</code>
 <br>
 <em>
-<a href="#projectcontour.io/v1.Condition">
+<a href="#projectsesame.io/v1.Condition">
 Condition
 </a>
 </em>
@@ -484,7 +484,7 @@ Condition
 <code>errors</code>
 <br>
 <em>
-<a href="#projectcontour.io/v1.SubCondition">
+<a href="#projectsesame.io/v1.SubCondition">
 []SubCondition
 </a>
 </em>
@@ -501,7 +501,7 @@ An empty slice here indicates no errors.</p>
 <code>warnings</code>
 <br>
 <em>
-<a href="#projectcontour.io/v1.SubCondition">
+<a href="#projectsesame.io/v1.SubCondition">
 []SubCondition
 </a>
 </em>
@@ -515,11 +515,11 @@ An empty slice here indicates no warnings.</p>
 </tr>
 </tbody>
 </table>
-<h3 id="projectcontour.io/v1.DownstreamValidation">DownstreamValidation
+<h3 id="projectsesame.io/v1.DownstreamValidation">DownstreamValidation
 </h3>
 <p>
 (<em>Appears on:</em>
-<a href="#projectcontour.io/v1.TLS">TLS</a>)
+<a href="#projectsesame.io/v1.TLS">TLS</a>)
 </p>
 <p>
 <p>DownstreamValidation defines how to verify the client certificate.</p>
@@ -547,11 +547,11 @@ The client certificate must validate against the certificates in the bundle.</p>
 </tr>
 </tbody>
 </table>
-<h3 id="projectcontour.io/v1.HTTPHealthCheckPolicy">HTTPHealthCheckPolicy
+<h3 id="projectsesame.io/v1.HTTPHealthCheckPolicy">HTTPHealthCheckPolicy
 </h3>
 <p>
 (<em>Appears on:</em>
-<a href="#projectcontour.io/v1.Route">Route</a>)
+<a href="#projectsesame.io/v1.Route">Route</a>)
 </p>
 <p>
 <p>HTTPHealthCheckPolicy defines health checks on the upstream service.</p>
@@ -586,7 +586,7 @@ string
 </td>
 <td>
 <p>The value of the host header in the HTTP health check request.
-If left empty (default value), the name &ldquo;contour-envoy-healthcheck&rdquo;
+If left empty (default value), the name &ldquo;Sesame-envoy-healthcheck&rdquo;
 will be used.</p>
 </td>
 </tr>
@@ -644,11 +644,11 @@ int64
 </tr>
 </tbody>
 </table>
-<h3 id="projectcontour.io/v1.HTTPProxySpec">HTTPProxySpec
+<h3 id="projectsesame.io/v1.HTTPProxySpec">HTTPProxySpec
 </h3>
 <p>
 (<em>Appears on:</em>
-<a href="#projectcontour.io/v1.HTTPProxy">HTTPProxy</a>)
+<a href="#projectsesame.io/v1.HTTPProxy">HTTPProxy</a>)
 </p>
 <p>
 <p>HTTPProxySpec defines the spec of the CRD.</p>
@@ -666,7 +666,7 @@ int64
 <code>virtualhost</code>
 <br>
 <em>
-<a href="#projectcontour.io/v1.VirtualHost">
+<a href="#projectsesame.io/v1.VirtualHost">
 VirtualHost
 </a>
 </em>
@@ -682,7 +682,7 @@ to be a &ldquo;root&rdquo; HTTPProxy.</p>
 <code>routes</code>
 <br>
 <em>
-<a href="#projectcontour.io/v1.Route">
+<a href="#projectsesame.io/v1.Route">
 []Route
 </a>
 </em>
@@ -697,7 +697,7 @@ to be a &ldquo;root&rdquo; HTTPProxy.</p>
 <code>tcpproxy</code>
 <br>
 <em>
-<a href="#projectcontour.io/v1.TCPProxy">
+<a href="#projectsesame.io/v1.TCPProxy">
 TCPProxy
 </a>
 </em>
@@ -712,7 +712,7 @@ TCPProxy
 <code>includes</code>
 <br>
 <em>
-<a href="#projectcontour.io/v1.Include">
+<a href="#projectsesame.io/v1.Include">
 []Include
 </a>
 </em>
@@ -725,11 +725,11 @@ possibly in another namespace.</p>
 </tr>
 </tbody>
 </table>
-<h3 id="projectcontour.io/v1.HTTPProxyStatus">HTTPProxyStatus
+<h3 id="projectsesame.io/v1.HTTPProxyStatus">HTTPProxyStatus
 </h3>
 <p>
 (<em>Appears on:</em>
-<a href="#projectcontour.io/v1.HTTPProxy">HTTPProxy</a>)
+<a href="#projectsesame.io/v1.HTTPProxy">HTTPProxy</a>)
 </p>
 <p>
 <p>HTTPProxyStatus reports the current state of the HTTPProxy.</p>
@@ -786,7 +786,7 @@ Kubernetes core/v1.LoadBalancerStatus
 <code>conditions</code>
 <br>
 <em>
-<a href="#projectcontour.io/v1.DetailedCondition">
+<a href="#projectsesame.io/v1.DetailedCondition">
 []DetailedCondition
 </a>
 </em>
@@ -795,10 +795,10 @@ Kubernetes core/v1.LoadBalancerStatus
 <em>(Optional)</em>
 <p>Conditions contains information about the current status of the HTTPProxy,
 in an upstream-friendly container.</p>
-<p>Contour will update a single condition, <code>Valid</code>, that is in normal-true polarity.
+<p>Sesame will update a single condition, <code>Valid</code>, that is in normal-true polarity.
 That is, when <code>currentStatus</code> is <code>valid</code>, the <code>Valid</code> condition will be <code>status: true</code>,
 and vice versa.</p>
-<p>Contour will leave untouched any other Conditions set in this block,
+<p>Sesame will leave untouched any other Conditions set in this block,
 in case some other controller wants to add a Condition.</p>
 <p>If you are another controller owner and wish to add a condition, you <em>should</em>
 namespace your condition with a label, like <code>controller.domain.com/ConditionName</code>.</p>
@@ -806,11 +806,11 @@ namespace your condition with a label, like <code>controller.domain.com/Conditio
 </tr>
 </tbody>
 </table>
-<h3 id="projectcontour.io/v1.HeaderMatchCondition">HeaderMatchCondition
+<h3 id="projectsesame.io/v1.HeaderMatchCondition">HeaderMatchCondition
 </h3>
 <p>
 (<em>Appears on:</em>
-<a href="#projectcontour.io/v1.MatchCondition">MatchCondition</a>)
+<a href="#projectsesame.io/v1.MatchCondition">MatchCondition</a>)
 </p>
 <p>
 <p>HeaderMatchCondition specifies how to conditionally match against HTTP
@@ -911,11 +911,11 @@ equal to. The condition is true if the header has any other value.</p>
 </tr>
 </tbody>
 </table>
-<h3 id="projectcontour.io/v1.HeaderValue">HeaderValue
+<h3 id="projectsesame.io/v1.HeaderValue">HeaderValue
 </h3>
 <p>
 (<em>Appears on:</em>
-<a href="#projectcontour.io/v1.HeadersPolicy">HeadersPolicy</a>)
+<a href="#projectsesame.io/v1.HeadersPolicy">HeadersPolicy</a>)
 </p>
 <p>
 <p>HeaderValue represents a header name/value pair</p>
@@ -954,12 +954,12 @@ string
 </tr>
 </tbody>
 </table>
-<h3 id="projectcontour.io/v1.HeadersPolicy">HeadersPolicy
+<h3 id="projectsesame.io/v1.HeadersPolicy">HeadersPolicy
 </h3>
 <p>
 (<em>Appears on:</em>
-<a href="#projectcontour.io/v1.Route">Route</a>, 
-<a href="#projectcontour.io/v1.Service">Service</a>)
+<a href="#projectsesame.io/v1.Route">Route</a>,
+<a href="#projectsesame.io/v1.Service">Service</a>)
 </p>
 <p>
 <p>HeadersPolicy defines how headers are managed during forwarding.
@@ -980,7 +980,7 @@ error to attempt to set the <code>Host</code> header in a HTTP response.</p>
 <code>set</code>
 <br>
 <em>
-<a href="#projectcontour.io/v1.HeaderValue">
+<a href="#projectsesame.io/v1.HeaderValue">
 []HeaderValue
 </a>
 </em>
@@ -1006,11 +1006,11 @@ If the header does not exist it will be added, otherwise it will be overwritten 
 </tr>
 </tbody>
 </table>
-<h3 id="projectcontour.io/v1.Include">Include
+<h3 id="projectsesame.io/v1.Include">Include
 </h3>
 <p>
 (<em>Appears on:</em>
-<a href="#projectcontour.io/v1.HTTPProxySpec">HTTPProxySpec</a>)
+<a href="#projectsesame.io/v1.HTTPProxySpec">HTTPProxySpec</a>)
 </p>
 <p>
 <p>Include describes a set of policies that can be applied to an HTTPProxy in a namespace.</p>
@@ -1053,7 +1053,7 @@ string
 <code>conditions</code>
 <br>
 <em>
-<a href="#projectcontour.io/v1.MatchCondition">
+<a href="#projectsesame.io/v1.MatchCondition">
 []MatchCondition
 </a>
 </em>
@@ -1071,12 +1071,12 @@ include invalid.</p>
 </tr>
 </tbody>
 </table>
-<h3 id="projectcontour.io/v1.LoadBalancerPolicy">LoadBalancerPolicy
+<h3 id="projectsesame.io/v1.LoadBalancerPolicy">LoadBalancerPolicy
 </h3>
 <p>
 (<em>Appears on:</em>
-<a href="#projectcontour.io/v1.Route">Route</a>, 
-<a href="#projectcontour.io/v1.TCPProxy">TCPProxy</a>)
+<a href="#projectsesame.io/v1.Route">Route</a>,
+<a href="#projectsesame.io/v1.TCPProxy">TCPProxy</a>)
 </p>
 <p>
 <p>LoadBalancerPolicy defines the load balancing policy.</p>
@@ -1108,12 +1108,12 @@ is used.</p>
 </tr>
 </tbody>
 </table>
-<h3 id="projectcontour.io/v1.MatchCondition">MatchCondition
+<h3 id="projectsesame.io/v1.MatchCondition">MatchCondition
 </h3>
 <p>
 (<em>Appears on:</em>
-<a href="#projectcontour.io/v1.Include">Include</a>, 
-<a href="#projectcontour.io/v1.Route">Route</a>)
+<a href="#projectsesame.io/v1.Include">Include</a>,
+<a href="#projectsesame.io/v1.Route">Route</a>)
 </p>
 <p>
 <p>MatchCondition are a general holder for matching rules for HTTPProxies.
@@ -1145,7 +1145,7 @@ string
 <code>header</code>
 <br>
 <em>
-<a href="#projectcontour.io/v1.HeaderMatchCondition">
+<a href="#projectsesame.io/v1.HeaderMatchCondition">
 HeaderMatchCondition
 </a>
 </em>
@@ -1157,11 +1157,11 @@ HeaderMatchCondition
 </tr>
 </tbody>
 </table>
-<h3 id="projectcontour.io/v1.PathRewritePolicy">PathRewritePolicy
+<h3 id="projectsesame.io/v1.PathRewritePolicy">PathRewritePolicy
 </h3>
 <p>
 (<em>Appears on:</em>
-<a href="#projectcontour.io/v1.Route">Route</a>)
+<a href="#projectsesame.io/v1.Route">Route</a>)
 </p>
 <p>
 <p>PathRewritePolicy specifies how a request URL path should be
@@ -1183,7 +1183,7 @@ No HTTP headers or body content is rewritten.</p>
 <code>replacePrefix</code>
 <br>
 <em>
-<a href="#projectcontour.io/v1.ReplacePrefix">
+<a href="#projectsesame.io/v1.ReplacePrefix">
 []ReplacePrefix
 </a>
 </em>
@@ -1195,11 +1195,11 @@ No HTTP headers or body content is rewritten.</p>
 </tr>
 </tbody>
 </table>
-<h3 id="projectcontour.io/v1.ReplacePrefix">ReplacePrefix
+<h3 id="projectsesame.io/v1.ReplacePrefix">ReplacePrefix
 </h3>
 <p>
 (<em>Appears on:</em>
-<a href="#projectcontour.io/v1.PathRewritePolicy">PathRewritePolicy</a>)
+<a href="#projectsesame.io/v1.PathRewritePolicy">PathRewritePolicy</a>)
 </p>
 <p>
 <p>ReplacePrefix describes a path prefix replacement.</p>
@@ -1248,20 +1248,20 @@ will be replaced with. This must not be empty.</p>
 </tr>
 </tbody>
 </table>
-<h3 id="projectcontour.io/v1.RetryOn">RetryOn
+<h3 id="projectsesame.io/v1.RetryOn">RetryOn
 (<code>string</code> alias)</h3>
 <p>
 (<em>Appears on:</em>
-<a href="#projectcontour.io/v1.RetryPolicy">RetryPolicy</a>)
+<a href="#projectsesame.io/v1.RetryPolicy">RetryPolicy</a>)
 </p>
 <p>
 <p>RetryOn is a string type alias with validation to ensure that the value is valid.</p>
 </p>
-<h3 id="projectcontour.io/v1.RetryPolicy">RetryPolicy
+<h3 id="projectsesame.io/v1.RetryPolicy">RetryPolicy
 </h3>
 <p>
 (<em>Appears on:</em>
-<a href="#projectcontour.io/v1.Route">Route</a>)
+<a href="#projectsesame.io/v1.Route">Route</a>)
 </p>
 <p>
 <p>RetryPolicy defines the attributes associated with retrying policy.</p>
@@ -1306,7 +1306,7 @@ Ignored if NumRetries is not supplied.</p>
 <code>retryOn</code>
 <br>
 <em>
-<a href="#projectcontour.io/v1.RetryOn">
+<a href="#projectsesame.io/v1.RetryOn">
 []RetryOn
 </a>
 </em>
@@ -1351,11 +1351,11 @@ Ignored if NumRetries is not supplied.</p>
 </tr>
 </tbody>
 </table>
-<h3 id="projectcontour.io/v1.Route">Route
+<h3 id="projectsesame.io/v1.Route">Route
 </h3>
 <p>
 (<em>Appears on:</em>
-<a href="#projectcontour.io/v1.HTTPProxySpec">HTTPProxySpec</a>)
+<a href="#projectsesame.io/v1.HTTPProxySpec">HTTPProxySpec</a>)
 </p>
 <p>
 <p>Route contains the set of routes for a virtual host.</p>
@@ -1373,7 +1373,7 @@ Ignored if NumRetries is not supplied.</p>
 <code>conditions</code>
 <br>
 <em>
-<a href="#projectcontour.io/v1.MatchCondition">
+<a href="#projectsesame.io/v1.MatchCondition">
 []MatchCondition
 </a>
 </em>
@@ -1392,7 +1392,7 @@ route invalid.</p>
 <code>services</code>
 <br>
 <em>
-<a href="#projectcontour.io/v1.Service">
+<a href="#projectsesame.io/v1.Service">
 []Service
 </a>
 </em>
@@ -1433,7 +1433,7 @@ not permitted when a <code>virtualhost.tls</code> block is present.</p>
 <code>timeoutPolicy</code>
 <br>
 <em>
-<a href="#projectcontour.io/v1.TimeoutPolicy">
+<a href="#projectsesame.io/v1.TimeoutPolicy">
 TimeoutPolicy
 </a>
 </em>
@@ -1448,7 +1448,7 @@ TimeoutPolicy
 <code>retryPolicy</code>
 <br>
 <em>
-<a href="#projectcontour.io/v1.RetryPolicy">
+<a href="#projectsesame.io/v1.RetryPolicy">
 RetryPolicy
 </a>
 </em>
@@ -1463,7 +1463,7 @@ RetryPolicy
 <code>healthCheckPolicy</code>
 <br>
 <em>
-<a href="#projectcontour.io/v1.HTTPHealthCheckPolicy">
+<a href="#projectsesame.io/v1.HTTPHealthCheckPolicy">
 HTTPHealthCheckPolicy
 </a>
 </em>
@@ -1478,7 +1478,7 @@ HTTPHealthCheckPolicy
 <code>loadBalancerPolicy</code>
 <br>
 <em>
-<a href="#projectcontour.io/v1.LoadBalancerPolicy">
+<a href="#projectsesame.io/v1.LoadBalancerPolicy">
 LoadBalancerPolicy
 </a>
 </em>
@@ -1493,7 +1493,7 @@ LoadBalancerPolicy
 <code>pathRewritePolicy</code>
 <br>
 <em>
-<a href="#projectcontour.io/v1.PathRewritePolicy">
+<a href="#projectsesame.io/v1.PathRewritePolicy">
 PathRewritePolicy
 </a>
 </em>
@@ -1509,7 +1509,7 @@ after the request has been routed to a Service.</p>
 <code>requestHeadersPolicy</code>
 <br>
 <em>
-<a href="#projectcontour.io/v1.HeadersPolicy">
+<a href="#projectsesame.io/v1.HeadersPolicy">
 HeadersPolicy
 </a>
 </em>
@@ -1524,7 +1524,7 @@ HeadersPolicy
 <code>responseHeadersPolicy</code>
 <br>
 <em>
-<a href="#projectcontour.io/v1.HeadersPolicy">
+<a href="#projectsesame.io/v1.HeadersPolicy">
 HeadersPolicy
 </a>
 </em>
@@ -1536,12 +1536,12 @@ HeadersPolicy
 </tr>
 </tbody>
 </table>
-<h3 id="projectcontour.io/v1.Service">Service
+<h3 id="projectsesame.io/v1.Service">Service
 </h3>
 <p>
 (<em>Appears on:</em>
-<a href="#projectcontour.io/v1.Route">Route</a>, 
-<a href="#projectcontour.io/v1.TCPProxy">TCPProxy</a>)
+<a href="#projectsesame.io/v1.Route">Route</a>,
+<a href="#projectsesame.io/v1.TCPProxy">TCPProxy</a>)
 </p>
 <p>
 <p>Service defines an Kubernetes Service to proxy traffic.</p>
@@ -1611,7 +1611,7 @@ int64
 <code>validation</code>
 <br>
 <em>
-<a href="#projectcontour.io/v1.UpstreamValidation">
+<a href="#projectsesame.io/v1.UpstreamValidation">
 UpstreamValidation
 </a>
 </em>
@@ -1638,7 +1638,7 @@ bool
 <code>requestHeadersPolicy</code>
 <br>
 <em>
-<a href="#projectcontour.io/v1.HeadersPolicy">
+<a href="#projectsesame.io/v1.HeadersPolicy">
 HeadersPolicy
 </a>
 </em>
@@ -1653,7 +1653,7 @@ HeadersPolicy
 <code>responseHeadersPolicy</code>
 <br>
 <em>
-<a href="#projectcontour.io/v1.HeadersPolicy">
+<a href="#projectsesame.io/v1.HeadersPolicy">
 HeadersPolicy
 </a>
 </em>
@@ -1665,11 +1665,11 @@ HeadersPolicy
 </tr>
 </tbody>
 </table>
-<h3 id="projectcontour.io/v1.SubCondition">SubCondition
+<h3 id="projectsesame.io/v1.SubCondition">SubCondition
 </h3>
 <p>
 (<em>Appears on:</em>
-<a href="#projectcontour.io/v1.DetailedCondition">DetailedCondition</a>)
+<a href="#projectsesame.io/v1.DetailedCondition">DetailedCondition</a>)
 </p>
 <p>
 <p>SubCondition is a Condition-like type intended for use as a subcondition inside a DetailedCondition.</p>
@@ -1706,7 +1706,7 @@ string
 <code>status</code>
 <br>
 <em>
-<a href="#projectcontour.io/v1.ConditionStatus">
+<a href="#projectsesame.io/v1.ConditionStatus">
 ConditionStatus
 </a>
 </em>
@@ -1746,11 +1746,11 @@ string
 </tr>
 </tbody>
 </table>
-<h3 id="projectcontour.io/v1.TCPHealthCheckPolicy">TCPHealthCheckPolicy
+<h3 id="projectsesame.io/v1.TCPHealthCheckPolicy">TCPHealthCheckPolicy
 </h3>
 <p>
 (<em>Appears on:</em>
-<a href="#projectcontour.io/v1.TCPProxy">TCPProxy</a>)
+<a href="#projectsesame.io/v1.TCPProxy">TCPProxy</a>)
 </p>
 <p>
 <p>TCPHealthCheckPolicy defines health checks on the upstream service.</p>
@@ -1817,11 +1817,11 @@ uint32
 </tr>
 </tbody>
 </table>
-<h3 id="projectcontour.io/v1.TCPProxy">TCPProxy
+<h3 id="projectsesame.io/v1.TCPProxy">TCPProxy
 </h3>
 <p>
 (<em>Appears on:</em>
-<a href="#projectcontour.io/v1.HTTPProxySpec">HTTPProxySpec</a>)
+<a href="#projectsesame.io/v1.HTTPProxySpec">HTTPProxySpec</a>)
 </p>
 <p>
 <p>TCPProxy contains the set of services to proxy TCP connections.</p>
@@ -1839,7 +1839,7 @@ uint32
 <code>loadBalancerPolicy</code>
 <br>
 <em>
-<a href="#projectcontour.io/v1.LoadBalancerPolicy">
+<a href="#projectsesame.io/v1.LoadBalancerPolicy">
 LoadBalancerPolicy
 </a>
 </em>
@@ -1854,7 +1854,7 @@ LoadBalancerPolicy
 <code>services</code>
 <br>
 <em>
-<a href="#projectcontour.io/v1.Service">
+<a href="#projectsesame.io/v1.Service">
 []Service
 </a>
 </em>
@@ -1869,7 +1869,7 @@ LoadBalancerPolicy
 <code>include</code>
 <br>
 <em>
-<a href="#projectcontour.io/v1.TCPProxyInclude">
+<a href="#projectsesame.io/v1.TCPProxyInclude">
 TCPProxyInclude
 </a>
 </em>
@@ -1884,7 +1884,7 @@ TCPProxyInclude
 <code>includes</code>
 <br>
 <em>
-<a href="#projectcontour.io/v1.TCPProxyInclude">
+<a href="#projectsesame.io/v1.TCPProxyInclude">
 TCPProxyInclude
 </a>
 </em>
@@ -1901,7 +1901,7 @@ when it should have been singular. This field should stay to not break backwards
 <code>healthCheckPolicy</code>
 <br>
 <em>
-<a href="#projectcontour.io/v1.TCPHealthCheckPolicy">
+<a href="#projectsesame.io/v1.TCPHealthCheckPolicy">
 TCPHealthCheckPolicy
 </a>
 </em>
@@ -1913,11 +1913,11 @@ TCPHealthCheckPolicy
 </tr>
 </tbody>
 </table>
-<h3 id="projectcontour.io/v1.TCPProxyInclude">TCPProxyInclude
+<h3 id="projectsesame.io/v1.TCPProxyInclude">TCPProxyInclude
 </h3>
 <p>
 (<em>Appears on:</em>
-<a href="#projectcontour.io/v1.TCPProxy">TCPProxy</a>)
+<a href="#projectsesame.io/v1.TCPProxy">TCPProxy</a>)
 </p>
 <p>
 <p>TCPProxyInclude describes a target HTTPProxy document which contains the TCPProxy details.</p>
@@ -1957,11 +1957,11 @@ string
 </tr>
 </tbody>
 </table>
-<h3 id="projectcontour.io/v1.TLS">TLS
+<h3 id="projectsesame.io/v1.TLS">TLS
 </h3>
 <p>
 (<em>Appears on:</em>
-<a href="#projectcontour.io/v1.VirtualHost">VirtualHost</a>)
+<a href="#projectsesame.io/v1.VirtualHost">VirtualHost</a>)
 </p>
 <p>
 <p>TLS describes tls properties. The SNI names that will be matched on
@@ -2021,7 +2021,7 @@ backing cluster.</p>
 <code>clientValidation</code>
 <br>
 <em>
-<a href="#projectcontour.io/v1.DownstreamValidation">
+<a href="#projectsesame.io/v1.DownstreamValidation">
 DownstreamValidation
 </a>
 </em>
@@ -2053,11 +2053,11 @@ be applied which handles all requests which don&rsquo;t match the SNI defined in
 </tr>
 </tbody>
 </table>
-<h3 id="projectcontour.io/v1.TLSCertificateDelegationSpec">TLSCertificateDelegationSpec
+<h3 id="projectsesame.io/v1.TLSCertificateDelegationSpec">TLSCertificateDelegationSpec
 </h3>
 <p>
 (<em>Appears on:</em>
-<a href="#projectcontour.io/v1.TLSCertificateDelegation">TLSCertificateDelegation</a>)
+<a href="#projectsesame.io/v1.TLSCertificateDelegation">TLSCertificateDelegation</a>)
 </p>
 <p>
 <p>TLSCertificateDelegationSpec defines the spec of the CRD</p>
@@ -2075,7 +2075,7 @@ be applied which handles all requests which don&rsquo;t match the SNI defined in
 <code>delegations</code>
 <br>
 <em>
-<a href="#projectcontour.io/v1.CertificateDelegation">
+<a href="#projectsesame.io/v1.CertificateDelegation">
 []CertificateDelegation
 </a>
 </em>
@@ -2085,11 +2085,11 @@ be applied which handles all requests which don&rsquo;t match the SNI defined in
 </tr>
 </tbody>
 </table>
-<h3 id="projectcontour.io/v1.TLSCertificateDelegationStatus">TLSCertificateDelegationStatus
+<h3 id="projectsesame.io/v1.TLSCertificateDelegationStatus">TLSCertificateDelegationStatus
 </h3>
 <p>
 (<em>Appears on:</em>
-<a href="#projectcontour.io/v1.TLSCertificateDelegation">TLSCertificateDelegation</a>)
+<a href="#projectsesame.io/v1.TLSCertificateDelegation">TLSCertificateDelegation</a>)
 </p>
 <p>
 <p>TLSCertificateDelegationStatus allows for the status of the delegation
@@ -2108,7 +2108,7 @@ to be presented to the user.</p>
 <code>conditions</code>
 <br>
 <em>
-<a href="#projectcontour.io/v1.DetailedCondition">
+<a href="#projectsesame.io/v1.DetailedCondition">
 []DetailedCondition
 </a>
 </em>
@@ -2117,10 +2117,10 @@ to be presented to the user.</p>
 <em>(Optional)</em>
 <p>Conditions contains information about the current status of the HTTPProxy,
 in an upstream-friendly container.</p>
-<p>Contour will update a single condition, <code>Valid</code>, that is in normal-true polarity.
+<p>Sesame will update a single condition, <code>Valid</code>, that is in normal-true polarity.
 That is, when <code>currentStatus</code> is <code>valid</code>, the <code>Valid</code> condition will be <code>status: true</code>,
 and vice versa.</p>
-<p>Contour will leave untouched any other Conditions set in this block,
+<p>Sesame will leave untouched any other Conditions set in this block,
 in case some other controller wants to add a Condition.</p>
 <p>If you are another controller owner and wish to add a condition, you <em>should</em>
 namespace your condition with a label, like <code>controller.domain.com\ConditionName</code>.</p>
@@ -2128,11 +2128,11 @@ namespace your condition with a label, like <code>controller.domain.com\Conditio
 </tr>
 </tbody>
 </table>
-<h3 id="projectcontour.io/v1.TimeoutPolicy">TimeoutPolicy
+<h3 id="projectsesame.io/v1.TimeoutPolicy">TimeoutPolicy
 </h3>
 <p>
 (<em>Appears on:</em>
-<a href="#projectcontour.io/v1.Route">Route</a>)
+<a href="#projectsesame.io/v1.Route">Route</a>)
 </p>
 <p>
 <p>TimeoutPolicy configures timeouts that are used for handling network requests.</p>
@@ -2182,11 +2182,11 @@ stream_idle_timeout default of 5m still applies.</p>
 </tr>
 </tbody>
 </table>
-<h3 id="projectcontour.io/v1.UpstreamValidation">UpstreamValidation
+<h3 id="projectsesame.io/v1.UpstreamValidation">UpstreamValidation
 </h3>
 <p>
 (<em>Appears on:</em>
-<a href="#projectcontour.io/v1.Service">Service</a>)
+<a href="#projectsesame.io/v1.Service">Service</a>)
 </p>
 <p>
 <p>UpstreamValidation defines how to verify the backend service&rsquo;s certificate</p>
@@ -2225,11 +2225,11 @@ string
 </tr>
 </tbody>
 </table>
-<h3 id="projectcontour.io/v1.VirtualHost">VirtualHost
+<h3 id="projectsesame.io/v1.VirtualHost">VirtualHost
 </h3>
 <p>
 (<em>Appears on:</em>
-<a href="#projectcontour.io/v1.HTTPProxySpec">HTTPProxySpec</a>)
+<a href="#projectsesame.io/v1.HTTPProxySpec">HTTPProxySpec</a>)
 </p>
 <p>
 <p>VirtualHost appears at most once. If it is present, the object is considered
@@ -2261,7 +2261,7 @@ all leaves of the DAG rooted at this object relate to the fqdn.</p>
 <code>tls</code>
 <br>
 <em>
-<a href="#projectcontour.io/v1.TLS">
+<a href="#projectsesame.io/v1.TLS">
 TLS
 </a>
 </em>

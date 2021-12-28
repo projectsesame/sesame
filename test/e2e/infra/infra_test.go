@@ -19,7 +19,7 @@ package infra
 import (
 	"testing"
 
-	contour_api_v1alpha1 "github.com/projectcontour/sesame/apis/projectsesame/v1alpha1"
+	Sesame_api_v1alpha1 "github.com/projectsesame/sesame/apis/projectsesame/v1alpha1"
 	v1 "k8s.io/api/core/v1"
 
 	. "github.com/onsi/ginkgo"
@@ -57,7 +57,7 @@ var _ = BeforeSuite(func() {
 			}},
 	}}
 
-	require.NoError(f.T(), f.Deployment.EnsureResourcesForLocalContour())
+	require.NoError(f.T(), f.Deployment.EnsureResourcesForLocalSesame())
 
 	// Create certificate and key for metrics over HTTPS.
 	cleanup = append(cleanup,
@@ -74,53 +74,53 @@ var _ = AfterSuite(func() {
 	for _, c := range cleanup {
 		c()
 	}
-	require.NoError(f.T(), f.Deployment.DeleteResourcesForLocalContour())
+	require.NoError(f.T(), f.Deployment.DeleteResourcesForLocalSesame())
 	gexec.CleanupBuildArtifacts()
 })
 
 var _ = Describe("Infra", func() {
 	var (
-		contourCmd            *gexec.Session
-		kubectlCmd            *gexec.Session
-		contourConfig         *config.Parameters
-		contourConfiguration  *contour_api_v1alpha1.ContourConfiguration
-		contourConfigFile     string
-		additionalContourArgs []string
+		SesameCmd            *gexec.Session
+		kubectlCmd           *gexec.Session
+		SesameConfig         *config.Parameters
+		SesameConfiguration  *Sesame_api_v1alpha1.SesameConfiguration
+		SesameConfigFile     string
+		additionalSesameArgs []string
 	)
 
 	BeforeEach(func() {
-		// Contour config file contents, can be modified in nested
+		// Sesame config file contents, can be modified in nested
 		// BeforeEach.
-		contourConfig = &config.Parameters{}
+		SesameConfig = &config.Parameters{}
 
-		// Contour configuration crd, can be modified in nested
+		// Sesame configuration crd, can be modified in nested
 		// BeforeEach.
-		contourConfiguration = e2e.DefaultContourConfiguration()
+		SesameConfiguration = e2e.DefaultSesameConfiguration()
 
 		// Default sesame serve command line arguments can be appended to in
 		// nested BeforeEach.
-		additionalContourArgs = []string{}
+		additionalSesameArgs = []string{}
 	})
 
 	// JustBeforeEach is called after each of the nested BeforeEach are
 	// called, so it is a final setup step before running a test.
-	// A nested BeforeEach may have modified Contour config, so we wait
-	// until here to start Contour.
+	// A nested BeforeEach may have modified Sesame config, so we wait
+	// until here to start Sesame.
 	JustBeforeEach(func() {
 		var err error
-		contourCmd, contourConfigFile, err = f.Deployment.StartLocalContour(contourConfig, contourConfiguration, additionalContourArgs...)
+		SesameCmd, SesameConfigFile, err = f.Deployment.StartLocalSesame(SesameConfig, SesameConfiguration, additionalSesameArgs...)
 		require.NoError(f.T(), err)
 
 		// Wait for Envoy to be healthy.
 		require.NoError(f.T(), f.Deployment.WaitForEnvoyDaemonSetUpdated())
 
-		kubectlCmd, err = f.Kubectl.StartKubectlPortForward(19001, 9001, "projectsesame", "daemonset/envoy", additionalContourArgs...)
+		kubectlCmd, err = f.Kubectl.StartKubectlPortForward(19001, 9001, "projectsesame", "daemonset/envoy", additionalSesameArgs...)
 		require.NoError(f.T(), err)
 	})
 
 	AfterEach(func() {
 		f.Kubectl.StopKubectlPortForward(kubectlCmd)
-		require.NoError(f.T(), f.Deployment.StopLocalContour(contourCmd, contourConfigFile))
+		require.NoError(f.T(), f.Deployment.StopLocalSesame(SesameCmd, SesameConfigFile))
 	})
 
 	f.Test(testMetrics)
@@ -128,7 +128,7 @@ var _ = Describe("Infra", func() {
 
 	Context("when serving metrics over HTTPS", func() {
 		BeforeEach(func() {
-			contourConfig.Metrics.Envoy = config.MetricsServerParameters{
+			SesameConfig.Metrics.Envoy = config.MetricsServerParameters{
 				Address:    "0.0.0.0",
 				Port:       8003,
 				ServerCert: "/metrics-certs/tls.crt",
@@ -136,10 +136,10 @@ var _ = Describe("Infra", func() {
 				CABundle:   "/metrics-certs/ca.crt",
 			}
 
-			contourConfiguration.Spec.Envoy.Metrics = contour_api_v1alpha1.MetricsConfig{
+			SesameConfiguration.Spec.Envoy.Metrics = Sesame_api_v1alpha1.MetricsConfig{
 				Address: "0.0.0.0",
 				Port:    8003,
-				TLS: &contour_api_v1alpha1.MetricsTLS{
+				TLS: &Sesame_api_v1alpha1.MetricsTLS{
 					CertFile: "/metrics-certs/tls.crt",
 					KeyFile:  "/metrics-certs/tls.key",
 					CAFile:   "/metrics-certs/ca.crt",

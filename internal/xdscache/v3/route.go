@@ -138,11 +138,11 @@ func (c *RouteCache) OnChange(root *dag.DAG) {
 // then by the length of the HeaderMatch slice (if any). The HeaderMatch
 // slice is also ordered by the matching header name.
 // We sort dag.Route objects before converting to Envoy types to ensure
-// more accurate ordering of route matches. Contour route match types may
+// more accurate ordering of route matches. Sesame route match types may
 // be implemented by Envoy route match types that change over time, or by
-// types that do not exactly match to the type in Contour (e.g. using a
+// types that do not exactly match to the type in Sesame (e.g. using a
 // regex matcher to implement a different type of match). Sorting based on
-// Contour types instead ensures we can sort from most to least specific
+// Sesame types instead ensures we can sort from most to least specific
 // route match regardless of the underlying Envoy type that is used to
 // implement the match.
 func sortRoutes(routes []*dag.Route) {

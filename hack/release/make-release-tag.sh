@@ -18,7 +18,7 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-readonly IMG="ghcr.io/projectcontour/contour:$NEWVERS"
+readonly IMG="ghcr.io/projectsesame/sesame:$NEWVERS"
 
 if [ -n "$(git tag --list "$NEWVERS")" ]; then
     printf "%s: tag '%s' already exists\n" "$PROGNAME" "$NEWVERS"
@@ -34,21 +34,21 @@ run::sed() {
     esac
 }
 
-# Update the image tags in the Contour, Envoy and certgen manifests to the new version.
+# Update the image tags in the Sesame, Envoy and certgen manifests to the new version.
 for example in examples/sesame/03-envoy.yaml examples/sesame/03-sesame.yaml examples/sesame/02-job-certgen.yaml ; do
     # The version might be main or OLDVERS depending on whether we are
     # tagging from the release branch or from main.
     run::sed \
-        "-es|ghcr.io/projectcontour/contour:main|$IMG|" \
-        "-es|ghcr.io/projectcontour/contour:$OLDVERS|$IMG|" \
+        "-es|ghcr.io/projectsesame/sesame:main|$IMG|" \
+        "-es|ghcr.io/projectsesame/sesame:$OLDVERS|$IMG|" \
         "$example"
 done
 
 # Update the certgen job name to the new version.
 for example in examples/sesame/02-job-certgen.yaml ; do
     run::sed \
-        "-es|contour-certgen-main|contour-certgen-$NEWVERS|" \
-        "-es|contour-certgen-$OLDVERS|contour-certgen-$NEWVERS|" \
+        "-es|sesame-certgen-main|sesame-certgen-$NEWVERS|" \
+        "-es|sesame-certgen-$OLDVERS|sesame-certgen-$NEWVERS|" \
         "$example"
 done
 
@@ -66,7 +66,7 @@ make generate
 # YAML updates. The "git commit" will fail if there are no changes, so
 # make sure that there are changes to commit before we do it.
 if git status -s examples/sesame 2>&1 | grep -E -q '^\s+[MADRCU]'; then
-    git commit -s -m "Update Contour Docker image to $NEWVERS." \
+    git commit -s -m "Update Sesame Docker image to $NEWVERS." \
         examples/sesame/03-sesame.yaml \
         examples/sesame/03-envoy.yaml \
         examples/sesame/02-job-certgen.yaml \
@@ -87,7 +87,7 @@ printf "Created tag '%s'\n" "$NEWVERS"
 # projectsesame org repository (i.e. not the user's Github fork).
 readonly REMOTE=$(git remote -v | awk '$2~/projectsesame\/sesame/ && $3=="(push)" {print $1}' | head -n 1)
 if [ -z "$REMOTE" ]; then
-    printf "%s: unable to determine remote for %s\n" "$PROGNAME" "projectcontour/contour"
+    printf "%s: unable to determine remote for %s\n" "$PROGNAME" "projectsesame/sesame"
     exit 1
 fi
 

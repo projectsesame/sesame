@@ -1,37 +1,37 @@
 ---
-title: Deploying Contour on AWS with NLB
+title: Deploying Sesame on AWS with NLB
 layout: page
 ---
 
-This is an advanced deployment guide to configure Contour on AWS with the [Network Load Balancer (NLB)][1].
+This is an advanced deployment guide to configure Sesame on AWS with the [Network Load Balancer (NLB)][1].
 This configuration has several advantages:
 
 1. NLBs are often cheaper. This is especially true for development. Idle LBs do not cost money.
-2. There are no extra network hops. Traffic goes to the NLB, to the node hosting Contour, and then to the target pod.
-3. Source IP addresses are retained. Envoy (running as part of Contour) sees the native source IP address and records this with an `X-Forwarded-For` header.
+2. There are no extra network hops. Traffic goes to the NLB, to the node hosting Sesame, and then to the target pod.
+3. Source IP addresses are retained. Envoy (running as part of Sesame) sees the native source IP address and records this with an `X-Forwarded-For` header.
 
 ## Moving parts
 
-- We run Envoy as a DaemonSet across the cluster and Contour as a deployment
+- We run Envoy as a DaemonSet across the cluster and Sesame as a deployment
 - The Envoy pod runs on host ports 80 and 443 on the node
 - Host networking means that traffic hits Envoy without transitioning through any other fancy networking hops
-- Contour also binds to 8001 for Envoy->Contour config traffic.
+- Sesame also binds to 8001 for Envoy->Sesame config traffic.
 
-## Deploying Contour
+## Deploying Sesame
 
-1. [Clone the Contour repository][4] and cd into the repo 
-2. Edit the Envoy service (`02-service-envoy.yaml`) in the `examples/contour` directory:
+1. [Clone the Sesame repository][4] and cd into the repo 
+2. Edit the Envoy service (`02-service-envoy.yaml`) in the `examples/Sesame` directory:
     - Remove the existing annotation: `service.beta.kubernetes.io/aws-load-balancer-backend-protocol: tcp`
     - Add the following annotation: `service.beta.kubernetes.io/aws-load-balancer-type: nlb`
-3. Run `kubectl apply -f examples/contour`
+3. Run `kubectl apply -f examples/Sesame`
 
-This creates the `projectcontour` Namespace along with a ServiceAccount, RBAC rules, Contour Deployment and an Envoy DaemonSet. 
+This creates the `projectsesame` Namespace along with a ServiceAccount, RBAC rules, Sesame Deployment and an Envoy DaemonSet. 
 It also creates the NLB based loadbalancer for you.
 
 You can get the address of your NLB via:
 
 ```
-$ kubectl get service envoy --namespace=projectcontour -o jsonpath='{.status.loadBalancer.ingress[0].hostname}'
+$ kubectl get service envoy --namespace=projectsesame -o jsonpath='{.status.loadBalancer.ingress[0].hostname}'
 ```
 
 ## Test

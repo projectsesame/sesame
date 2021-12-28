@@ -4,15 +4,15 @@ layout: page
 ---
 
 This document describes the differences between IngressRoute and HTTPProxy.
-It is intended for Contour users who have existing IngressRoute resources they wish to migrate to HTTPProxy.
+It is intended for Sesame users who have existing IngressRoute resources they wish to migrate to HTTPProxy.
 It is not intended a comprehensive documentation of HTTPProxy, for that please see the [`HTTPProxy` documentation][1].
 
-_Note: IngressRoute has been removed from Contour in v1.6._
+_Note: IngressRoute has been removed from Sesame in v1.6._
 
 ## The easy way
 
 The simplest way to migrate from IngressRoute to HTTPProxy is to use the `ir2proxy` tool.
-Installation instructions are available at [its github repo](https://github.com/projectcontour/ir2proxy).
+Installation instructions are available at [its github repo](https://github.com/projectsesame/ir2proxy).
 It's installable either by homebrew or downloading the binary.
 
 This tool can automatically migrate most IngressRoutes to HTTPProxies.
@@ -24,7 +24,7 @@ The tool will tell you when manual intervention is required.
 
 ### Group, Version and Kind changes
 
-`HTTPProxy` has moved to the `projectcontour.io` group.
+`HTTPProxy` has moved to the `projectsesame.io` group.
 The version is `v1`, with all the guarantees a GA API implies.
 
 
@@ -118,7 +118,7 @@ spec:
 #### TLS Certificate Delegation
 
 The group and version of the TLSCertificateDelegation CRD have changed.
-`contour.heptio.com/v1beta1.TLSCertificateDelegation` has been removed.
+`Sesame.heptio.com/v1beta1.TLSCertificateDelegation` has been removed.
 
 Before:
 
@@ -534,7 +534,7 @@ Orphaned status will be reported on _child_ HTTPProxy objects that are not inclu
 
 The `--ingressroute-root-namespace` flag has been renamed to `--root-namespaces` for obvious reasons.
 The old name has been removed.
-See the [upgrading documentation]({% link _resources/upgrading.md %}) for more information on upgrading Contour.
+See the [upgrading documentation]({% link _resources/upgrading.md %}) for more information on upgrading Sesame.
 
 ### TCP Proxying
 

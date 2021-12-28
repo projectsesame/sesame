@@ -91,16 +91,16 @@ func TestServeContextTLSParams(t *testing.T) {
 		"tls supplied correctly": {
 			tls: &sesame_api_v1alpha1.TLS{
 				CAFile:   "cacert.pem",
-				CertFile: "contourcert.pem",
-				KeyFile:  "contourkey.pem",
+				CertFile: "Sesamecert.pem",
+				KeyFile:  "Sesamekey.pem",
 				Insecure: false,
 			},
 			expectError: false,
 		},
 		"tls partially supplied": {
 			tls: &sesame_api_v1alpha1.TLS{
-				CertFile: "contourcert.pem",
-				KeyFile:  "contourkey.pem",
+				CertFile: "Sesamecert.pem",
+				KeyFile:  "Sesamekey.pem",
 				Insecure: false,
 			},
 			expectError: true,
@@ -126,12 +126,12 @@ func TestServeContextCertificateHandling(t *testing.T) {
 	trustedCACert := certyaml.Certificate{
 		Subject: "cn=trusted-ca",
 	}
-	contourCertBeforeRotation := certyaml.Certificate{
+	SesameCertBeforeRotation := certyaml.Certificate{
 		Subject:         "cn=sesame-before-rotation",
 		SubjectAltNames: []string{"DNS:localhost"},
 		Issuer:          &trustedCACert,
 	}
-	contourCertAfterRotation := certyaml.Certificate{
+	SesameCertAfterRotation := certyaml.Certificate{
 		Subject:         "cn=sesame-after-rotation",
 		SubjectAltNames: []string{"DNS:localhost"},
 		Issuer:          &trustedCACert,
@@ -161,22 +161,22 @@ func TestServeContextCertificateHandling(t *testing.T) {
 		expectError       bool
 	}{
 		"successful TLS connection established": {
-			serverCredentials: &contourCertBeforeRotation,
+			serverCredentials: &SesameCertBeforeRotation,
 			clientCredentials: &trustedEnvoyCert,
 			expectError:       false,
 		},
 		"rotating server credentials returns new server cert": {
-			serverCredentials: &contourCertAfterRotation,
+			serverCredentials: &SesameCertAfterRotation,
 			clientCredentials: &trustedEnvoyCert,
 			expectError:       false,
 		},
 		"rotating server credentials again to ensure rotation can be repeated": {
-			serverCredentials: &contourCertBeforeRotation,
+			serverCredentials: &SesameCertBeforeRotation,
 			clientCredentials: &trustedEnvoyCert,
 			expectError:       false,
 		},
 		"fail to connect with client certificate which is not signed by correct CA": {
-			serverCredentials: &contourCertBeforeRotation,
+			serverCredentials: &SesameCertBeforeRotation,
 			clientCredentials: &untrustedClientCert,
 			expectError:       true,
 		},
@@ -187,23 +187,23 @@ func TestServeContextCertificateHandling(t *testing.T) {
 	checkFatalErr(t, err)
 	defer os.RemoveAll(configDir)
 
-	contourTLS := &sesame_api_v1alpha1.TLS{
+	SesameTLS := &sesame_api_v1alpha1.TLS{
 		CAFile:   filepath.Join(configDir, "CAcert.pem"),
-		CertFile: filepath.Join(configDir, "contourcert.pem"),
-		KeyFile:  filepath.Join(configDir, "contourkey.pem"),
+		CertFile: filepath.Join(configDir, "Sesamecert.pem"),
+		KeyFile:  filepath.Join(configDir, "Sesamekey.pem"),
 		Insecure: false,
 	}
 
 	// Initial set of credentials must be written into temp directory before
 	// starting the tests to avoid error at server startup.
-	err = trustedCACert.WritePEM(contourTLS.CAFile, filepath.Join(configDir, "CAkey.pem"))
+	err = trustedCACert.WritePEM(SesameTLS.CAFile, filepath.Join(configDir, "CAkey.pem"))
 	checkFatalErr(t, err)
-	err = contourCertBeforeRotation.WritePEM(contourTLS.CertFile, contourTLS.KeyFile)
+	err = SesameCertBeforeRotation.WritePEM(SesameTLS.CertFile, SesameTLS.KeyFile)
 	checkFatalErr(t, err)
 
 	// Start a dummy server.
 	log := fixture.NewTestLogger(t)
-	opts := grpcOptions(log, contourTLS)
+	opts := grpcOptions(log, SesameTLS)
 	g := grpc.NewServer(opts...)
 	if g == nil {
 		t.Error("failed to create server")
@@ -222,7 +222,7 @@ func TestServeContextCertificateHandling(t *testing.T) {
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
 			// Store certificate and key to temp dir used by serveContext.
-			err = tc.serverCredentials.WritePEM(contourTLS.CertFile, contourTLS.KeyFile)
+			err = tc.serverCredentials.WritePEM(SesameTLS.CertFile, SesameTLS.KeyFile)
 			checkFatalErr(t, err)
 			clientCert, _ := tc.clientCredentials.TLSCertificate()
 			receivedCert, err := tryConnect(address, clientCert, caCertPool)
@@ -248,26 +248,26 @@ func TestTlsVersionDeprecation(t *testing.T) {
 	caCert := certyaml.Certificate{
 		Subject: "cn=ca",
 	}
-	contourCert := certyaml.Certificate{
-		Subject: "cn=contourBeforeRotation",
+	SesameCert := certyaml.Certificate{
+		Subject: "cn=SesameBeforeRotation",
 		Issuer:  &caCert,
 	}
 
-	contourTLS := &sesame_api_v1alpha1.TLS{
+	SesameTLS := &sesame_api_v1alpha1.TLS{
 		CAFile:   filepath.Join(configDir, "CAcert.pem"),
-		CertFile: filepath.Join(configDir, "contourcert.pem"),
-		KeyFile:  filepath.Join(configDir, "contourkey.pem"),
+		CertFile: filepath.Join(configDir, "Sesamecert.pem"),
+		KeyFile:  filepath.Join(configDir, "Sesamekey.pem"),
 		Insecure: false,
 	}
 
-	err = caCert.WritePEM(contourTLS.CAFile, filepath.Join(configDir, "CAkey.pem"))
+	err = caCert.WritePEM(SesameTLS.CAFile, filepath.Join(configDir, "CAkey.pem"))
 	checkFatalErr(t, err)
-	err = contourCert.WritePEM(contourTLS.CertFile, contourTLS.KeyFile)
+	err = SesameCert.WritePEM(SesameTLS.CertFile, SesameTLS.KeyFile)
 	checkFatalErr(t, err)
 
 	// Get preliminary TLS config from the serveContext.
 	log := fixture.NewTestLogger(t)
-	preliminaryTLSConfig := tlsconfig(log, contourTLS)
+	preliminaryTLSConfig := tlsconfig(log, SesameTLS)
 
 	// Get actual TLS config that will be used during TLS handshake.
 	tlsConfig, err := preliminaryTLSConfig.GetConfigForClient(nil)
@@ -366,11 +366,11 @@ func TestConvertServeContext(t *testing.T) {
 
 	defaultContext := newServeContext()
 	defaultContext.ServerConfig = ServerConfig{
-		xdsAddr:     "127.0.0.1",
-		xdsPort:     8001,
-		caFile:      "/certs/ca.crt",
-		contourCert: "/certs/cert.crt",
-		contourKey:  "/certs/cert.key",
+		xdsAddr:    "127.0.0.1",
+		xdsPort:    8001,
+		caFile:     "/certs/ca.crt",
+		SesameCert: "/certs/cert.crt",
+		SesameKey:  "/certs/cert.key",
 	}
 
 	headersPolicyContext := newServeContext()
@@ -427,12 +427,12 @@ func TestConvertServeContext(t *testing.T) {
 	accessLog.Config.AccessLogFields = []string{"custom_field"}
 
 	cases := map[string]struct {
-		serveContext  *serveContext
-		contourConfig sesame_api_v1alpha1.SesameConfigurationSpec
+		serveContext *serveContext
+		SesameConfig sesame_api_v1alpha1.SesameConfigurationSpec
 	}{
 		"default ServeContext": {
 			serveContext: defaultContext,
-			contourConfig: sesame_api_v1alpha1.SesameConfigurationSpec{
+			SesameConfig: sesame_api_v1alpha1.SesameConfigurationSpec{
 				XDSServer: sesame_api_v1alpha1.XDSServerConfig{
 					Type:    sesame_api_v1alpha1.SesameServerType,
 					Address: "127.0.0.1",
@@ -540,7 +540,7 @@ func TestConvertServeContext(t *testing.T) {
 		},
 		"headers policy": {
 			serveContext: headersPolicyContext,
-			contourConfig: sesame_api_v1alpha1.SesameConfigurationSpec{
+			SesameConfig: sesame_api_v1alpha1.SesameConfigurationSpec{
 				XDSServer: sesame_api_v1alpha1.XDSServerConfig{
 					Type:    sesame_api_v1alpha1.SesameServerType,
 					Address: "127.0.0.1",
@@ -651,7 +651,7 @@ func TestConvertServeContext(t *testing.T) {
 		},
 		"ingress": {
 			serveContext: ingressContext,
-			contourConfig: sesame_api_v1alpha1.SesameConfigurationSpec{
+			SesameConfig: sesame_api_v1alpha1.SesameConfigurationSpec{
 				XDSServer: sesame_api_v1alpha1.XDSServerConfig{
 					Type:    sesame_api_v1alpha1.SesameServerType,
 					Address: "127.0.0.1",
@@ -756,7 +756,7 @@ func TestConvertServeContext(t *testing.T) {
 		},
 		"gatewayapi": {
 			serveContext: gatewayContext,
-			contourConfig: sesame_api_v1alpha1.SesameConfigurationSpec{
+			SesameConfig: sesame_api_v1alpha1.SesameConfigurationSpec{
 				XDSServer: sesame_api_v1alpha1.XDSServerConfig{
 					Type:    sesame_api_v1alpha1.SesameServerType,
 					Address: "127.0.0.1",
@@ -863,7 +863,7 @@ func TestConvertServeContext(t *testing.T) {
 		},
 		"client certificate": {
 			serveContext: clientCertificate,
-			contourConfig: sesame_api_v1alpha1.SesameConfigurationSpec{
+			SesameConfig: sesame_api_v1alpha1.SesameConfigurationSpec{
 				XDSServer: sesame_api_v1alpha1.XDSServerConfig{
 					Type:    sesame_api_v1alpha1.SesameServerType,
 					Address: "127.0.0.1",
@@ -971,7 +971,7 @@ func TestConvertServeContext(t *testing.T) {
 		},
 		"httpproxy": {
 			serveContext: httpProxy,
-			contourConfig: sesame_api_v1alpha1.SesameConfigurationSpec{
+			SesameConfig: sesame_api_v1alpha1.SesameConfigurationSpec{
 				XDSServer: sesame_api_v1alpha1.XDSServerConfig{
 					Type:    sesame_api_v1alpha1.SesameServerType,
 					Address: "127.0.0.1",
@@ -1079,7 +1079,7 @@ func TestConvertServeContext(t *testing.T) {
 		},
 		"ratelimit": {
 			serveContext: rateLimit,
-			contourConfig: sesame_api_v1alpha1.SesameConfigurationSpec{
+			SesameConfig: sesame_api_v1alpha1.SesameConfigurationSpec{
 				XDSServer: sesame_api_v1alpha1.XDSServerConfig{
 					Type:    sesame_api_v1alpha1.SesameServerType,
 					Address: "127.0.0.1",
@@ -1192,7 +1192,7 @@ func TestConvertServeContext(t *testing.T) {
 		},
 		"default http versions": {
 			serveContext: defaultHTTPVersions,
-			contourConfig: sesame_api_v1alpha1.SesameConfigurationSpec{
+			SesameConfig: sesame_api_v1alpha1.SesameConfigurationSpec{
 				XDSServer: sesame_api_v1alpha1.XDSServerConfig{
 					Type:    sesame_api_v1alpha1.SesameServerType,
 					Address: "127.0.0.1",
@@ -1299,7 +1299,7 @@ func TestConvertServeContext(t *testing.T) {
 		},
 		"access log": {
 			serveContext: accessLog,
-			contourConfig: sesame_api_v1alpha1.SesameConfigurationSpec{
+			SesameConfig: sesame_api_v1alpha1.SesameConfigurationSpec{
 				XDSServer: sesame_api_v1alpha1.XDSServerConfig{
 					Type:    sesame_api_v1alpha1.SesameServerType,
 					Address: "127.0.0.1",
@@ -1387,7 +1387,7 @@ func TestConvertServeContext(t *testing.T) {
 	for name, tc := range cases {
 		t.Run(name, func(t *testing.T) {
 			converted := tc.serveContext.convertToSesameConfigurationSpec()
-			assert.Equal(t, tc.contourConfig, converted)
+			assert.Equal(t, tc.SesameConfig, converted)
 		})
 	}
 }

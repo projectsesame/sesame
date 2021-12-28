@@ -68,7 +68,7 @@ func main() {
 	if len(prDetails.Labels) == 0 {
 		log.Fatal(`
 Thanks for your PR.
-For a PR to be accepted to Contour, it must have:
+For a PR to be accepted to Sesame, it must have:
 - at least one release-note label set
 - a file named changelogs/unreleased/PR#-author-category,
 	where category matches the relase-note/category label you apply.
@@ -101,10 +101,10 @@ or https://github.com/projectsesame/sesame/blob/main/design/changelog.md for bac
 	if category == "" {
 		log.Fatal(`
 Thanks for your PR.
-For a PR to be accepted to Contour, it must have:
+For a PR to be accepted to Sesame, it must have:
 - at least one release-note label set
 - a file named changelogs/unreleased/PR#-author-category,
-  where category matches the relase-note/category label you apply.
+  where category matches the release-note/category label you apply.
 
 There are some labels set, but there must be at least one release-note label.`)
 	}
@@ -121,7 +121,7 @@ There are some labels set, but there must be at least one release-note label.`)
 	if os.IsNotExist(err) {
 		log.Fatalf(`
 Thanks for your PR, and thanks for labelling it with a release-note.
-For a PR to be accepted to Contour, it must have a file named
+For a PR to be accepted to Sesame, it must have a file named
 changelogs/unreleased/%d-%s-%s.md with a description of the change.`,
 			pr, *prDetails.User.Login, category)
 	}
@@ -129,7 +129,7 @@ changelogs/unreleased/%d-%s-%s.md with a description of the change.`,
 	if changelogFile.Size() == 0 {
 		log.Fatalf(`
 		Thanks for your PR, and thanks for labelling it with a release-note.
-For a PR to be accepted to Contour, it must have:
+For a PR to be accepted to Sesame, it must have:
 - a file named changelogs/unreleased/%d-%s-%s.md with a description of the change
 - the file must not be empty.`,
 			pr, *prDetails.User.Login, category)

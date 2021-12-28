@@ -14,7 +14,7 @@
 package fixture
 
 import (
-	v1 "github.com/projectcontour/sesame/apis/projectsesame/v1"
+	v1 "github.com/projectsesame/sesame/apis/projectsesame/v1"
 )
 
 // DetailedConditionBuilder is a builder object to make creating HTTPProxy fixtures more succinct.

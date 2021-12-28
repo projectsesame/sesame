@@ -1,16 +1,16 @@
 ---
-title: Header and Host Rewrite with Contour 1.1
-excerpt: Our latest release, Contour 1.1, now includes request and response header manipulation as well as host rewriting to external domains.
+title: Header and Host Rewrite with Sesame 1.1
+excerpt: Our latest release, Sesame 1.1, now includes request and response header manipulation as well as host rewriting to external domains.
 author_name: Steve Sloka
 author_avatar: /img/contributors/steve-sloka.png
 categories: [kubernetes]
 # Tag should match author to drive author pages
-tags: ['Contour Team', 'Steve Sloka', 'release']
+tags: ['Sesame Team', 'Steve Sloka', 'release']
 date: 2020-01-16
-slug: announcing-contour-1.1
+slug: announcing-Sesame-1.1
 ---
 
-Contour continues to take shape with new features. Our latest release, [Contour 1.1](https://github.com/projectsesame/sesame/releases/tag/v1.1.0), now includes request and response header manipulation as well as host rewriting to external domains. Contour 1.1 also lets you specify a service’s protocol in HTTPProxy and adds back prefix rewrite support, which was the last feature blocking many users from migrating from IngressRoute to HTTPProxy.
+Sesame continues to take shape with new features. Our latest release, [Sesame 1.1](https://github.com/projectsesame/sesame/releases/tag/v1.1.0), now includes request and response header manipulation as well as host rewriting to external domains. Sesame 1.1 also lets you specify a service’s protocol in HTTPProxy and adds back prefix rewrite support, which was the last feature blocking many users from migrating from IngressRoute to HTTPProxy.
 
 ## Header Manipulation
 
@@ -21,7 +21,7 @@ The header request policy has the following configuration:
 * **Set**: Takes a name-value pair and will create a header if it does not exist or update the value of the header specified by the key
 * **Remove**: Takes the name of a header to remove
 
-The following example takes requests from `headers.projectcontour.io/` and applies the following logic:
+The following example takes requests from `headers.projectsesame.io/` and applies the following logic:
 
 * Adds the header `X-Foo: bar` to any request before it is proxied to the Kubernetes service named `s1` and removes the header `X-Baz`
 * After the request is processed by service `s1`, the response back to the requestor will have the header `X-Service-Name: s1` added and will remove the header `X-Internal-Secret`
@@ -55,7 +55,7 @@ spec:
 
 ## Prefix Rewrite Support
 
-Path prefix rewrite was a feature in IngressRoute that got removed right before Contour 1.0 was released. Now in Contour 1.1, HTTPProxy supports rewriting the HTTP request URL path prior to delivering the request to the backend service. Rewriting, which is performed after a routing decision has been made, never changes the request destination.
+Path prefix rewrite was a feature in IngressRoute that got removed right before Sesame 1.0 was released. Now in Sesame 1.1, HTTPProxy supports rewriting the HTTP request URL path prior to delivering the request to the backend service. Rewriting, which is performed after a routing decision has been made, never changes the request destination.
 
 The pathRewritePolicy field specifies how the path prefix should be rewritten. The replacePrefix rewrite policy specifies a replacement string for a HTTP request path prefix match. When this field is present, the path prefix that the request matched is replaced by the text specified in the replacement field. If the HTTP request path is longer than the matched prefix, the remainder of the path is unchanged.
 
@@ -80,11 +80,11 @@ spec:
         replacement: /app/api/v1
 ```
 
-For more information, see the documentation on [`Path Rewriting`](https://projectcontour.io/docs/v1.1.0/httpproxy/#path-rewriting).
+For more information, see the documentation on [`Path Rewriting`](https://projectsesame.io/docs/v1.1.0/httpproxy/#path-rewriting).
 
 ## Host Rewrite
 
-Contour supports routing traffic to `ExternalName` service types. This kind of traffic routing allows users to proxy traffic to resources that aren’t running in the same Kubernetes cluster. You could, for example, proxy traffic to an external object storage bucket.
+Sesame supports routing traffic to `ExternalName` service types. This kind of traffic routing allows users to proxy traffic to resources that aren’t running in the same Kubernetes cluster. You could, for example, proxy traffic to an external object storage bucket.
 
 Some users encountered a problem with this feature, in that the host header that the externalName service received was the same host header as in the original request. This problem potentially leads to routing in the external name service to fail. 
 
@@ -108,13 +108,13 @@ spec:
         value: external.dev
 ```
 
-Now requests to `header.projectcontour.io` will proxy to `external.dev` with the header `Host: external.dev`. 
+Now requests to `header.projectsesame.io` will proxy to `external.dev` with the header `Host: external.dev`. 
 
 ## IngressRoute Deprecation
 
-Since the release of Contour 1.0, `HTTPProxy` became the successor of `IngressRoute` going forward. One struggle for users wanting to migrate is a way to convert IngressRoute resources to HTTPProxy resources.
+Since the release of Sesame 1.0, `HTTPProxy` became the successor of `IngressRoute` going forward. One struggle for users wanting to migrate is a way to convert IngressRoute resources to HTTPProxy resources.
 
-A new tool named [`ir2proxy`](https://github.com/projectcontour/ir2proxy) will take an `IngressRoute` object and migrate it to an HTTPProxy.
+A new tool named [`ir2proxy`](https://github.com/projectsesame/ir2proxy) will take an `IngressRoute` object and migrate it to an HTTPProxy.
 
 ```yaml
 $ ir2proxy basic.ingressroute.yaml
@@ -136,19 +136,19 @@ spec:
 status: {}
 ```
 
-Ir2proxy can be installed from the [releases](https://github.com/projectcontour/ir2proxy/releases) page or via [homebrew](https://github.com/projectcontour/ir2proxy#homebrew).
+Ir2proxy can be installed from the [releases](https://github.com/projectsesame/ir2proxy/releases) page or via [homebrew](https://github.com/projectsesame/ir2proxy#homebrew).
 
 ## Future Plans
 
-The Contour team would love to hear your feedback! Many of the features in this release were driven by users who needed a better way to solve their problems. We’re working hard to add features to Contour, especially in expanding how we approach routing.
+The Sesame team would love to hear your feedback! Many of the features in this release were driven by users who needed a better way to solve their problems. We’re working hard to add features to Sesame, especially in expanding how we approach routing.
 
-We recommend reading the full release notes for [Contour 1.1](https://github.com/projectsesame/sesame/releases/tag/v1.1.0) as well as digging into the [upgrade guide](https://projectcontour.io/resources/upgrading/), which outlines the changes to be aware of when moving to version 1.1.
+We recommend reading the full release notes for [Sesame 1.1](https://github.com/projectsesame/sesame/releases/tag/v1.1.0) as well as digging into the [upgrade guide](https://projectsesame.io/resources/upgrading/), which outlines the changes to be aware of when moving to version 1.1.
 
 If you are interested in contributing, a great place to start is to comment on one of the issues labeled with [Help Wanted](https://github.com/projectsesame/sesame/issues?q=is%3Aopen+is%3Aissue+label%3A%22help+wanted%22) and work with the team on how to resolve them.
 
 ## Thank you!
 
-We’re immensely grateful for all the community contributions that help make Contour even better! For version 1.1, special thanks go out to the following people:
+We’re immensely grateful for all the community contributions that help make Sesame even better! For version 1.1, special thanks go out to the following people:
 
 [@alvaroaleman](https://github.com/alvaroaleman)  
 [@SDBrett](https://github.com/SDBrett)  

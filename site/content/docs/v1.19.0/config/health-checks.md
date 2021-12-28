@@ -3,7 +3,7 @@
 ## HTTP Proxy Health Checking
 
 Active health checking can be configured on a per route basis.
-Contour supports HTTP health checking and can be configured with various settings to tune the behavior.
+Sesame supports HTTP health checking and can be configured with various settings to tune the behavior.
 
 During HTTP health checking Envoy will send an HTTP request to the upstream Endpoints.
 It expects a 200 response if the host is healthy.
@@ -39,7 +39,7 @@ spec:
 Health check configuration parameters:
 
 - `path`: HTTP endpoint used to perform health checks on upstream service (e.g. `/healthz`). It expects a 200 response if the host is healthy. The upstream host can return 503 if it wants to immediately notify downstream hosts to no longer forward traffic to it.
-- `host`: The value of the host header in the HTTP health check request. If left empty (default value), the name "contour-envoy-healthcheck" will be used.
+- `host`: The value of the host header in the HTTP health check request. If left empty (default value), the name "Sesame-envoy-healthcheck" will be used.
 - `intervalSeconds`: The interval (seconds) between health checks. Defaults to 5 seconds if not set.
 - `timeoutSeconds`: The time to wait (seconds) for a health check response. If the timeout is reached the health check attempt will be considered a failure. Defaults to 2 seconds if not set.
 - `unhealthyThresholdCount`: The number of unhealthy health checks required before a host is marked unhealthy. Note that for http health checking if a host responds with 503 this threshold is ignored and the host is considered unhealthy immediately. Defaults to 3 if not defined.
@@ -47,7 +47,7 @@ Health check configuration parameters:
 
 ## TCP Proxy Health Checking
 
-Contour also supports TCP health checking and can be configured with various settings to tune the behavior.
+Sesame also supports TCP health checking and can be configured with various settings to tune the behavior.
 
 During TCP health checking Envoy will send a connect-only health check to the upstream Endpoints.
 It is important to note that these are health checks which Envoy implements and are separate from any

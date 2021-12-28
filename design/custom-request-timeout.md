@@ -15,7 +15,7 @@ This document describes the design of a new resource in IngressRoute for custom 
 
 # Background
 
-Contour supports custom request timeout and custom retry attempts via [Ingress Annotations](https://github.com/projectsesame/sesame/blob/main/docs/annotations.md).
+Sesame supports custom request timeout and custom retry attempts via [Ingress Annotations](https://github.com/projectsesame/sesame/blob/main/docs/annotations.md).
 We wish to expose the same same functionality has been requested via IngressRoute as well.
 
 Additionally, request and retry behavior apply to any interaction that 
@@ -67,7 +67,7 @@ spec:
 The naming conventions of the proposed YAML fields are inspired from [HTTP Timeouts](https://tools.ietf.org/id/draft-thomson-hybi-http-timeout-00.html#rfc.section.4).
 
 These proposed YAML resources are defined with being generic as motivation so that any ingress controller can use these 
-fields of IngressRoute and setup the ingress, not just limited to contour-envoy only.
+fields of IngressRoute and setup the ingress, not just limited to Sesame-envoy only.
 
 # Detailed Design
 
@@ -132,7 +132,7 @@ func (d JsonDuration) MarshalJSON() (b []byte, err error) {
 	return []byte(fmt.Sprintf(`"%s"`, d.String())), nil
 }
 
-// Time interprets all forms of input received from the YAML file for Contour.
+// Time interprets all forms of input received from the YAML file for Sesame.
 func (d *JsonDuration) Time() (timeout time.Duration, valid bool) {
 	if d == nil {
 		// this means the timeout field (like request, idle, etc.) was not specified in the YAML file
@@ -192,7 +192,7 @@ the future additions if made can be neatly encapsulated.
 ## Communicating from DAG to Envoy
 
 Now that we have the DAG built, we need to communicate the state of the routes to Envoy. This happens in `RouteRoute`
-function of `contour/internal/envoy/route.go` 
+function of `Sesame/internal/envoy/route.go` 
 
 We would use the following to map value from DAG's route to protobuf
 
@@ -232,12 +232,12 @@ If the specific fault reported is unusual or rare, it could be considered as an 
 
 # Testing
 
-Beside the unit tests in the contour repo, we can use httpbin to test Retry and Timeout functionality.
+Beside the unit tests in the Sesame repo, we can use httpbin to test Retry and Timeout functionality.
 
 ## Using httpbin
 httpbin simplifies testing of HTTP request and response. We will be using [/status](https://httpbin.org/#/Status_codes)
 and [/delay](https://httpbin.org/#/Dynamic_data) of httpbin to test our feature's functionality. This is the application
-deployed **after** contour-envoy has been up and running in your kubernetes cluster.
+deployed **after** Sesame-envoy has been up and running in your kubernetes cluster.
 
 ```yaml
 apiVersion: apps/v1
@@ -316,7 +316,7 @@ spec:
         perTryTimeout: 200ms
 ```
 
-From the YAML we can see `http://contour.example.com/` has different policy than `http://contour.example.com/httpbin/`
+From the YAML we can see `http://Sesame.example.com/` has different policy than `http://Sesame.example.com/httpbin/`
 
 Based on the arguments passed with `/status/{status}` and `/delay/{delay}` we will see the corresponding stats in envoy
 increase by sending a curl request inside the Envoy's container - `curl http://localhost:9001/stats`

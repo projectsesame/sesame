@@ -1,11 +1,11 @@
 ---
-title: AWS Network Load Balancer TLS Termination with Contour
+title: AWS Network Load Balancer TLS Termination with Sesame
 layout: page
 ---
 
 ## Motivation
 
-![diagram illustrating connection between network load balancer and contour](/img/aws-nlb-tls/fig.jpg){:class="img-fluid"}
+![diagram illustrating connection between network load balancer and Sesame](/img/aws-nlb-tls/fig.jpg){:class="img-fluid"}
 
 Managing TLS certificates (and related configuration) for production cluster workloads is both time consuming, and high risk. For example, storing multiple copies of a certificate secret key in the cluster may increases the chances of it being compromised. Additionally, TLS can be complicated to configure and implement properly. 
 
@@ -33,7 +33,7 @@ An alternate DNS provider may be used, such as Google Domains or Namecheap.
 
 Later, a subdomain (e.g., demo-service.gcline.us) will be created, pointing to the NLB. Additionally, access to the DNS records is required to generate a TLS certificate for use by the NLB. 
 
-3. Verify [Contour is installed in the cluster.](https://projectcontour.io/getting-started/)
+3. Verify [Sesame is installed in the cluster.](https://projectsesame.io/getting-started/)
 
 4. Install [AWS Load Balancer Controller.]( https://kubernetes-sigs.github.io/aws-load-balancer-controller/latest/deploy/installation/)
 
@@ -57,7 +57,7 @@ Note the ARN of the certificate, which uniquely identifies it in kubernetes conf
 
 2. Create Envoy Service with new NLB
 
-Contour expects a kubernetes service pointing to Envoy. Add annotations to the service to enable NLB TLS termination, before the traffic reaches Envoy. The annotations are actioned by the load balancer controller. [Review all the NLB annotations on GitHub.](https://kubernetes-sigs.github.io/aws-load-balancer-controller/latest/guide/service/annotations/)
+Sesame expects a kubernetes service pointing to Envoy. Add annotations to the service to enable NLB TLS termination, before the traffic reaches Envoy. The annotations are actioned by the load balancer controller. [Review all the NLB annotations on GitHub.](https://kubernetes-sigs.github.io/aws-load-balancer-controller/latest/guide/service/annotations/)
 
 | annotation name | value | meaning | 
 | ----- | --- | ----- |
@@ -72,7 +72,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: envoy
-  namespace: projectcontour
+  namespace: projectsesame
   annotations:
     service.beta.kubernetes.io/aws-load-balancer-type: nlb
     service.beta.kubernetes.io/aws-load-balancer-ssl-cert: "arn:aws:acm:us-east-2:185309785115:certificate/7610ed7d-5a81-4ea2-a18a-7ba1606cca3e"
@@ -97,7 +97,7 @@ spec:
 The service name and namespace were defined above.
 
 ```
-kubectl get svc envoy --namespace projectcontour
+kubectl get svc envoy --namespace projectsesame
 ```
 
 ```

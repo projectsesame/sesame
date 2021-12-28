@@ -3,7 +3,7 @@
 A CORS (Cross-origin resource sharing) policy can be set for a HTTPProxy in order to allow cross-domain requests for trusted sources.
 If a policy is set, it will be applied to all the routes of the virtual host.
 
-Contour allows configuring the headers involved in cross-domain requests.
+Sesame allows configuring the headers involved in cross-domain requests.
 In this example, cross-domain requests will be allowed for any domain (note the `*` value).
 
 ```yaml

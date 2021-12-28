@@ -88,12 +88,12 @@ func WriteCertsPEM(outputDir string, certdata *certs.Certificates, force Overwri
 		return err
 	}
 
-	err = writePEM(outputDir, "contourcert.pem", certdata.SesameCertificate, force)
+	err = writePEM(outputDir, "Sesamecert.pem", certdata.SesameCertificate, force)
 	if err != nil {
 		return err
 	}
 
-	err = writePEM(outputDir, "contourkey.pem", certdata.SesamePrivateKey, force)
+	err = writePEM(outputDir, "Sesamekey.pem", certdata.SesamePrivateKey, force)
 	if err != nil {
 		return err
 	}
@@ -150,7 +150,7 @@ func WriteSecretsKube(client *kubernetes.Clientset, secrets []*corev1.Secret, fo
 func AsSecrets(namespace string, certdata *certs.Certificates) []*corev1.Secret {
 	return []*corev1.Secret{
 		newSecret(corev1.SecretTypeTLS,
-			"contourcert", namespace,
+			"Sesamecert", namespace,
 			map[string][]byte{
 				dag.CACertificateKey:    certdata.CACertificate,
 				corev1.TLSCertKey:       certdata.SesameCertificate,
@@ -173,7 +173,7 @@ func AsSecrets(namespace string, certdata *certs.Certificates) []*corev1.Secret 
 func AsLegacySecrets(namespace string, certdata *certs.Certificates) []*corev1.Secret {
 	return []*corev1.Secret{
 		newSecret(corev1.SecretTypeTLS,
-			"contourcert", namespace,
+			"Sesamecert", namespace,
 			map[string][]byte{
 				corev1.TLSCertKey:       certdata.SesameCertificate,
 				corev1.TLSPrivateKeyKey: certdata.SesamePrivateKey,

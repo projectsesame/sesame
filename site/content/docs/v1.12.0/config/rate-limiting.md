@@ -10,7 +10,7 @@ Local rate limit policies program Envoy's [HTTP local rate limit filter](https:/
 It's important to note that local rate limit policies apply *per Envoy pod*.
 For example, a local rate limit policy of 100 requests per second for a given route will result in *each Envoy pod* allowing up to 100 requests per second for that route.
 
-By contrast, **global** rate limiting (which will be added in a future Contour release), uses a shared external rate limit service, allowing rate limits to apply across *all* Envoy pods.
+By contrast, **global** rate limiting (which will be added in a future Sesame release), uses a shared external rate limit service, allowing rate limits to apply across *all* Envoy pods.
 
 ### Defining a local rate limit
 

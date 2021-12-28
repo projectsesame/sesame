@@ -1,4 +1,4 @@
-We are delighted to present version 1.13.0 of Contour, our layer 7 HTTP reverse proxy for Kubernetes clusters.
+We are delighted to present version 1.13.0 of Sesame, our layer 7 HTTP reverse proxy for Kubernetes clusters.
 
 A big thank you to everyone who contributed to the release.
 
@@ -6,7 +6,7 @@ A big thank you to everyone who contributed to the release.
 
 ## Gateway API Support
 
-Contour now provides initial support for [Gateway API](https://gateway-api.sigs.k8s.io/), an open source project to evolve service networking APIs within the Kubernetes ecosystem. Gateway API consists of multiple resources that provide user interfaces to expose Kubernetes applications- Services, Ingress, and more. See the [user guide](https://projectcontour.io/guides/gateway-api/) for additional details and to start using Gateway API with Contour.
+Sesame now provides initial support for [Gateway API](https://gateway-api.sigs.k8s.io/), an open source project to evolve service networking APIs within the Kubernetes ecosystem. Gateway API consists of multiple resources that provide user interfaces to expose Kubernetes applications- Services, Ingress, and more. See the [user guide](https://projectsesame.io/guides/gateway-api/) for additional details and to start using Gateway API with Sesame.
 
 Related issues and PRs: #3278 #3397 #2809 #3283
 
@@ -24,7 +24,7 @@ Thanks to @skriss for designing and implementing this feature!
 
 ## Configurable Global TLS Cipher Suites
 
-TLS cipher suites used by Envoy listeners can now be configured. The configured cipher suites are validated against Envoy's allowed cipher list. Contour will exit on startup if any invalid cipher suites are present in the config file. If no cipher suites are provided, Contour will use the defaults that exist now.
+TLS cipher suites used by Envoy listeners can now be configured. The configured cipher suites are validated against Envoy's allowed cipher list. Sesame will exit on startup if any invalid cipher suites are present in the config file. If no cipher suites are provided, Sesame will use the defaults that exist now.
 
 Related issues and PRs: #2880 #3292 #3304
 
@@ -59,7 +59,7 @@ Related issues and PRs: #3291
 Thanks to @stevesloka for implementing this feature!
 
 ## Dynamic Service Headers
-Adds support for %CONTOUR_NAMESPACE%, %CONTOUR_SERVICE_NAME% and %CONTOUR_SERVICE_PORT% dynamic variables. These variables will be expanded like the Envoy dynamic variables in #3234. __Note:__ The CONTOUR_ prefix is used to prevent the clashing with a future Envoy dynamic variable. Variables that can't be expanded are passed through literally.
+Adds support for %Sesame_NAMESPACE%, %Sesame_SERVICE_NAME% and %Sesame_SERVICE_PORT% dynamic variables. These variables will be expanded like the Envoy dynamic variables in #3234. __Note:__ The Sesame_ prefix is used to prevent the clashing with a future Envoy dynamic variable. Variables that can't be expanded are passed through literally.
 
 Related issues and PRs: #3269
 
@@ -71,21 +71,21 @@ Thanks to @erwbgy for implementing this feature!
 - Insecure AES128/256 ciphers are disabled by default. See #3304 for additional details.
 - The following Prometheus Gauges have been renamed to make the metric names follow promlint conventions. We encourage operators to have dashboard and alert queries refer to the new names. The old metrics will be removed completely in the next release:
    ```
-   contour_httpproxy_total -> contour_httpproxy
-   contour_httpproxy_invalid_total  -> contour_httpproxy_invalid
-   contour_httpproxy_orphaned_total  -> contour_httpproxy_orphaned
-   contour_httpproxy_valid_total  -> contour_httpproxy_valid
-   contour_httpproxy_root_total  -> contour_httpproxy_root
+   Sesame_httpproxy_total -> Sesame_httpproxy
+   Sesame_httpproxy_invalid_total  -> Sesame_httpproxy_invalid
+   Sesame_httpproxy_orphaned_total  -> Sesame_httpproxy_orphaned
+   Sesame_httpproxy_valid_total  -> Sesame_httpproxy_valid
+   Sesame_httpproxy_root_total  -> Sesame_httpproxy_root
    ```
 
 # Upgrading
-Please consult the [upgrade documentation](https://projectcontour.io/resources/upgrading/).
+Please consult the [upgrade documentation](https://projectsesame.io/resources/upgrading/).
 
 ## Community Thanks!
-We’re immensely grateful for all the community contributions that help make Contour even better! For version 1.13, special thanks go out to the following contributors:
+We’re immensely grateful for all the community contributions that help make Sesame even better! For version 1.13, special thanks go out to the following contributors:
 - @xtreme-jesse-malone
 - @abhide
 - @seemiller
 
-# Are you a Contour user? We would love to know!
-If you're using Contour and want to add your organization to our adopters list, please visit this [page](https://github.com/projectsesame/sesame/blob/master/ADOPTERS.md). If you prefer to keep your organization name anonymous but still give us feedback into your usage and scenarios for Contour, please post on this [GitHub thread](https://github.com/projectsesame/sesame/issues/1269).
+# Are you a Sesame user? We would love to know!
+If you're using Sesame and want to add your organization to our adopters list, please visit this [page](https://github.com/projectsesame/sesame/blob/master/ADOPTERS.md). If you prefer to keep your organization name anonymous but still give us feedback into your usage and scenarios for Sesame, please post on this [GitHub thread](https://github.com/projectsesame/sesame/issues/1269).

@@ -85,7 +85,7 @@ rules:
 - apiGroups:
   - projectsesame.io
   resources:
-  - contourconfigurations
+  - Sesameconfigurations
   - extensionservices
   - httpproxies
   - tlscertificatedelegations
@@ -96,7 +96,7 @@ rules:
 - apiGroups:
   - projectsesame.io
   resources:
-  - contourconfigurations/status
+  - Sesameconfigurations/status
   - extensionservices/status
   - httpproxies/status
   verbs:

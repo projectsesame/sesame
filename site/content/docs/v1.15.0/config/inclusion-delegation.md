@@ -3,7 +3,7 @@
 HTTPProxy permits the splitting of a system's configuration into separate HTTPProxy instances using **inclusion**.
 
 Inclusion, as the name implies, allows for one HTTPProxy object to be included in another, optionally with some conditions inherited from the parent.
-Contour reads the inclusion tree and merges the included routes into one big object internally before rendering Envoy config.
+Sesame reads the inclusion tree and merges the included routes into one big object internally before rendering Envoy config.
 Importantly, the included HTTPProxy objects do not have to be in the same namespace.
 
 Each tree of HTTPProxy starts with a root, the top level object of the configuration for a particular virtual host.
@@ -21,9 +21,9 @@ These conditions are added to any conditions on the routes included.
 This process is recursive.
 
 Conditions are sets of individual condition statements, for example `prefix: /blog` is the condition that the matching request's path must start with `/blog`.
-When conditions are combined through inclusion Contour merges the conditions inherited via inclusion with any conditions specified on the route.
+When conditions are combined through inclusion Sesame merges the conditions inherited via inclusion with any conditions specified on the route.
 This may result in duplicates, for example two `prefix:` conditions, or two header match conditions with the same name and value.
-To resolve this Contour applies the following logic.
+To resolve this Sesame applies the following logic.
 
 - `prefix:` conditions are concatenated together in the order they were applied from the root object. For example the conditions, `prefix: /api`, `prefix: /v1` becomes a single `prefix: /api/v1` conditions. Note: Multiple prefixes cannot be supplied on a single set of Route conditions.
 - Proxies with repeated identical `header:` conditions of type "exact match" (the same header keys exactly) are marked as "Invalid" since they create an un-routable configuration.
@@ -129,7 +129,7 @@ spec:
 ## Orphaned HTTPProxy children
 
 It is possible for HTTPProxy objects to exist that have not been delegated to by another HTTPProxy.
-These objects are considered "orphaned" and will be ignored by Contour in determining ingress configuration.
+These objects are considered "orphaned" and will be ignored by Sesame in determining ingress configuration.
 
 [1]: request-routing#conditions
-[2]: api/#projectcontour.io/v1.HTTPProxySpec
+[2]: api/#projectsesame.io/v1.HTTPProxySpec

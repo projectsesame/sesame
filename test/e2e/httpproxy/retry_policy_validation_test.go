@@ -20,7 +20,7 @@ import (
 	"context"
 
 	. "github.com/onsi/ginkgo"
-	contourv1 "github.com/projectcontour/sesame/apis/projectsesame/v1"
+	Sesamev1 "github.com/projectsesame/sesame/apis/projectsesame/v1"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -30,22 +30,22 @@ func testRetryPolicyValidation(namespace string) {
 	Specify("retry policy is validated on create", func() {
 		t := f.T()
 
-		p := &contourv1.HTTPProxy{
+		p := &Sesamev1.HTTPProxy{
 			ObjectMeta: metav1.ObjectMeta{
 				Namespace: namespace,
 				Name:      "invalid-retry-on-condition",
 			},
-			Spec: contourv1.HTTPProxySpec{
-				Routes: []contourv1.Route{
+			Spec: Sesamev1.HTTPProxySpec{
+				Routes: []Sesamev1.Route{
 					{
-						Services: []contourv1.Service{
+						Services: []Sesamev1.Service{
 							{
 								Name: "foo",
 								Port: 80,
 							},
 						},
-						RetryPolicy: &contourv1.RetryPolicy{
-							RetryOn: []contourv1.RetryOn{
+						RetryPolicy: &Sesamev1.RetryPolicy{
+							RetryOn: []Sesamev1.RetryOn{
 								"foobar",
 							},
 						},

@@ -220,7 +220,7 @@ func (p *HTTPProxyProcessor) computeHTTPProxy(proxy *sesame_api_v1.HTTPProxy) {
 			if tls.EnableFallbackCertificate {
 				if p.FallbackCertificate == nil {
 					validCond.AddError(sesame_api_v1.ConditionTypeTLSError, "FallbackNotPresent",
-						"Spec.Virtualhost.TLS enabled fallback but the fallback Certificate Secret is not configured in Contour configuration file")
+						"Spec.Virtualhost.TLS enabled fallback but the fallback Certificate Secret is not configured in Sesame configuration file")
 					return
 				}
 
@@ -460,7 +460,7 @@ func (p *HTTPProxyProcessor) computeRoutes(
 	}
 
 	dynamicHeaders := map[string]string{
-		"CONTOUR_NAMESPACE": proxy.Namespace,
+		"Sesame_NAMESPACE": proxy.Namespace,
 	}
 
 	for _, route := range proxy.Spec.Routes {
@@ -641,8 +641,8 @@ func (p *HTTPProxyProcessor) computeRoutes(
 				}
 			}
 
-			dynamicHeaders["CONTOUR_SERVICE_NAME"] = service.Name
-			dynamicHeaders["CONTOUR_SERVICE_PORT"] = strconv.Itoa(service.Port)
+			dynamicHeaders["Sesame_SERVICE_NAME"] = service.Name
+			dynamicHeaders["Sesame_SERVICE_PORT"] = strconv.Itoa(service.Port)
 
 			reqHP, err := headersPolicyService(p.RequestHeadersPolicy, service.RequestHeadersPolicy, dynamicHeaders)
 			if err != nil {

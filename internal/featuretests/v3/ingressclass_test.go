@@ -18,10 +18,10 @@ import (
 
 	envoy_route_v3 "github.com/envoyproxy/go-control-plane/envoy/config/route/v3"
 	envoy_discovery_v3 "github.com/envoyproxy/go-control-plane/envoy/service/discovery/v3"
-	contour_api_v1 "github.com/projectcontour/sesame/apis/projectsesame/v1"
-	envoy_v3 "github.com/projectcontour/sesame/internal/envoy/v3"
-	"github.com/projectsesame/sesame/internal/contour"
+	Sesame_api_v1 "github.com/projectsesame/sesame/apis/projectsesame/v1"
+	"github.com/projectsesame/sesame/internal/Sesame"
 	"github.com/projectsesame/sesame/internal/dag"
+	envoy_v3 "github.com/projectsesame/sesame/internal/envoy/v3"
 	"github.com/projectsesame/sesame/internal/featuretests"
 	"github.com/projectsesame/sesame/internal/fixture"
 	v1 "k8s.io/api/core/v1"
@@ -154,12 +154,12 @@ func TestIngressClassAnnotation_Configured(t *testing.T) {
 		// --- ingress class matches explicitly
 		proxyValid := fixture.NewProxy(HTTPProxyName).
 			Annotate("projectsesame.io/ingress.class", "linkerd").
-			WithSpec(contour_api_v1.HTTPProxySpec{
-				VirtualHost: &contour_api_v1.VirtualHost{
+			WithSpec(Sesame_api_v1.HTTPProxySpec{
+				VirtualHost: &Sesame_api_v1.VirtualHost{
 					Fqdn: "www.example.com",
 				},
-				Routes: []contour_api_v1.Route{{
-					Services: []contour_api_v1.Service{{
+				Routes: []Sesame_api_v1.Route{{
+					Services: []Sesame_api_v1.Service{{
 						Name: svc.Name,
 						Port: int(svc.Spec.Ports[0].Port),
 					}},
@@ -185,12 +185,12 @@ func TestIngressClassAnnotation_Configured(t *testing.T) {
 		// --- wrong ingress class specified
 		proxyWrongClass := fixture.NewProxy(HTTPProxyName).
 			Annotate("kubernetes.io/ingress.class", "sesame").
-			WithSpec(contour_api_v1.HTTPProxySpec{
-				VirtualHost: &contour_api_v1.VirtualHost{
+			WithSpec(Sesame_api_v1.HTTPProxySpec{
+				VirtualHost: &Sesame_api_v1.VirtualHost{
 					Fqdn: "www.example.com",
 				},
-				Routes: []contour_api_v1.Route{{
-					Services: []contour_api_v1.Service{{
+				Routes: []Sesame_api_v1.Route{{
+					Services: []Sesame_api_v1.Service{{
 						Name: svc.Name,
 						Port: int(svc.Spec.Ports[0].Port),
 					}},
@@ -209,12 +209,12 @@ func TestIngressClassAnnotation_Configured(t *testing.T) {
 
 		// --- no ingress class specified
 		proxyNoClass := fixture.NewProxy(HTTPProxyName).
-			WithSpec(contour_api_v1.HTTPProxySpec{
-				VirtualHost: &contour_api_v1.VirtualHost{
+			WithSpec(Sesame_api_v1.HTTPProxySpec{
+				VirtualHost: &Sesame_api_v1.VirtualHost{
 					Fqdn: "www.example.com",
 				},
-				Routes: []contour_api_v1.Route{{
-					Services: []contour_api_v1.Service{{
+				Routes: []Sesame_api_v1.Route{{
+					Services: []Sesame_api_v1.Service{{
 						Name: svc.Name,
 						Port: int(svc.Spec.Ports[0].Port),
 					}},
@@ -265,7 +265,7 @@ func TestIngressClassAnnotation_Configured(t *testing.T) {
 // no configured ingress.class, anything else on object - fail
 
 func TestIngressClassAnnotation_NotConfigured(t *testing.T) {
-	rh, c, done := setup(t, func(reh *contour.EventHandler) {})
+	rh, c, done := setup(t, func(reh *Sesame.EventHandler) {})
 	defer done()
 
 	svc := fixture.NewService("kuard").
@@ -385,12 +385,12 @@ func TestIngressClassAnnotation_NotConfigured(t *testing.T) {
 	{
 		// --- no ingress class specified
 		proxyNoClass := fixture.NewProxy(HTTPProxyName).
-			WithSpec(contour_api_v1.HTTPProxySpec{
-				VirtualHost: &contour_api_v1.VirtualHost{
+			WithSpec(Sesame_api_v1.HTTPProxySpec{
+				VirtualHost: &Sesame_api_v1.VirtualHost{
 					Fqdn: "www.example.com",
 				},
-				Routes: []contour_api_v1.Route{{
-					Services: []contour_api_v1.Service{{
+				Routes: []Sesame_api_v1.Route{{
+					Services: []Sesame_api_v1.Service{{
 						Name: svc.Name,
 						Port: int(svc.Spec.Ports[0].Port),
 					}},
@@ -416,12 +416,12 @@ func TestIngressClassAnnotation_NotConfigured(t *testing.T) {
 		// --- matching ingress class specified
 		proxyMatchingClass := fixture.NewProxy(HTTPProxyName).
 			Annotate("kubernetes.io/ingress.class", "sesame").
-			WithSpec(contour_api_v1.HTTPProxySpec{
-				VirtualHost: &contour_api_v1.VirtualHost{
+			WithSpec(Sesame_api_v1.HTTPProxySpec{
+				VirtualHost: &Sesame_api_v1.VirtualHost{
 					Fqdn: "www.example.com",
 				},
-				Routes: []contour_api_v1.Route{{
-					Services: []contour_api_v1.Service{{
+				Routes: []Sesame_api_v1.Route{{
+					Services: []Sesame_api_v1.Service{{
 						Name: svc.Name,
 						Port: int(svc.Spec.Ports[0].Port),
 					}},
@@ -447,12 +447,12 @@ func TestIngressClassAnnotation_NotConfigured(t *testing.T) {
 		// --- non-matching ingress class specified
 		proxyNonMatchingClass := fixture.NewProxy(HTTPProxyName).
 			Annotate("kubernetes.io/ingress.class", "invalid").
-			WithSpec(contour_api_v1.HTTPProxySpec{
-				VirtualHost: &contour_api_v1.VirtualHost{
+			WithSpec(Sesame_api_v1.HTTPProxySpec{
+				VirtualHost: &Sesame_api_v1.VirtualHost{
 					Fqdn: "www.example.com",
 				},
-				Routes: []contour_api_v1.Route{{
-					Services: []contour_api_v1.Service{{
+				Routes: []Sesame_api_v1.Route{{
+					Services: []Sesame_api_v1.Service{{
 						Name: svc.Name,
 						Port: int(svc.Spec.Ports[0].Port),
 					}},
@@ -512,14 +512,14 @@ func TestIngressClassAnnotationUpdate(t *testing.T) {
 		WithPorts(v1.ServicePort{Port: 8080, TargetPort: intstr.FromInt(8080)})
 	rh.OnAdd(svc)
 
-	vhost := &contour_api_v1.HTTPProxy{
+	vhost := &Sesame_api_v1.HTTPProxy{
 		ObjectMeta: fixture.ObjectMeta("default/kuard"),
-		Spec: contour_api_v1.HTTPProxySpec{
-			VirtualHost: &contour_api_v1.VirtualHost{
+		Spec: Sesame_api_v1.HTTPProxySpec{
+			VirtualHost: &Sesame_api_v1.VirtualHost{
 				Fqdn: "kuard.projectsesame.io",
 			},
-			Routes: []contour_api_v1.Route{{
-				Services: []contour_api_v1.Service{{
+			Routes: []Sesame_api_v1.Route{{
+				Services: []Sesame_api_v1.Service{{
 					Name: "kuard",
 					Port: 8080,
 				}},
@@ -691,12 +691,12 @@ func TestIngressClassResource_Configured(t *testing.T) {
 	{
 		// --- ingress class matches explicitly
 		proxyValid := fixture.NewProxy(HTTPProxyName).
-			WithSpec(contour_api_v1.HTTPProxySpec{
-				VirtualHost: &contour_api_v1.VirtualHost{
+			WithSpec(Sesame_api_v1.HTTPProxySpec{
+				VirtualHost: &Sesame_api_v1.VirtualHost{
 					Fqdn: "www.example.com",
 				},
-				Routes: []contour_api_v1.Route{{
-					Services: []contour_api_v1.Service{{
+				Routes: []Sesame_api_v1.Route{{
+					Services: []Sesame_api_v1.Service{{
 						Name: svc.Name,
 						Port: int(svc.Spec.Ports[0].Port),
 					}},
@@ -722,12 +722,12 @@ func TestIngressClassResource_Configured(t *testing.T) {
 
 		// --- wrong ingress class specified
 		proxyWrongClass := fixture.NewProxy(HTTPProxyName).
-			WithSpec(contour_api_v1.HTTPProxySpec{
-				VirtualHost: &contour_api_v1.VirtualHost{
+			WithSpec(Sesame_api_v1.HTTPProxySpec{
+				VirtualHost: &Sesame_api_v1.VirtualHost{
 					Fqdn: "www.example.com",
 				},
-				Routes: []contour_api_v1.Route{{
-					Services: []contour_api_v1.Service{{
+				Routes: []Sesame_api_v1.Route{{
+					Services: []Sesame_api_v1.Service{{
 						Name: svc.Name,
 						Port: int(svc.Spec.Ports[0].Port),
 					}},
@@ -747,12 +747,12 @@ func TestIngressClassResource_Configured(t *testing.T) {
 
 		// --- no ingress class specified
 		proxyNoClass := fixture.NewProxy(HTTPProxyName).
-			WithSpec(contour_api_v1.HTTPProxySpec{
-				VirtualHost: &contour_api_v1.VirtualHost{
+			WithSpec(Sesame_api_v1.HTTPProxySpec{
+				VirtualHost: &Sesame_api_v1.VirtualHost{
 					Fqdn: "www.example.com",
 				},
-				Routes: []contour_api_v1.Route{{
-					Services: []contour_api_v1.Service{{
+				Routes: []Sesame_api_v1.Route{{
+					Services: []Sesame_api_v1.Service{{
 						Name: svc.Name,
 						Port: int(svc.Spec.Ports[0].Port),
 					}},
@@ -799,7 +799,7 @@ func TestIngressClassResource_Configured(t *testing.T) {
 }
 
 func TestIngressClassResource_NotConfigured(t *testing.T) {
-	rh, c, done := setup(t, func(reh *contour.EventHandler) {})
+	rh, c, done := setup(t, func(reh *Sesame.EventHandler) {})
 	defer done()
 
 	svc := fixture.NewService("kuard").
@@ -881,7 +881,7 @@ func TestIngressClassResource_NotConfigured(t *testing.T) {
 				Namespace: Namespace,
 			},
 			Spec: networking_v1.IngressSpec{
-				IngressClassName: pointer.StringPtr("notcontour"),
+				IngressClassName: pointer.StringPtr("notSesame"),
 				DefaultBackend:   featuretests.IngressBackend(svc),
 			},
 		}
@@ -929,12 +929,12 @@ func TestIngressClassResource_NotConfigured(t *testing.T) {
 	{
 		// --- no ingress class specified
 		proxyNoClass := fixture.NewProxy(HTTPProxyName).
-			WithSpec(contour_api_v1.HTTPProxySpec{
-				VirtualHost: &contour_api_v1.VirtualHost{
+			WithSpec(Sesame_api_v1.HTTPProxySpec{
+				VirtualHost: &Sesame_api_v1.VirtualHost{
 					Fqdn: "www.example.com",
 				},
-				Routes: []contour_api_v1.Route{{
-					Services: []contour_api_v1.Service{{
+				Routes: []Sesame_api_v1.Route{{
+					Services: []Sesame_api_v1.Service{{
 						Name: svc.Name,
 						Port: int(svc.Spec.Ports[0].Port),
 					}},
@@ -959,12 +959,12 @@ func TestIngressClassResource_NotConfigured(t *testing.T) {
 
 		// --- matching ingress class specified
 		proxyMatchingClass := fixture.NewProxy(HTTPProxyName).
-			WithSpec(contour_api_v1.HTTPProxySpec{
-				VirtualHost: &contour_api_v1.VirtualHost{
+			WithSpec(Sesame_api_v1.HTTPProxySpec{
+				VirtualHost: &Sesame_api_v1.VirtualHost{
 					Fqdn: "www.example.com",
 				},
-				Routes: []contour_api_v1.Route{{
-					Services: []contour_api_v1.Service{{
+				Routes: []Sesame_api_v1.Route{{
+					Services: []Sesame_api_v1.Service{{
 						Name: svc.Name,
 						Port: int(svc.Spec.Ports[0].Port),
 					}},
@@ -990,17 +990,17 @@ func TestIngressClassResource_NotConfigured(t *testing.T) {
 
 		// --- non-matching ingress class specified
 		proxyNonMatchingClass := fixture.NewProxy(HTTPProxyName).
-			WithSpec(contour_api_v1.HTTPProxySpec{
-				VirtualHost: &contour_api_v1.VirtualHost{
+			WithSpec(Sesame_api_v1.HTTPProxySpec{
+				VirtualHost: &Sesame_api_v1.VirtualHost{
 					Fqdn: "www.example.com",
 				},
-				Routes: []contour_api_v1.Route{{
-					Services: []contour_api_v1.Service{{
+				Routes: []Sesame_api_v1.Route{{
+					Services: []Sesame_api_v1.Service{{
 						Name: svc.Name,
 						Port: int(svc.Spec.Ports[0].Port),
 					}},
 				}},
-				IngressClassName: "notcontour",
+				IngressClassName: "notSesame",
 			})
 
 		rh.OnUpdate(proxyMatchingClass, proxyNonMatchingClass)

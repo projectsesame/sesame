@@ -22,8 +22,8 @@ import (
 	envoy_config_filter_http_local_ratelimit_v3 "github.com/envoyproxy/go-control-plane/envoy/extensions/filters/http/local_ratelimit/v3"
 	envoy_discovery_v3 "github.com/envoyproxy/go-control-plane/envoy/service/discovery/v3"
 	envoy_type_v3 "github.com/envoyproxy/go-control-plane/envoy/type/v3"
-	contour_api_v1 "github.com/projectcontour/sesame/apis/projectsesame/v1"
-	envoy_v3 "github.com/projectcontour/sesame/internal/envoy/v3"
+	Sesame_api_v1 "github.com/projectsesame/sesame/apis/projectsesame/v1"
+	envoy_v3 "github.com/projectsesame/sesame/internal/envoy/v3"
 	"github.com/projectsesame/sesame/internal/fixture"
 	"github.com/projectsesame/sesame/internal/protobuf"
 	"google.golang.org/protobuf/types/known/wrapperspb"
@@ -32,19 +32,19 @@ import (
 	"k8s.io/client-go/tools/cache"
 )
 
-func filterExists(t *testing.T, rh cache.ResourceEventHandler, c *Contour) {
-	p := &contour_api_v1.HTTPProxy{
+func filterExists(t *testing.T, rh cache.ResourceEventHandler, c *Sesame) {
+	p := &Sesame_api_v1.HTTPProxy{
 		ObjectMeta: metav1.ObjectMeta{
 			Namespace: "default",
 			Name:      "proxy1",
 		},
-		Spec: contour_api_v1.HTTPProxySpec{
-			VirtualHost: &contour_api_v1.VirtualHost{
+		Spec: Sesame_api_v1.HTTPProxySpec{
+			VirtualHost: &Sesame_api_v1.VirtualHost{
 				Fqdn: "foo.com",
 			},
-			Routes: []contour_api_v1.Route{
+			Routes: []Sesame_api_v1.Route{
 				{
-					Services: []contour_api_v1.Service{
+					Services: []Sesame_api_v1.Service{
 						{
 							Name: "s1",
 							Port: 80,
@@ -64,19 +64,19 @@ func filterExists(t *testing.T, rh cache.ResourceEventHandler, c *Contour) {
 	}).Status(p).IsValid()
 }
 
-func noRateLimitsDefined(t *testing.T, rh cache.ResourceEventHandler, c *Contour) {
-	p := &contour_api_v1.HTTPProxy{
+func noRateLimitsDefined(t *testing.T, rh cache.ResourceEventHandler, c *Sesame) {
+	p := &Sesame_api_v1.HTTPProxy{
 		ObjectMeta: metav1.ObjectMeta{
 			Namespace: "default",
 			Name:      "proxy1",
 		},
-		Spec: contour_api_v1.HTTPProxySpec{
-			VirtualHost: &contour_api_v1.VirtualHost{
+		Spec: Sesame_api_v1.HTTPProxySpec{
+			VirtualHost: &Sesame_api_v1.VirtualHost{
 				Fqdn: "foo.com",
 			},
-			Routes: []contour_api_v1.Route{
+			Routes: []Sesame_api_v1.Route{
 				{
-					Services: []contour_api_v1.Service{
+					Services: []Sesame_api_v1.Service{
 						{
 							Name: "s1",
 							Port: 80,
@@ -104,26 +104,26 @@ func noRateLimitsDefined(t *testing.T, rh cache.ResourceEventHandler, c *Contour
 	}).Status(p).IsValid()
 }
 
-func vhostRateLimitDefined(t *testing.T, rh cache.ResourceEventHandler, c *Contour) {
-	p := &contour_api_v1.HTTPProxy{
+func vhostRateLimitDefined(t *testing.T, rh cache.ResourceEventHandler, c *Sesame) {
+	p := &Sesame_api_v1.HTTPProxy{
 		ObjectMeta: metav1.ObjectMeta{
 			Namespace: "default",
 			Name:      "proxy1",
 		},
-		Spec: contour_api_v1.HTTPProxySpec{
-			VirtualHost: &contour_api_v1.VirtualHost{
+		Spec: Sesame_api_v1.HTTPProxySpec{
+			VirtualHost: &Sesame_api_v1.VirtualHost{
 				Fqdn: "foo.com",
-				RateLimitPolicy: &contour_api_v1.RateLimitPolicy{
-					Local: &contour_api_v1.LocalRateLimitPolicy{
+				RateLimitPolicy: &Sesame_api_v1.RateLimitPolicy{
+					Local: &Sesame_api_v1.LocalRateLimitPolicy{
 						Requests: 100,
 						Unit:     "minute",
 						Burst:    50,
 					},
 				},
 			},
-			Routes: []contour_api_v1.Route{
+			Routes: []Sesame_api_v1.Route{
 				{
-					Services: []contour_api_v1.Service{
+					Services: []Sesame_api_v1.Service{
 						{
 							Name: "s1",
 							Port: 80,
@@ -169,31 +169,31 @@ func vhostRateLimitDefined(t *testing.T, rh cache.ResourceEventHandler, c *Conto
 	}).Status(p).IsValid()
 }
 
-func routeRateLimitsDefined(t *testing.T, rh cache.ResourceEventHandler, c *Contour) {
-	p := &contour_api_v1.HTTPProxy{
+func routeRateLimitsDefined(t *testing.T, rh cache.ResourceEventHandler, c *Sesame) {
+	p := &Sesame_api_v1.HTTPProxy{
 		ObjectMeta: metav1.ObjectMeta{
 			Namespace: "default",
 			Name:      "proxy1",
 		},
-		Spec: contour_api_v1.HTTPProxySpec{
-			VirtualHost: &contour_api_v1.VirtualHost{
+		Spec: Sesame_api_v1.HTTPProxySpec{
+			VirtualHost: &Sesame_api_v1.VirtualHost{
 				Fqdn: "foo.com",
 			},
-			Routes: []contour_api_v1.Route{
+			Routes: []Sesame_api_v1.Route{
 				{
-					Conditions: []contour_api_v1.MatchCondition{
+					Conditions: []Sesame_api_v1.MatchCondition{
 						{
 							Prefix: "/s1",
 						},
 					},
-					Services: []contour_api_v1.Service{
+					Services: []Sesame_api_v1.Service{
 						{
 							Name: "s1",
 							Port: 80,
 						},
 					},
-					RateLimitPolicy: &contour_api_v1.RateLimitPolicy{
-						Local: &contour_api_v1.LocalRateLimitPolicy{
+					RateLimitPolicy: &Sesame_api_v1.RateLimitPolicy{
+						Local: &Sesame_api_v1.LocalRateLimitPolicy{
 							Requests: 100,
 							Unit:     "minute",
 							Burst:    50,
@@ -201,19 +201,19 @@ func routeRateLimitsDefined(t *testing.T, rh cache.ResourceEventHandler, c *Cont
 					},
 				},
 				{
-					Conditions: []contour_api_v1.MatchCondition{
+					Conditions: []Sesame_api_v1.MatchCondition{
 						{
 							Prefix: "/s2",
 						},
 					},
-					Services: []contour_api_v1.Service{
+					Services: []Sesame_api_v1.Service{
 						{
 							Name: "s2",
 							Port: 80,
 						},
 					},
-					RateLimitPolicy: &contour_api_v1.RateLimitPolicy{
-						Local: &contour_api_v1.LocalRateLimitPolicy{
+					RateLimitPolicy: &Sesame_api_v1.RateLimitPolicy{
+						Local: &Sesame_api_v1.LocalRateLimitPolicy{
 							Requests: 5,
 							Unit:     "second",
 							Burst:    1,
@@ -287,38 +287,38 @@ func routeRateLimitsDefined(t *testing.T, rh cache.ResourceEventHandler, c *Cont
 	}).Status(p).IsValid()
 }
 
-func vhostAndRouteRateLimitsDefined(t *testing.T, rh cache.ResourceEventHandler, c *Contour) {
-	p := &contour_api_v1.HTTPProxy{
+func vhostAndRouteRateLimitsDefined(t *testing.T, rh cache.ResourceEventHandler, c *Sesame) {
+	p := &Sesame_api_v1.HTTPProxy{
 		ObjectMeta: metav1.ObjectMeta{
 			Namespace: "default",
 			Name:      "proxy1",
 		},
-		Spec: contour_api_v1.HTTPProxySpec{
-			VirtualHost: &contour_api_v1.VirtualHost{
+		Spec: Sesame_api_v1.HTTPProxySpec{
+			VirtualHost: &Sesame_api_v1.VirtualHost{
 				Fqdn: "foo.com",
-				RateLimitPolicy: &contour_api_v1.RateLimitPolicy{
-					Local: &contour_api_v1.LocalRateLimitPolicy{
+				RateLimitPolicy: &Sesame_api_v1.RateLimitPolicy{
+					Local: &Sesame_api_v1.LocalRateLimitPolicy{
 						Requests: 100,
 						Unit:     "minute",
 						Burst:    50,
 					},
 				},
 			},
-			Routes: []contour_api_v1.Route{
+			Routes: []Sesame_api_v1.Route{
 				{
-					Conditions: []contour_api_v1.MatchCondition{
+					Conditions: []Sesame_api_v1.MatchCondition{
 						{
 							Prefix: "/s1",
 						},
 					},
-					Services: []contour_api_v1.Service{
+					Services: []Sesame_api_v1.Service{
 						{
 							Name: "s1",
 							Port: 80,
 						},
 					},
-					RateLimitPolicy: &contour_api_v1.RateLimitPolicy{
-						Local: &contour_api_v1.LocalRateLimitPolicy{
+					RateLimitPolicy: &Sesame_api_v1.RateLimitPolicy{
+						Local: &Sesame_api_v1.LocalRateLimitPolicy{
 							Requests: 100,
 							Unit:     "minute",
 							Burst:    50,
@@ -326,19 +326,19 @@ func vhostAndRouteRateLimitsDefined(t *testing.T, rh cache.ResourceEventHandler,
 					},
 				},
 				{
-					Conditions: []contour_api_v1.MatchCondition{
+					Conditions: []Sesame_api_v1.MatchCondition{
 						{
 							Prefix: "/s2",
 						},
 					},
-					Services: []contour_api_v1.Service{
+					Services: []Sesame_api_v1.Service{
 						{
 							Name: "s2",
 							Port: 80,
 						},
 					},
-					RateLimitPolicy: &contour_api_v1.RateLimitPolicy{
-						Local: &contour_api_v1.LocalRateLimitPolicy{
+					RateLimitPolicy: &Sesame_api_v1.RateLimitPolicy{
+						Local: &Sesame_api_v1.LocalRateLimitPolicy{
 							Requests: 5,
 							Unit:     "second",
 							Burst:    1,
@@ -434,31 +434,31 @@ func vhostAndRouteRateLimitsDefined(t *testing.T, rh cache.ResourceEventHandler,
 	}).Status(p).IsValid()
 }
 
-func customResponseCode(t *testing.T, rh cache.ResourceEventHandler, c *Contour) {
-	p := &contour_api_v1.HTTPProxy{
+func customResponseCode(t *testing.T, rh cache.ResourceEventHandler, c *Sesame) {
+	p := &Sesame_api_v1.HTTPProxy{
 		ObjectMeta: metav1.ObjectMeta{
 			Namespace: "default",
 			Name:      "proxy1",
 		},
-		Spec: contour_api_v1.HTTPProxySpec{
-			VirtualHost: &contour_api_v1.VirtualHost{
+		Spec: Sesame_api_v1.HTTPProxySpec{
+			VirtualHost: &Sesame_api_v1.VirtualHost{
 				Fqdn: "foo.com",
 			},
-			Routes: []contour_api_v1.Route{
+			Routes: []Sesame_api_v1.Route{
 				{
-					Conditions: []contour_api_v1.MatchCondition{
+					Conditions: []Sesame_api_v1.MatchCondition{
 						{
 							Prefix: "/s1",
 						},
 					},
-					Services: []contour_api_v1.Service{
+					Services: []Sesame_api_v1.Service{
 						{
 							Name: "s1",
 							Port: 80,
 						},
 					},
-					RateLimitPolicy: &contour_api_v1.RateLimitPolicy{
-						Local: &contour_api_v1.LocalRateLimitPolicy{
+					RateLimitPolicy: &Sesame_api_v1.RateLimitPolicy{
+						Local: &Sesame_api_v1.LocalRateLimitPolicy{
 							Requests:           100,
 							Unit:               "minute",
 							Burst:              50,
@@ -507,35 +507,35 @@ func customResponseCode(t *testing.T, rh cache.ResourceEventHandler, c *Contour)
 	}).Status(p).IsValid()
 }
 
-func customResponseHeaders(t *testing.T, rh cache.ResourceEventHandler, c *Contour) {
-	p := &contour_api_v1.HTTPProxy{
+func customResponseHeaders(t *testing.T, rh cache.ResourceEventHandler, c *Sesame) {
+	p := &Sesame_api_v1.HTTPProxy{
 		ObjectMeta: metav1.ObjectMeta{
 			Namespace: "default",
 			Name:      "proxy1",
 		},
-		Spec: contour_api_v1.HTTPProxySpec{
-			VirtualHost: &contour_api_v1.VirtualHost{
+		Spec: Sesame_api_v1.HTTPProxySpec{
+			VirtualHost: &Sesame_api_v1.VirtualHost{
 				Fqdn: "foo.com",
 			},
-			Routes: []contour_api_v1.Route{
+			Routes: []Sesame_api_v1.Route{
 				{
-					Conditions: []contour_api_v1.MatchCondition{
+					Conditions: []Sesame_api_v1.MatchCondition{
 						{
 							Prefix: "/s1",
 						},
 					},
-					Services: []contour_api_v1.Service{
+					Services: []Sesame_api_v1.Service{
 						{
 							Name: "s1",
 							Port: 80,
 						},
 					},
-					RateLimitPolicy: &contour_api_v1.RateLimitPolicy{
-						Local: &contour_api_v1.LocalRateLimitPolicy{
+					RateLimitPolicy: &Sesame_api_v1.RateLimitPolicy{
+						Local: &Sesame_api_v1.LocalRateLimitPolicy{
 							Requests: 100,
 							Unit:     "minute",
 							Burst:    50,
-							ResponseHeadersToAdd: []contour_api_v1.HeaderValue{
+							ResponseHeadersToAdd: []Sesame_api_v1.HeaderValue{
 								{
 									Name:  "header-name-1",
 									Value: "header-value-1",
@@ -620,7 +620,7 @@ func customResponseHeaders(t *testing.T, rh cache.ResourceEventHandler, c *Conto
 }
 
 func TestLocalRateLimiting(t *testing.T) {
-	subtests := map[string]func(*testing.T, cache.ResourceEventHandler, *Contour){
+	subtests := map[string]func(*testing.T, cache.ResourceEventHandler, *Sesame){
 		"LocalRateLimitFilterExists":           filterExists,
 		"NoRateLimitsDefined":                  noRateLimitsDefined,
 		"VirtualHostRateLimitDefined":          vhostRateLimitDefined,

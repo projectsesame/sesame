@@ -1,10 +1,10 @@
 ---
 # layout: page
 title: Guides
-description: Contour Resources
+description: Sesame Resources
 id: guides
 ---
-## Getting things done with Contour
+## Getting things done with Sesame
 
-This page contains links to articles on configuring specific Contour features.
+This page contains links to articles on configuring specific Sesame features.
 

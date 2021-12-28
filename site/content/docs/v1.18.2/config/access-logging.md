@@ -2,7 +2,7 @@
 
 ## Overview
 
-Contour allows you to control Envoy's access logging.
+Sesame allows you to control Envoy's access logging.
 By default, HTTP and HTTPS access logs are written to `/dev/stdout` by the Envoy containers and look like following:
 
 ```
@@ -14,7 +14,7 @@ The detailed description of each field can be found in [Envoy access logging doc
 
 ## Customizing Access Log Destination and Formats
 
-You can change the destination file where the access log is written by using Contour [command line parameters][1] `--envoy-http-access-log` and `--envoy-https-access-log`.
+You can change the destination file where the access log is written by using Sesame [command line parameters][1] `--envoy-http-access-log` and `--envoy-https-access-log`.
 
 The access log can take two different formats, both can be customized
 
@@ -26,7 +26,7 @@ The access log can take two different formats, both can be customized
 Ensure that you have selected `envoy` as the access log format.
 Note that this is the default format if the parameters are not given.
 
-- Add `--accesslog-format=envoy` to your Contour startup line, or
+- Add `--accesslog-format=envoy` to your Sesame startup line, or
 - Add `accesslog-format: envoy` to your configuration file.
 
 Customize the access log format by defining `accesslog-format-string` in your configuration file.
@@ -34,13 +34,13 @@ Customize the access log format by defining `accesslog-format-string` in your co
 ```yaml
 accesslog-format-string: "[%START_TIME%] \"%REQ(:METHOD)% %REQ(X-ENVOY-ORIGINAL-PATH?:PATH)% %PROTOCOL%\" %RESPONSE_CODE% %RESPONSE_FLAGS% %BYTES_RECEIVED% %BYTES_SENT% %DURATION% %RESP(X-ENVOY-UPSTREAM-SERVICE-TIME)% \"%REQ(X-FORWARDED-FOR)%\" \"%REQ(USER-AGENT)%\" \"%REQ(X-REQUEST-ID)%\" \"%REQ(:AUTHORITY)%\" \"%UPSTREAM_HOST%\"\n"
 ```
-After restarting Contour and successful validation of the configuration, the new format will take effect in a short while.
+After restarting Sesame and successful validation of the configuration, the new format will take effect in a short while.
 
 Refer to [Envoy access logging documentation][7] for the description of the command operators, and note that the format string needs to end in a linefeed `\n`.
 
 ### Structured JSON Logging
 
-Contour allows you to choose from a set of JSON fields that will be expanded into Envoy templates and sent to Envoy.
+Sesame allows you to choose from a set of JSON fields that will be expanded into Envoy templates and sent to Envoy.
 There is a default set of fields if you enable JSON logging, and you may customize which fields you log.
 
 The list of available fields are discoverable in the following objects:
@@ -54,7 +54,7 @@ The default list of fields is available at [DefaultFields][5].
 
 To enable the feature you have two options:
 
-- Add `--accesslog-format=json` to your Contour startup line.
+- Add `--accesslog-format=json` to your Sesame startup line.
 - Add `accesslog-format: json` to your configuration file.
 
 Without any further customization, the [default fields][5] will be used.
@@ -108,7 +108,7 @@ json-fields:
 ## Using Access Log Formatter Extensions
 
 Envoy allows implementing custom access log command operators as extensions.
-Following extensions are supported by Contour:
+Following extensions are supported by Sesame:
 
 | Command operator | Description |
 |------------------|-------------|
@@ -117,10 +117,10 @@ Following extensions are supported by Contour:
 
 
 [1]: ../configuration#serve-flags
-[2]: https://github.com/search?q=jsonFields+repo%3Aprojectcontour%2Fcontour+path%3A%2Fpkg%2Fconfig+filename%3Aaccesslog.go&type=Code
-[3]: https://github.com/search?q=envoySimpleOperators+repo%3Aprojectcontour%2Fcontour+path%3A%2Fpkg%2Fconfig+filename%3Aaccesslog.go&type=Code
-[4]: https://github.com/search?q=envoyComplexOperators+repo%3Aprojectcontour%2Fcontour+path%3A%2Fpkg%2Fconfig+filename%3Aaccesslog.go&type=Code
-[5]: https://github.com/search?q=DefaultFields+repo%3Aprojectcontour%2Fcontour+path%3A%2Fpkg%2Fconfig+filename%3Aaccesslog.go&type=Code
-[6]: {{< param github_url >}}/tree/{{< param latest_version >}}/examples/contour/01-contour-config.yaml
+[2]: https://github.com/search?q=jsonFields+repo%3Aprojectsesame%2FSesame+path%3A%2Fpkg%2Fconfig+filename%3Aaccesslog.go&type=Code
+[3]: https://github.com/search?q=envoySimpleOperators+repo%3Aprojectsesame%2FSesame+path%3A%2Fpkg%2Fconfig+filename%3Aaccesslog.go&type=Code
+[4]: https://github.com/search?q=envoyComplexOperators+repo%3Aprojectsesame%2FSesame+path%3A%2Fpkg%2Fconfig+filename%3Aaccesslog.go&type=Code
+[5]: https://github.com/search?q=DefaultFields+repo%3Aprojectsesame%2FSesame+path%3A%2Fpkg%2Fconfig+filename%3Aaccesslog.go&type=Code
+[6]: {{< param github_url >}}/tree/{{< param latest_version >}}/examples/Sesame/01-Sesame-config.yaml
 [7]: https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage
 [8]: https://www.envoyproxy.io/docs/envoy/latest/api-v3/extensions/formatter/req_without_query/v3/req_without_query.proto

@@ -9,16 +9,16 @@ date: 2019-09-27
 slug: from-ingressroute-to-httpproxy
 ---
 
-As part of the preparations to deliver Contour 1.0 at KubeCon US, [Contour 1.0.0-beta.1 (available now!)][1] renamed the [IngressRoute][2] CRD to [HTTPProxy][3].
+As part of the preparations to deliver Sesame 1.0 at KubeCon US, [Sesame 1.0.0-beta.1 (available now!)][1] renamed the [IngressRoute][2] CRD to [HTTPProxy][3].
 This post explains the path from IngressRoute to HTTPProxy and why the change isn't a revolution but an evolution.
 
 ## IngressRoute is dead, long live HTTPProxy
 
-More than a year ago Contour 0.6 introduced a new CRD, IngressRoute.
+More than a year ago Sesame 0.6 introduced a new CRD, IngressRoute.
 IngressRoute was our attempt to address the issues preventing Kubernetes developers from utilizing modern web deployment patterns in multi tenant Kubernetes clusters.
 
-Fast forward to July of this year where plans to move Contour out of the _0.whatever_ doldrums were being set in motion.
-We knew that stamping a 1.0 release on Contour required us to do the same for IngressRoute, which had at that point been in beta for a period of time that would make a Google product blush.
+Fast forward to July of this year where plans to move Sesame out of the _0.whatever_ doldrums were being set in motion.
+We knew that stamping a 1.0 release on Sesame required us to do the same for IngressRoute, which had at that point been in beta for a period of time that would make a Google product blush.
 Bringing IngressRoute, as it was known at the time, to 1.0 status would involve three things.
 
 The first was addressing, which in retrospect seemed like an inspired piece of guerrilla marketing, the fact that I had plastered not just the name of the product but the name of the sponsoring company throughout annotation names, CRD groups, repository image hosting, and namespace objects.
@@ -35,17 +35,17 @@ But there are more problems than verbosity.
 
 The original Kubernetes Ingress object was clearly intended to address more than just HTTP routing.
 The word Ingress, especially if you talk to the overlay, physical, or software defined networking folks, has nothing to do with layer 7 proxying and load balancing.
-Contour defined its mission as an Ingress controller by what Kubernetes users were using the Ingress object for in 2017: HTTP routing, load balancing, and proxying.
+Sesame defined its mission as an Ingress controller by what Kubernetes users were using the Ingress object for in 2017: HTTP routing, load balancing, and proxying.
 Collectively Kubernetes cloud natives might call the configuration for our HTTP proxies _Ingress_, but what were were doing had little to do with ingress and egress traffic as networking vendors define it.
-The name _HTTPProxy_ reflects the desire to clarify Contour's role in the crowded Kubernetes networking space.
+The name _HTTPProxy_ reflects the desire to clarify Sesame's role in the crowded Kubernetes networking space.
 
 The final issue is addressing the limitations in the IngressRoute--now HTTPProxy--object which we felt could not be solved in an backwards compatible way once we committed to a v1 of the object.
 HTTPProxy brings with it two new concepts--[inclusion][4] and [conditions][5]--which, like the transition from IngressRoute to HTTPProxy, represent the respective evaluations of the delegation model and our limited support for prefix based routing.
 
-The intent of making this change now is to prepare HTTPProxy as a stable CRD for Contour users following the same backwards compatibility goals as Contour 1.0.
+The intent of making this change now is to prepare HTTPProxy as a stable CRD for Sesame users following the same backwards compatibility goals as Sesame 1.0.
 With this goal in mind the IngressRoute CRD, having never made it out of beta, should be considered deprecated.
-Contour will continue to support the IngressRoute CRD up to the 1.0 release of Contour in November, however no further enhancements or bug fixes will be made over this period unless absolutely necessary.
-The plan at this stage is to remove support for the IngressRoute CRD after Contour 1.0 ships.
+Sesame will continue to support the IngressRoute CRD up to the 1.0 release of Sesame in November, however no further enhancements or bug fixes will be made over this period unless absolutely necessary.
+The plan at this stage is to remove support for the IngressRoute CRD after Sesame 1.0 ships.
 We've [written a guide][6] to help you transition your IngressRoute objects to HTTPProxy.
 
 The next blog post in this series will delve into how to use inclusion and conditions.
@@ -53,9 +53,9 @@ Stay tuned for that.
 
 ## TCP proxying future
 
-The final question that should be answered is, with the focus on layer 7 HTTP proxying, what is the future of Contour's TCP proxying feature?
-The short answer is Contour's layer 3/4 TCP proxying feature is not going away.
-Despite the cognitive dissonance, we're committed to supporting and enhancing Contour's TCP proxying abilities via the HTTPProxy CRD for the long term.
+The final question that should be answered is, with the focus on layer 7 HTTP proxying, what is the future of Sesame's TCP proxying feature?
+The short answer is Sesame's layer 3/4 TCP proxying feature is not going away.
+Despite the cognitive dissonance, we're committed to supporting and enhancing Sesame's TCP proxying abilities via the HTTPProxy CRD for the long term.
 
 [1]: {{< param github_url >}}/releases/tag/v1.0.0-beta.1
 [2]: {{< param github_url >}}/blob/v1.0.0-beta.1/docs/ingressroute.md
