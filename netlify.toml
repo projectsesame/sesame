@@ -45,21 +45,21 @@ HUGO_ENABLEGITINFO = "true"
 # Optimization blog post: https://www.netlify.com/blog/2019/08/05/control-your-asset-optimization-settings-from-netlify.toml/
 # How to guide: https://docs.netlify.com/configure-builds/file-based-configuration/#post-processing
 
-# Redirect /quickstart/Sesame.yaml to the deployment that matches :latest.
+# Redirect /quickstart/sesame.yaml to the deployment that matches :latest.
 #
-# kubectl apply https://projectsesame.io/quickstart/Sesame.yaml
+# kubectl apply https://projectsesame.io/quickstart/sesame.yaml
 [[redirects]]
-  from = "/quickstart/Sesame.yaml"
-  to = "https://raw.githubusercontent.com/projectsesame/Sesame/release-1.19/examples/render/Sesame.yaml"
+  from = "/quickstart/sesame.yaml"
+  to = "https://raw.githubusercontent.com/projectsesame/sesame/release-1.19/examples/render/sesame.yaml"
   status = 302
 
 # Redirect versioned quickstarts so that they can easily be referenced by
 # users or for upgrade testing.
 #
-# kubectl apply https://projectsesame.io/quickstart/v1.4.0/Sesame.yaml
+# kubectl apply https://projectsesame.io/quickstart/v1.4.0/sesame.yaml
 [[redirects]]
-  from = "/quickstart/*/Sesame.yaml"
-  to = "https://raw.githubusercontent.com/projectsesame/Sesame/:splat/examples/render/Sesame.yaml"
+  from = "/quickstart/*/sesame.yaml"
+  to = "https://raw.githubusercontent.com/projectsesame/sesame/:splat/examples/render/sesame.yaml"
   status = 302
 
 # Redirect /quickstart/operator.yaml to the deployment that matches :latest.
@@ -79,21 +79,21 @@ from = "/quickstart/*/operator.yaml"
 to = "https://raw.githubusercontent.com/projectsesame/sesame-operator/:splat/examples/operator/operator.yaml"
 status = 302
 
-# Redirect /quickstart/Sesame-custom-resource.yaml to the Sesame custom resource that matches :latest.
+# Redirect /quickstart/sesame-custom-resource.yaml to the Sesame custom resource that matches :latest.
 #
-# kubectl apply https://projectsesame.io/quickstart/Sesame-custom-resource.yaml
+# kubectl apply https://projectsesame.io/quickstart/sesame-custom-resource.yaml
 [[redirects]]
-from = "/quickstart/Sesame-custom-resource.yaml"
-to = "https://raw.githubusercontent.com/projectsesame/sesame-operator/release-1.19/examples/Sesame/Sesame.yaml"
+from = "/quickstart/ssame-custom-resource.yaml"
+to = "https://raw.githubusercontent.com/projectsesame/sesame-operator/release-1.19/examples/sesame/sesame.yaml"
 status = 302
 
 # Redirect versioned quickstarts so that they can easily be referenced by
 # users or for upgrade testing.
 #
-# kubectl apply https://projectsesame.io/quickstart/v1.11.0/Sesame-custom-resource.yaml
+# kubectl apply https://projectsesame.io/quickstart/v1.11.0/sesame-custom-resource.yaml
 [[redirects]]
-from = "/quickstart/*/Sesame-custom-resource.yaml"
-to = "https://raw.githubusercontent.com/projectsesame/sesame-operator/:splat/examples/Sesame/Sesame.yaml"
+from = "/quickstart/*/sesame-custom-resource.yaml"
+to = "https://raw.githubusercontent.com/projectsesame/sesame-operator/:splat/examples/sesame/sesame.yaml"
 status = 302
 
 # Redirect /quickstart/gateway.yaml to the example Gateway manifest that matches :latest.
@@ -104,12 +104,12 @@ from = "/quickstart/gateway.yaml"
 to = "https://raw.githubusercontent.com/projectsesame/sesame-operator/release-1.19/examples/gateway/gateway.yaml"
 status = 302
 
-# Redirect /quickstart/Sesame-gateway.yaml to the example Sesame-Gateway manifest that matches :latest.
+# Redirect /quickstart/sesame-gateway.yaml to the example Sesame-Gateway manifest that matches :latest.
 #
-# kubectl apply https://projectsesame.io/quickstart/Sesame-gateway.yaml
+# kubectl apply https://projectsesame.io/quickstart/sesame-gateway.yaml
 [[redirects]]
-from = "/quickstart/Sesame-gateway.yaml"
-to = "https://raw.githubusercontent.com/projectsesame/Sesame/release-1.19/examples/render/Sesame-gateway.yaml"
+from = "/quickstart/sesame-gateway.yaml"
+to = "https://raw.githubusercontent.com/projectsesame/sesame/release-1.19/examples/render/sesame-gateway.yaml"
 status = 302
 
 # Redirect versioned quickstarts so that they can easily be referenced by

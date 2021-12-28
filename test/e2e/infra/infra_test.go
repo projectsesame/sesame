@@ -19,11 +19,9 @@ package infra
 import (
 	"testing"
 
-	Sesame_api_v1alpha1 "github.com/projectsesame/sesame/apis/projectsesame/v1alpha1"
+	sesame_api_v1alpha1 "github.com/projectsesame/sesame/apis/projectsesame/v1alpha1"
 	v1 "k8s.io/api/core/v1"
 
-	. "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
 	"github.com/onsi/gomega/gexec"
 	"github.com/projectsesame/sesame/pkg/config"
 	"github.com/projectsesame/sesame/test/e2e"
@@ -83,7 +81,7 @@ var _ = Describe("Infra", func() {
 		SesameCmd            *gexec.Session
 		kubectlCmd           *gexec.Session
 		SesameConfig         *config.Parameters
-		SesameConfiguration  *Sesame_api_v1alpha1.SesameConfiguration
+		SesameConfiguration  *sesame_api_v1alpha1.SesameConfiguration
 		SesameConfigFile     string
 		additionalSesameArgs []string
 	)
@@ -136,10 +134,10 @@ var _ = Describe("Infra", func() {
 				CABundle:   "/metrics-certs/ca.crt",
 			}
 
-			SesameConfiguration.Spec.Envoy.Metrics = Sesame_api_v1alpha1.MetricsConfig{
+			SesameConfiguration.Spec.Envoy.Metrics = sesame_api_v1alpha1.MetricsConfig{
 				Address: "0.0.0.0",
 				Port:    8003,
-				TLS: &Sesame_api_v1alpha1.MetricsTLS{
+				TLS: &sesame_api_v1alpha1.MetricsTLS{
 					CertFile: "/metrics-certs/tls.crt",
 					KeyFile:  "/metrics-certs/tls.key",
 					CAFile:   "/metrics-certs/ca.crt",

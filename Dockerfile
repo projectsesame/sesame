@@ -2,11 +2,11 @@ ARG BUILDPLATFORM=linux/amd64
 ARG BUILD_BASE_IMAGE
 
 FROM --platform=$BUILDPLATFORM $BUILD_BASE_IMAGE AS build
-WORKDIR /Sesame
+WORKDIR /sesame
 
 ARG BUILD_GOPROXY
 ENV GOPROXY=${BUILD_GOPROXY}
-COPY go.mod go.sum /Sesame/
+COPY go.mod go.sum /sesame/
 RUN go mod download
 
 COPY cmd cmd
@@ -33,7 +33,7 @@ RUN make build \
 	    BUILD_BRANCH=${BUILD_BRANCH}
 
 # Ensure we produced a static binary.
-RUN ldd Sesame 2>&1 | grep 'not a dynamic executable'
+RUN ldd sesame 2>&1 | grep 'not a dynamic executable'
 
 FROM scratch AS final
-COPY --from=build /Sesame/Sesame /bin/Sesame
+COPY --from=build /sesame/sesame /bin/sesame

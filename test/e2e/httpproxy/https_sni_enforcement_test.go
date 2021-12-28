@@ -19,8 +19,7 @@ package httpproxy
 import (
 	"crypto/tls"
 
-	. "github.com/onsi/ginkgo"
-	Sesamev1 "github.com/projectsesame/sesame/apis/projectsesame/v1"
+	sesamev1 "github.com/projectsesame/sesame/apis/projectsesame/v1"
 	"github.com/projectsesame/sesame/test/e2e"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -34,21 +33,21 @@ func testHTTPSSNIEnforcement(namespace string) {
 		f.Fixtures.Echo.Deploy(namespace, "echo-one")
 		f.Certs.CreateSelfSignedCert(namespace, "echo-one-cert", "echo-one", "sni-enforcement-echo-one.projectsesame.io")
 
-		echoOneProxy := &Sesamev1.HTTPProxy{
+		echoOneProxy := &sesamev1.HTTPProxy{
 			ObjectMeta: metav1.ObjectMeta{
 				Namespace: namespace,
 				Name:      "echo-one",
 			},
-			Spec: Sesamev1.HTTPProxySpec{
-				VirtualHost: &Sesamev1.VirtualHost{
+			Spec: sesamev1.HTTPProxySpec{
+				VirtualHost: &sesamev1.VirtualHost{
 					Fqdn: "sni-enforcement-echo-one.projectsesame.io",
-					TLS: &Sesamev1.TLS{
+					TLS: &sesamev1.TLS{
 						SecretName: "echo-one",
 					},
 				},
-				Routes: []Sesamev1.Route{
+				Routes: []sesamev1.Route{
 					{
-						Services: []Sesamev1.Service{
+						Services: []sesamev1.Service{
 							{
 								Name: "echo-one",
 								Port: 80,
@@ -74,21 +73,21 @@ func testHTTPSSNIEnforcement(namespace string) {
 		f.Fixtures.Echo.Deploy(namespace, "echo-two")
 		f.Certs.CreateSelfSignedCert(namespace, "echo-two-cert", "echo-two", "sni-enforcement-echo-two.projectsesame.io")
 
-		echoTwoProxy := &Sesamev1.HTTPProxy{
+		echoTwoProxy := &sesamev1.HTTPProxy{
 			ObjectMeta: metav1.ObjectMeta{
 				Namespace: namespace,
 				Name:      "echo-two",
 			},
-			Spec: Sesamev1.HTTPProxySpec{
-				VirtualHost: &Sesamev1.VirtualHost{
+			Spec: sesamev1.HTTPProxySpec{
+				VirtualHost: &sesamev1.VirtualHost{
 					Fqdn: "sni-enforcement-echo-two.projectsesame.io",
-					TLS: &Sesamev1.TLS{
+					TLS: &sesamev1.TLS{
 						SecretName: "echo-two",
 					},
 				},
-				Routes: []Sesamev1.Route{
+				Routes: []sesamev1.Route{
 					{
-						Services: []Sesamev1.Service{
+						Services: []sesamev1.Service{
 							{
 								Name: "echo-two",
 								Port: 80,

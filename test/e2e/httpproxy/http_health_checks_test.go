@@ -19,8 +19,7 @@ package httpproxy
 import (
 	"context"
 
-	. "github.com/onsi/ginkgo"
-	Sesamev1 "github.com/projectsesame/sesame/apis/projectsesame/v1"
+	sesamev1 "github.com/projectsesame/sesame/apis/projectsesame/v1"
 	"github.com/projectsesame/sesame/test/e2e"
 	"github.com/stretchr/testify/require"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -34,18 +33,18 @@ func testHTTPHealthChecks(namespace string) {
 
 		f.Fixtures.Echo.Deploy(namespace, "echo")
 
-		p := &Sesamev1.HTTPProxy{
+		p := &sesamev1.HTTPProxy{
 			ObjectMeta: metav1.ObjectMeta{
 				Namespace: namespace,
 				Name:      "health-checks",
 			},
-			Spec: Sesamev1.HTTPProxySpec{
-				VirtualHost: &Sesamev1.VirtualHost{
+			Spec: sesamev1.HTTPProxySpec{
+				VirtualHost: &sesamev1.VirtualHost{
 					Fqdn: "healthchecks.projectsesame.io",
 				},
-				Routes: []Sesamev1.Route{
+				Routes: []sesamev1.Route{
 					{
-						Services: []Sesamev1.Service{
+						Services: []sesamev1.Service{
 							{
 								Name: "echo",
 								Port: 80,
@@ -70,7 +69,7 @@ func testHTTPHealthChecks(namespace string) {
 				return err
 			}
 
-			p.Spec.Routes[0].HealthCheckPolicy = &Sesamev1.HTTPHealthCheckPolicy{
+			p.Spec.Routes[0].HealthCheckPolicy = &sesamev1.HTTPHealthCheckPolicy{
 				Path: "/status/418",
 			}
 
@@ -92,7 +91,7 @@ func testHTTPHealthChecks(namespace string) {
 				return err
 			}
 
-			p.Spec.Routes[0].HealthCheckPolicy = &Sesamev1.HTTPHealthCheckPolicy{
+			p.Spec.Routes[0].HealthCheckPolicy = &sesamev1.HTTPHealthCheckPolicy{
 				Path: "/status/200",
 			}
 

@@ -20,8 +20,7 @@ import (
 	"net/http"
 	"strings"
 
-	. "github.com/onsi/ginkgo"
-	Sesamev1 "github.com/projectsesame/sesame/apis/projectsesame/v1"
+	sesamev1 "github.com/projectsesame/sesame/apis/projectsesame/v1"
 	"github.com/projectsesame/sesame/test/e2e"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -34,23 +33,23 @@ func testDynamicHeaders(namespace string) {
 
 		f.Fixtures.Echo.Deploy(namespace, "ingress-conformance-echo")
 
-		p := &Sesamev1.HTTPProxy{
+		p := &sesamev1.HTTPProxy{
 			ObjectMeta: metav1.ObjectMeta{
 				Namespace: namespace,
 				Name:      "dynamic-headers",
 			},
-			Spec: Sesamev1.HTTPProxySpec{
-				VirtualHost: &Sesamev1.VirtualHost{
+			Spec: sesamev1.HTTPProxySpec{
+				VirtualHost: &sesamev1.VirtualHost{
 					Fqdn: "dynamicheaders.projectsesame.io",
 				},
-				Routes: []Sesamev1.Route{
+				Routes: []sesamev1.Route{
 					{
-						Services: []Sesamev1.Service{
+						Services: []sesamev1.Service{
 							{
 								Name:                  "ingress-conformance-echo",
 								Port:                  80,
-								RequestHeadersPolicy:  &Sesamev1.HeadersPolicy{},
-								ResponseHeadersPolicy: &Sesamev1.HeadersPolicy{},
+								RequestHeadersPolicy:  &sesamev1.HeadersPolicy{},
+								ResponseHeadersPolicy: &sesamev1.HeadersPolicy{},
 							},
 						},
 					},
@@ -95,7 +94,7 @@ func testDynamicHeaders(namespace string) {
 			"X-Sesame-Service":                "%Sesame_SERVICE_NAME%:%Sesame_SERVICE_PORT%",
 		}
 		for k, v := range requestHeaders {
-			hv := Sesamev1.HeaderValue{
+			hv := sesamev1.HeaderValue{
 				Name:  k,
 				Value: v,
 			}
@@ -137,7 +136,7 @@ func testDynamicHeaders(namespace string) {
 			"X-Dynamic-Header-24":             "%RESPONSE_CODE_DETAILS%",
 		}
 		for k, v := range responseHeaders {
-			hv := Sesamev1.HeaderValue{
+			hv := sesamev1.HeaderValue{
 				Name:  k,
 				Value: v,
 			}

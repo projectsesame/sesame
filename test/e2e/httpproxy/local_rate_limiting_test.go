@@ -19,8 +19,7 @@ package httpproxy
 import (
 	"context"
 
-	. "github.com/onsi/ginkgo"
-	Sesamev1 "github.com/projectsesame/sesame/apis/projectsesame/v1"
+	sesamev1 "github.com/projectsesame/sesame/apis/projectsesame/v1"
 	"github.com/projectsesame/sesame/test/e2e"
 	"github.com/stretchr/testify/require"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -34,18 +33,18 @@ func testLocalRateLimitingVirtualHost(namespace string) {
 
 		f.Fixtures.Echo.Deploy(namespace, "echo")
 
-		p := &Sesamev1.HTTPProxy{
+		p := &sesamev1.HTTPProxy{
 			ObjectMeta: metav1.ObjectMeta{
 				Namespace: namespace,
 				Name:      "vhostlocalratelimit",
 			},
-			Spec: Sesamev1.HTTPProxySpec{
-				VirtualHost: &Sesamev1.VirtualHost{
+			Spec: sesamev1.HTTPProxySpec{
+				VirtualHost: &sesamev1.VirtualHost{
 					Fqdn: "vhostlocalratelimit.projectsesame.io",
 				},
-				Routes: []Sesamev1.Route{
+				Routes: []sesamev1.Route{
 					{
-						Services: []Sesamev1.Service{
+						Services: []sesamev1.Service{
 							{
 								Name: "echo",
 								Port: 80,
@@ -72,8 +71,8 @@ func testLocalRateLimitingVirtualHost(namespace string) {
 				return err
 			}
 
-			p.Spec.VirtualHost.RateLimitPolicy = &Sesamev1.RateLimitPolicy{
-				Local: &Sesamev1.LocalRateLimitPolicy{
+			p.Spec.VirtualHost.RateLimitPolicy = &sesamev1.RateLimitPolicy{
+				Local: &sesamev1.LocalRateLimitPolicy{
 					Requests: 1,
 					Unit:     "hour",
 				},
@@ -108,18 +107,18 @@ func testLocalRateLimitingRoute(namespace string) {
 
 		f.Fixtures.Echo.Deploy(namespace, "echo")
 
-		p := &Sesamev1.HTTPProxy{
+		p := &sesamev1.HTTPProxy{
 			ObjectMeta: metav1.ObjectMeta{
 				Namespace: namespace,
 				Name:      "routelocalratelimit",
 			},
-			Spec: Sesamev1.HTTPProxySpec{
-				VirtualHost: &Sesamev1.VirtualHost{
+			Spec: sesamev1.HTTPProxySpec{
+				VirtualHost: &sesamev1.VirtualHost{
 					Fqdn: "routelocalratelimit.projectsesame.io",
 				},
-				Routes: []Sesamev1.Route{
+				Routes: []sesamev1.Route{
 					{
-						Services: []Sesamev1.Service{
+						Services: []sesamev1.Service{
 							{
 								Name: "echo",
 								Port: 80,
@@ -127,13 +126,13 @@ func testLocalRateLimitingRoute(namespace string) {
 						},
 					},
 					{
-						Services: []Sesamev1.Service{
+						Services: []sesamev1.Service{
 							{
 								Name: "echo",
 								Port: 80,
 							},
 						},
-						Conditions: []Sesamev1.MatchCondition{
+						Conditions: []sesamev1.MatchCondition{
 							{
 								Prefix: "/unlimited",
 							},
@@ -159,8 +158,8 @@ func testLocalRateLimitingRoute(namespace string) {
 				return err
 			}
 
-			p.Spec.Routes[0].RateLimitPolicy = &Sesamev1.RateLimitPolicy{
-				Local: &Sesamev1.LocalRateLimitPolicy{
+			p.Spec.Routes[0].RateLimitPolicy = &sesamev1.RateLimitPolicy{
+				Local: &sesamev1.LocalRateLimitPolicy{
 					Requests: 1,
 					Unit:     "hour",
 				},

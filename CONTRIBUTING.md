@@ -28,7 +28,7 @@ Sesame uses [`go modules`][2] for dependency management.
 2. Create a local clone
 
 ```
-git clone git@github.com:YOUR-USERNAME/Sesame.git
+git clone git@github.com:YOUR-USERNAME/sesame.git
 ```
 
 ### Building
@@ -238,8 +238,8 @@ Sesame uses the following pattern to name imports when referencing packages from
 Examples:
 
 ```
-Sesame_api_v1 "github.com/projectsesame/sesame/apis/projectsesame/v1"
-Sesame_api_v1alpha1 "github.com/projectsesame/sesame/apis/projectsesame/v1alpha1"
+sesame_api_v1 "github.com/projectsesame/sesame/apis/projectsesame/v1"
+sesame_api_v1alpha1 "github.com/projectsesame/sesame/apis/projectsesame/v1alpha1"
 envoy_v3 "github.com/projectsesame/sesame/internal/envoy/v3"
 xdscache_v3 "github.com/projectsesame/sesame/internal/xdscache/v3"
 ```   
@@ -249,7 +249,7 @@ xdscache_v3 "github.com/projectsesame/sesame/internal/xdscache/v3"
 Before a change is submitted it should pass all the pre commit CI jobs.
 If there are unrelated test failures the change can be merged so long as a reference to an issue that tracks the test failures is provided.
 
-Once a change lands in main it will be built and available at this tag, `ghcr.io/projectsesame/Sesame:main`.
+Once a change lands in main it will be built and available at this tag, `ghcr.io/projectsesame/sesame:main`.
 You can read more about the available Sesame images in the [tagging][7] document.
 
 ### Build an image
@@ -257,8 +257,8 @@ You can read more about the available Sesame images in the [tagging][7] document
 To build an image of your change using Sesame's `Dockerfile`, run these commands (replacing the repository host and tag with your own):
 
 ```
-docker build -t ghcr.io/davecheney/Sesame:latest .
-docker push ghcr.io/davecheney/Sesame:latest
+docker build -t ghcr.io/davecheney/sesame:latest .
+docker push ghcr.io/davecheney/sesame:latest
 ```
 or, you can use the make helper, like so:
 

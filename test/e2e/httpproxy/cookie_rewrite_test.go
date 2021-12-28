@@ -23,8 +23,7 @@ import (
 	"net/http"
 	"strings"
 
-	. "github.com/onsi/ginkgo"
-	Sesamev1 "github.com/projectsesame/sesame/apis/projectsesame/v1"
+	sesamev1 "github.com/projectsesame/sesame/apis/projectsesame/v1"
 	"github.com/projectsesame/sesame/test/e2e"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -49,24 +48,24 @@ func testInvalidCookieRewriteFields(namespace string) {
 		}, controlChars...)
 
 		for _, c := range invalidNameChars {
-			p := &Sesamev1.HTTPProxy{
+			p := &sesamev1.HTTPProxy{
 				ObjectMeta: metav1.ObjectMeta{
 					Namespace: namespace,
 					Name:      fmt.Sprintf("invalid-cookie-name-%d", c),
 				},
-				Spec: Sesamev1.HTTPProxySpec{
-					VirtualHost: &Sesamev1.VirtualHost{
+				Spec: sesamev1.HTTPProxySpec{
+					VirtualHost: &sesamev1.VirtualHost{
 						Fqdn: fmt.Sprintf("invalid-cookie-name-%d.projectsesame.io", c),
 					},
-					Routes: []Sesamev1.Route{
+					Routes: []sesamev1.Route{
 						{
-							CookieRewritePolicies: []Sesamev1.CookieRewritePolicy{
+							CookieRewritePolicies: []sesamev1.CookieRewritePolicy{
 								{
 									Name:        fmt.Sprintf("invalid%cchar", c),
-									PathRewrite: &Sesamev1.CookiePathRewrite{Value: "/foo"},
+									PathRewrite: &sesamev1.CookiePathRewrite{Value: "/foo"},
 								},
 							},
-							Services: []Sesamev1.Service{
+							Services: []sesamev1.Service{
 								{
 									Name: "echo",
 									Port: 80,
@@ -82,24 +81,24 @@ func testInvalidCookieRewriteFields(namespace string) {
 		// ;, DEL, and control chars.
 		invalidPathChars := append([]rune{';', 127}, controlChars...)
 		for _, c := range invalidPathChars {
-			p := &Sesamev1.HTTPProxy{
+			p := &sesamev1.HTTPProxy{
 				ObjectMeta: metav1.ObjectMeta{
 					Namespace: namespace,
 					Name:      fmt.Sprintf("invalid-path-%d", c),
 				},
-				Spec: Sesamev1.HTTPProxySpec{
-					VirtualHost: &Sesamev1.VirtualHost{
+				Spec: sesamev1.HTTPProxySpec{
+					VirtualHost: &sesamev1.VirtualHost{
 						Fqdn: fmt.Sprintf("invalid-path-%d.projectsesame.io", c),
 					},
-					Routes: []Sesamev1.Route{
+					Routes: []sesamev1.Route{
 						{
-							CookieRewritePolicies: []Sesamev1.CookieRewritePolicy{
+							CookieRewritePolicies: []sesamev1.CookieRewritePolicy{
 								{
 									Name:        "invalidpath",
-									PathRewrite: &Sesamev1.CookiePathRewrite{Value: fmt.Sprintf("/invalid%cpath", c)},
+									PathRewrite: &sesamev1.CookiePathRewrite{Value: fmt.Sprintf("/invalid%cpath", c)},
 								},
 							},
-							Services: []Sesamev1.Service{
+							Services: []sesamev1.Service{
 								{
 									Name: "echo",
 									Port: 80,
@@ -116,26 +115,26 @@ func testInvalidCookieRewriteFields(namespace string) {
 			"*", "*.foo.com", "invalid.char&.com",
 		}
 		for i, d := range invalidDomains {
-			p := &Sesamev1.HTTPProxy{
+			p := &sesamev1.HTTPProxy{
 				ObjectMeta: metav1.ObjectMeta{
 					Namespace: namespace,
 					Name:      fmt.Sprintf("invalid-domain-%d", i),
 				},
-				Spec: Sesamev1.HTTPProxySpec{
-					VirtualHost: &Sesamev1.VirtualHost{
+				Spec: sesamev1.HTTPProxySpec{
+					VirtualHost: &sesamev1.VirtualHost{
 						Fqdn: fmt.Sprintf("invalid-domain-%d.projectsesame.io", i),
 					},
-					Routes: []Sesamev1.Route{
+					Routes: []sesamev1.Route{
 						{
-							CookieRewritePolicies: []Sesamev1.CookieRewritePolicy{
+							CookieRewritePolicies: []sesamev1.CookieRewritePolicy{
 								{
 									Name: "invaliddomain",
-									DomainRewrite: &Sesamev1.CookieDomainRewrite{
+									DomainRewrite: &sesamev1.CookieDomainRewrite{
 										Value: d,
 									},
 								},
 							},
-							Services: []Sesamev1.Service{
+							Services: []sesamev1.Service{
 								{
 									Name: "echo",
 									Port: 80,
@@ -148,24 +147,24 @@ func testInvalidCookieRewriteFields(namespace string) {
 			assert.Error(f.T(), f.Client.Create(context.TODO(), p), "expected domain rewrite %q to be invalid", d)
 		}
 
-		p := &Sesamev1.HTTPProxy{
+		p := &sesamev1.HTTPProxy{
 			ObjectMeta: metav1.ObjectMeta{
 				Namespace: namespace,
 				Name:      "invalid-samesite",
 			},
-			Spec: Sesamev1.HTTPProxySpec{
-				VirtualHost: &Sesamev1.VirtualHost{
+			Spec: sesamev1.HTTPProxySpec{
+				VirtualHost: &sesamev1.VirtualHost{
 					Fqdn: "invalid-samesite.projectsesame.io",
 				},
-				Routes: []Sesamev1.Route{
+				Routes: []sesamev1.Route{
 					{
-						CookieRewritePolicies: []Sesamev1.CookieRewritePolicy{
+						CookieRewritePolicies: []sesamev1.CookieRewritePolicy{
 							{
 								Name:     "invalid-samesite",
 								SameSite: pointer.String("Invalid"),
 							},
 						},
-						Services: []Sesamev1.Service{
+						Services: []sesamev1.Service{
 							{
 								Name: "echo",
 								Port: 80,
@@ -184,21 +183,21 @@ func testAppCookieRewrite(namespace string) {
 		deployEchoServer(f.T(), f.Client, namespace, "echo")
 		deployEchoServer(f.T(), f.Client, namespace, "echo-other")
 
-		p := &Sesamev1.HTTPProxy{
+		p := &sesamev1.HTTPProxy{
 			ObjectMeta: metav1.ObjectMeta{
 				Namespace: namespace,
 				Name:      "app-cookie-rewrite",
 			},
-			Spec: Sesamev1.HTTPProxySpec{
-				VirtualHost: &Sesamev1.VirtualHost{
+			Spec: sesamev1.HTTPProxySpec{
+				VirtualHost: &sesamev1.VirtualHost{
 					Fqdn: "app-cookie-rewrite.projectsesame.io",
 				},
-				Routes: []Sesamev1.Route{
+				Routes: []sesamev1.Route{
 					{
-						Conditions: []Sesamev1.MatchCondition{
+						Conditions: []sesamev1.MatchCondition{
 							{Prefix: "/no-rewrite"},
 						},
-						Services: []Sesamev1.Service{
+						Services: []sesamev1.Service{
 							{
 								Name: "echo",
 								Port: 80,
@@ -206,19 +205,19 @@ func testAppCookieRewrite(namespace string) {
 						},
 					},
 					{
-						Conditions: []Sesamev1.MatchCondition{
+						Conditions: []sesamev1.MatchCondition{
 							{Prefix: "/no-attributes"},
 						},
-						CookieRewritePolicies: []Sesamev1.CookieRewritePolicy{
+						CookieRewritePolicies: []sesamev1.CookieRewritePolicy{
 							{
 								Name:          "no-attributes",
-								PathRewrite:   &Sesamev1.CookiePathRewrite{Value: "/foo"},
-								DomainRewrite: &Sesamev1.CookieDomainRewrite{Value: "foo.com"},
+								PathRewrite:   &sesamev1.CookiePathRewrite{Value: "/foo"},
+								DomainRewrite: &sesamev1.CookieDomainRewrite{Value: "foo.com"},
 								Secure:        pointer.Bool(true),
 								SameSite:      pointer.String("Strict"),
 							},
 						},
-						Services: []Sesamev1.Service{
+						Services: []sesamev1.Service{
 							{
 								Name: "echo",
 								Port: 80,
@@ -226,19 +225,19 @@ func testAppCookieRewrite(namespace string) {
 						},
 					},
 					{
-						Conditions: []Sesamev1.MatchCondition{
+						Conditions: []sesamev1.MatchCondition{
 							{Prefix: "/rewrite-all"},
 						},
-						CookieRewritePolicies: []Sesamev1.CookieRewritePolicy{
+						CookieRewritePolicies: []sesamev1.CookieRewritePolicy{
 							{
 								Name:          "rewrite-all",
-								PathRewrite:   &Sesamev1.CookiePathRewrite{Value: "/ra"},
-								DomainRewrite: &Sesamev1.CookieDomainRewrite{Value: "ra.com"},
+								PathRewrite:   &sesamev1.CookiePathRewrite{Value: "/ra"},
+								DomainRewrite: &sesamev1.CookieDomainRewrite{Value: "ra.com"},
 								Secure:        pointer.Bool(false),
 								SameSite:      pointer.String("Lax"),
 							},
 						},
-						Services: []Sesamev1.Service{
+						Services: []sesamev1.Service{
 							{
 								Name: "echo",
 								Port: 80,
@@ -246,16 +245,16 @@ func testAppCookieRewrite(namespace string) {
 						},
 					},
 					{
-						Conditions: []Sesamev1.MatchCondition{
+						Conditions: []sesamev1.MatchCondition{
 							{Prefix: "/rewrite-some"},
 						},
-						CookieRewritePolicies: []Sesamev1.CookieRewritePolicy{
+						CookieRewritePolicies: []sesamev1.CookieRewritePolicy{
 							{
 								Name:          "rewrite-some",
-								DomainRewrite: &Sesamev1.CookieDomainRewrite{Value: "rs.com"},
+								DomainRewrite: &sesamev1.CookieDomainRewrite{Value: "rs.com"},
 							},
 						},
-						Services: []Sesamev1.Service{
+						Services: []sesamev1.Service{
 							{
 								Name: "echo",
 								Port: 80,
@@ -263,20 +262,20 @@ func testAppCookieRewrite(namespace string) {
 						},
 					},
 					{
-						Conditions: []Sesamev1.MatchCondition{
+						Conditions: []sesamev1.MatchCondition{
 							{Prefix: "/multi"},
 						},
-						CookieRewritePolicies: []Sesamev1.CookieRewritePolicy{
+						CookieRewritePolicies: []sesamev1.CookieRewritePolicy{
 							{
 								Name:        "multi-1",
-								PathRewrite: &Sesamev1.CookiePathRewrite{Value: "/m1"},
+								PathRewrite: &sesamev1.CookiePathRewrite{Value: "/m1"},
 							},
 							{
 								Name:          "multi-2",
-								DomainRewrite: &Sesamev1.CookieDomainRewrite{Value: "m2.com"},
+								DomainRewrite: &sesamev1.CookieDomainRewrite{Value: "m2.com"},
 							},
 						},
-						Services: []Sesamev1.Service{
+						Services: []sesamev1.Service{
 							{
 								Name: "echo",
 								Port: 80,
@@ -284,61 +283,61 @@ func testAppCookieRewrite(namespace string) {
 						},
 					},
 					{
-						Conditions: []Sesamev1.MatchCondition{
+						Conditions: []sesamev1.MatchCondition{
 							{Prefix: "/service"},
 						},
-						Services: []Sesamev1.Service{
+						Services: []sesamev1.Service{
 							{
 								Name: "echo",
 								Port: 80,
-								CookieRewritePolicies: []Sesamev1.CookieRewritePolicy{
+								CookieRewritePolicies: []sesamev1.CookieRewritePolicy{
 									{
 										Name:        "service",
-										PathRewrite: &Sesamev1.CookiePathRewrite{Value: "/svc-new"},
+										PathRewrite: &sesamev1.CookiePathRewrite{Value: "/svc-new"},
 									},
 								},
 							},
 							{
 								Name: "echo-other",
 								Port: 80,
-								CookieRewritePolicies: []Sesamev1.CookieRewritePolicy{
+								CookieRewritePolicies: []sesamev1.CookieRewritePolicy{
 									{
 										Name:        "service",
-										PathRewrite: &Sesamev1.CookiePathRewrite{Value: "/svc-new-other"},
+										PathRewrite: &sesamev1.CookiePathRewrite{Value: "/svc-new-other"},
 									},
 								},
 							},
 						},
 					},
 					{
-						Conditions: []Sesamev1.MatchCondition{
+						Conditions: []sesamev1.MatchCondition{
 							{Prefix: "/route-and-service"},
 						},
-						CookieRewritePolicies: []Sesamev1.CookieRewritePolicy{
+						CookieRewritePolicies: []sesamev1.CookieRewritePolicy{
 							{
 								Name:          "route-service",
-								PathRewrite:   &Sesamev1.CookiePathRewrite{Value: "/route"},
-								DomainRewrite: &Sesamev1.CookieDomainRewrite{Value: "route.com"},
+								PathRewrite:   &sesamev1.CookiePathRewrite{Value: "/route"},
+								DomainRewrite: &sesamev1.CookieDomainRewrite{Value: "route.com"},
 							},
 							{
 								Name:        "route",
-								PathRewrite: &Sesamev1.CookiePathRewrite{Value: "/route"},
+								PathRewrite: &sesamev1.CookiePathRewrite{Value: "/route"},
 							},
 						},
-						Services: []Sesamev1.Service{
+						Services: []sesamev1.Service{
 							{
 								Name: "echo",
 								Port: 80,
-								CookieRewritePolicies: []Sesamev1.CookieRewritePolicy{
+								CookieRewritePolicies: []sesamev1.CookieRewritePolicy{
 									{
 										Name:        "route-service",
-										PathRewrite: &Sesamev1.CookiePathRewrite{Value: "/service"},
+										PathRewrite: &sesamev1.CookiePathRewrite{Value: "/service"},
 										Secure:      pointer.Bool(true),
 										SameSite:    pointer.String("Lax"),
 									},
 									{
 										Name:        "service",
-										PathRewrite: &Sesamev1.CookiePathRewrite{Value: "/service"},
+										PathRewrite: &sesamev1.CookiePathRewrite{Value: "/service"},
 									},
 								},
 							},
@@ -439,27 +438,27 @@ func testHeaderGlobalRewriteCookieRewrite(namespace string) {
 	Specify("cookies from global header rewrites can be rewritten", func() {
 		f.Fixtures.Echo.Deploy(namespace, "echo")
 
-		p := &Sesamev1.HTTPProxy{
+		p := &sesamev1.HTTPProxy{
 			ObjectMeta: metav1.ObjectMeta{
 				Namespace: namespace,
 				Name:      "global-header-rewrite-cookie-rewrite",
 			},
-			Spec: Sesamev1.HTTPProxySpec{
-				VirtualHost: &Sesamev1.VirtualHost{
+			Spec: sesamev1.HTTPProxySpec{
+				VirtualHost: &sesamev1.VirtualHost{
 					Fqdn: "global-header-rewrite-cookie-rewrite.projectsesame.io",
 				},
-				Routes: []Sesamev1.Route{
+				Routes: []sesamev1.Route{
 					{
-						Conditions: []Sesamev1.MatchCondition{
+						Conditions: []sesamev1.MatchCondition{
 							{Prefix: "/global"},
 						},
-						CookieRewritePolicies: []Sesamev1.CookieRewritePolicy{
+						CookieRewritePolicies: []sesamev1.CookieRewritePolicy{
 							{
 								Name:        "global",
-								PathRewrite: &Sesamev1.CookiePathRewrite{Value: "/global"},
+								PathRewrite: &sesamev1.CookiePathRewrite{Value: "/global"},
 							},
 						},
-						Services: []Sesamev1.Service{
+						Services: []sesamev1.Service{
 							{
 								Name: "echo",
 								Port: 80,
@@ -486,31 +485,31 @@ func testHeaderRewriteCookieRewrite(namespace string) {
 	Specify("cookies from HTTPProxy header rewrites can be rewritten", func() {
 		f.Fixtures.Echo.Deploy(namespace, "echo")
 
-		p := &Sesamev1.HTTPProxy{
+		p := &sesamev1.HTTPProxy{
 			ObjectMeta: metav1.ObjectMeta{
 				Namespace: namespace,
 				Name:      "header-rewrite-cookie-rewrite",
 			},
-			Spec: Sesamev1.HTTPProxySpec{
-				VirtualHost: &Sesamev1.VirtualHost{
+			Spec: sesamev1.HTTPProxySpec{
+				VirtualHost: &sesamev1.VirtualHost{
 					Fqdn: "header-rewrite-cookie-rewrite.projectsesame.io",
 				},
-				Routes: []Sesamev1.Route{
+				Routes: []sesamev1.Route{
 					{
-						Conditions: []Sesamev1.MatchCondition{
+						Conditions: []sesamev1.MatchCondition{
 							{Prefix: "/cookie-lb"},
 						},
-						LoadBalancerPolicy: &Sesamev1.LoadBalancerPolicy{
+						LoadBalancerPolicy: &sesamev1.LoadBalancerPolicy{
 							Strategy: "Cookie",
 						},
-						CookieRewritePolicies: []Sesamev1.CookieRewritePolicy{
+						CookieRewritePolicies: []sesamev1.CookieRewritePolicy{
 							{
 								Name:     "X-Sesame-Session-Affinity",
 								Secure:   pointer.Bool(true),
 								SameSite: pointer.String("Strict"),
 							},
 						},
-						Services: []Sesamev1.Service{
+						Services: []sesamev1.Service{
 							{
 								Name: "echo",
 								Port: 80,
@@ -518,21 +517,21 @@ func testHeaderRewriteCookieRewrite(namespace string) {
 						},
 					},
 					{
-						Conditions: []Sesamev1.MatchCondition{
+						Conditions: []sesamev1.MatchCondition{
 							{Prefix: "/route-route"},
 						},
-						ResponseHeadersPolicy: &Sesamev1.HeadersPolicy{
-							Set: []Sesamev1.HeaderValue{
+						ResponseHeadersPolicy: &sesamev1.HeadersPolicy{
+							Set: []sesamev1.HeaderValue{
 								{Name: "Set-Cookie", Value: "route-route=foo"},
 							},
 						},
-						CookieRewritePolicies: []Sesamev1.CookieRewritePolicy{
+						CookieRewritePolicies: []sesamev1.CookieRewritePolicy{
 							{
 								Name:        "route-route",
-								PathRewrite: &Sesamev1.CookiePathRewrite{Value: "/route-route"},
+								PathRewrite: &sesamev1.CookiePathRewrite{Value: "/route-route"},
 							},
 						},
-						Services: []Sesamev1.Service{
+						Services: []sesamev1.Service{
 							{
 								Name: "echo",
 								Port: 80,
@@ -540,65 +539,65 @@ func testHeaderRewriteCookieRewrite(namespace string) {
 						},
 					},
 					{
-						Conditions: []Sesamev1.MatchCondition{
+						Conditions: []sesamev1.MatchCondition{
 							{Prefix: "/route-service"},
 						},
-						ResponseHeadersPolicy: &Sesamev1.HeadersPolicy{
-							Set: []Sesamev1.HeaderValue{
+						ResponseHeadersPolicy: &sesamev1.HeadersPolicy{
+							Set: []sesamev1.HeaderValue{
 								{Name: "Set-Cookie", Value: "route-service=foo"},
 							},
 						},
-						Services: []Sesamev1.Service{
+						Services: []sesamev1.Service{
 							{
 								Name: "echo",
 								Port: 80,
-								CookieRewritePolicies: []Sesamev1.CookieRewritePolicy{
+								CookieRewritePolicies: []sesamev1.CookieRewritePolicy{
 									{
 										Name:        "route-service",
-										PathRewrite: &Sesamev1.CookiePathRewrite{Value: "/route-service"},
+										PathRewrite: &sesamev1.CookiePathRewrite{Value: "/route-service"},
 									},
 								},
 							},
 						},
 					},
 					{
-						Conditions: []Sesamev1.MatchCondition{
+						Conditions: []sesamev1.MatchCondition{
 							{Prefix: "/service-service"},
 						},
-						Services: []Sesamev1.Service{
+						Services: []sesamev1.Service{
 							{
 								Name: "echo",
 								Port: 80,
-								ResponseHeadersPolicy: &Sesamev1.HeadersPolicy{
-									Set: []Sesamev1.HeaderValue{
+								ResponseHeadersPolicy: &sesamev1.HeadersPolicy{
+									Set: []sesamev1.HeaderValue{
 										{Name: "Set-Cookie", Value: "service-service=bar"},
 									},
 								},
-								CookieRewritePolicies: []Sesamev1.CookieRewritePolicy{
+								CookieRewritePolicies: []sesamev1.CookieRewritePolicy{
 									{
 										Name:        "service-service",
-										PathRewrite: &Sesamev1.CookiePathRewrite{Value: "/service-service"},
+										PathRewrite: &sesamev1.CookiePathRewrite{Value: "/service-service"},
 									},
 								},
 							},
 						},
 					},
 					{
-						Conditions: []Sesamev1.MatchCondition{
+						Conditions: []sesamev1.MatchCondition{
 							{Prefix: "/service-route"},
 						},
-						CookieRewritePolicies: []Sesamev1.CookieRewritePolicy{
+						CookieRewritePolicies: []sesamev1.CookieRewritePolicy{
 							{
 								Name:        "service-route",
-								PathRewrite: &Sesamev1.CookiePathRewrite{Value: "/service-route"},
+								PathRewrite: &sesamev1.CookiePathRewrite{Value: "/service-route"},
 							},
 						},
-						Services: []Sesamev1.Service{
+						Services: []sesamev1.Service{
 							{
 								Name: "echo",
 								Port: 80,
-								ResponseHeadersPolicy: &Sesamev1.HeadersPolicy{
-									Set: []Sesamev1.HeaderValue{
+								ResponseHeadersPolicy: &sesamev1.HeadersPolicy{
+									Set: []sesamev1.HeaderValue{
 										{Name: "Set-Cookie", Value: "service-route=bar"},
 									},
 								},
@@ -662,30 +661,30 @@ func testCookieRewriteTLS(namespace string) {
 		deployEchoServer(f.T(), f.Client, namespace, "echo")
 		f.Certs.CreateSelfSignedCert(namespace, "echo-cert", "echo", "cookie-rewrite-tls.projectsesame.io")
 
-		p := &Sesamev1.HTTPProxy{
+		p := &sesamev1.HTTPProxy{
 			ObjectMeta: metav1.ObjectMeta{
 				Namespace: namespace,
 				Name:      "cookie-rewrite-tls",
 			},
-			Spec: Sesamev1.HTTPProxySpec{
-				VirtualHost: &Sesamev1.VirtualHost{
+			Spec: sesamev1.HTTPProxySpec{
+				VirtualHost: &sesamev1.VirtualHost{
 					Fqdn: "cookie-rewrite-tls.projectsesame.io",
-					TLS: &Sesamev1.TLS{
+					TLS: &sesamev1.TLS{
 						SecretName: "echo",
 					},
 				},
-				Routes: []Sesamev1.Route{
+				Routes: []sesamev1.Route{
 					{
-						CookieRewritePolicies: []Sesamev1.CookieRewritePolicy{
+						CookieRewritePolicies: []sesamev1.CookieRewritePolicy{
 							{
 								Name:          "a-cookie",
-								PathRewrite:   &Sesamev1.CookiePathRewrite{Value: "/"},
-								DomainRewrite: &Sesamev1.CookieDomainRewrite{Value: "cookie-rewrite-tls.projectsesame.io"},
+								PathRewrite:   &sesamev1.CookiePathRewrite{Value: "/"},
+								DomainRewrite: &sesamev1.CookieDomainRewrite{Value: "cookie-rewrite-tls.projectsesame.io"},
 								Secure:        pointer.Bool(true),
 								SameSite:      pointer.String("Strict"),
 							},
 						},
-						Services: []Sesamev1.Service{
+						Services: []sesamev1.Service{
 							{
 								Name: "echo",
 								Port: 80,

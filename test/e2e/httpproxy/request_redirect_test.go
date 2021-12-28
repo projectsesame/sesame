@@ -19,10 +19,9 @@ package httpproxy
 import (
 	"net/http"
 
-	Sesame_api_v1 "github.com/projectsesame/sesame/apis/projectsesame/v1"
+	sesame_api_v1 "github.com/projectsesame/sesame/apis/projectsesame/v1"
 
 	"github.com/onsi/ginkgo"
-	. "github.com/onsi/ginkgo"
 	"github.com/projectsesame/sesame/test/e2e"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -53,7 +52,7 @@ func testRequestRedirectRule(namespace string) {
 	})
 }
 
-func doTest(namespace string, proxy *Sesame_api_v1.HTTPProxy, t ginkgo.GinkgoTInterface) {
+func doTest(namespace string, proxy *sesame_api_v1.HTTPProxy, t ginkgo.GinkgoTInterface) {
 
 	f.Fixtures.Echo.Deploy(namespace, "echo")
 
@@ -89,37 +88,37 @@ func doTest(namespace string, proxy *Sesame_api_v1.HTTPProxy, t ginkgo.GinkgoTIn
 	assert.Equal(t, "https://envoyproxy.io:8080/complex-redirect", res.Headers.Get("Location"))
 }
 
-func getHTTPProxy(namespace string, removeServices bool) *Sesame_api_v1.HTTPProxy {
+func getHTTPProxy(namespace string, removeServices bool) *sesame_api_v1.HTTPProxy {
 
-	proxy := &Sesame_api_v1.HTTPProxy{
+	proxy := &sesame_api_v1.HTTPProxy{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "redirect",
 			Namespace: namespace,
 		},
-		Spec: Sesame_api_v1.HTTPProxySpec{
-			VirtualHost: &Sesame_api_v1.VirtualHost{
+		Spec: sesame_api_v1.HTTPProxySpec{
+			VirtualHost: &sesame_api_v1.VirtualHost{
 				Fqdn: "requestredirectrule.projectsesame.io",
 			},
-			Routes: []Sesame_api_v1.Route{{
-				Conditions: []Sesame_api_v1.MatchCondition{{
+			Routes: []sesame_api_v1.Route{{
+				Conditions: []sesame_api_v1.MatchCondition{{
 					Prefix: "/basic-redirect",
 				}},
-				Services: []Sesame_api_v1.Service{{
+				Services: []sesame_api_v1.Service{{
 					Name: "echo",
 					Port: 80,
 				}},
-				RequestRedirectPolicy: &Sesame_api_v1.HTTPRequestRedirectPolicy{
+				RequestRedirectPolicy: &sesame_api_v1.HTTPRequestRedirectPolicy{
 					Hostname: pointer.StringPtr("projectsesame.io"),
 				},
 			}, {
-				Conditions: []Sesame_api_v1.MatchCondition{{
+				Conditions: []sesame_api_v1.MatchCondition{{
 					Prefix: "/complex-redirect",
 				}},
-				Services: []Sesame_api_v1.Service{{
+				Services: []sesame_api_v1.Service{{
 					Name: "echo",
 					Port: 80,
 				}},
-				RequestRedirectPolicy: &Sesame_api_v1.HTTPRequestRedirectPolicy{
+				RequestRedirectPolicy: &sesame_api_v1.HTTPRequestRedirectPolicy{
 					Scheme:     pointer.StringPtr("https"),
 					Hostname:   pointer.StringPtr("envoyproxy.io"),
 					Port:       pointer.Int32Ptr(8080),
@@ -132,7 +131,7 @@ func getHTTPProxy(namespace string, removeServices bool) *Sesame_api_v1.HTTPProx
 	if removeServices {
 		// Remove the services from the proxy.
 		for i := range proxy.Spec.Routes {
-			proxy.Spec.Routes[i].Services = []Sesame_api_v1.Service{}
+			proxy.Spec.Routes[i].Services = []sesame_api_v1.Service{}
 		}
 	}
 

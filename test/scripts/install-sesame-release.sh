@@ -32,7 +32,7 @@ if [ -z "$VERS" ] ; then
 fi
 
 # Install the Sesame version.
-${KUBECTL} apply -f "https://projectsesame.io/quickstart/$VERS/Sesame.yaml"
+${KUBECTL} apply -f "https://projectsesame.io/quickstart/$VERS/sesame.yaml"
 
 ${KUBECTL} wait --timeout="${WAITTIME}" -n projectsesame -l app=sesame deployments --for=condition=Available
 ${KUBECTL} wait --timeout="${WAITTIME}" -n projectsesame -l app=envoy pods --for=condition=Ready

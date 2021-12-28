@@ -20,12 +20,10 @@ import (
 	"context"
 	"testing"
 
-	Sesame_api_v1alpha1 "github.com/projectsesame/sesame/apis/projectsesame/v1alpha1"
+	sesame_api_v1alpha1 "github.com/projectsesame/sesame/apis/projectsesame/v1alpha1"
 
 	certmanagerv1 "github.com/jetstack/cert-manager/pkg/apis/certmanager/v1"
 	certmanagermetav1 "github.com/jetstack/cert-manager/pkg/apis/meta/v1"
-	. "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
 	"github.com/onsi/gomega/gexec"
 	"github.com/projectsesame/sesame/pkg/config"
 	"github.com/projectsesame/sesame/test/e2e"
@@ -56,7 +54,7 @@ var _ = Describe("Ingress", func() {
 	var (
 		SesameCmd            *gexec.Session
 		SesameConfig         *config.Parameters
-		SesameConfiguration  *Sesame_api_v1alpha1.SesameConfiguration
+		SesameConfiguration  *sesame_api_v1alpha1.SesameConfiguration
 		SesameConfigFile     string
 		additionalSesameArgs []string
 	)
@@ -171,7 +169,7 @@ var _ = Describe("Ingress", func() {
 						Name:      "backend-client-cert",
 					},
 				}
-				SesameConfiguration.Spec.Envoy.ClientCertificate = &Sesame_api_v1alpha1.NamespacedName{
+				SesameConfiguration.Spec.Envoy.ClientCertificate = &sesame_api_v1alpha1.NamespacedName{
 					Namespace: namespace,
 					Name:      "backend-client-cert",
 				}

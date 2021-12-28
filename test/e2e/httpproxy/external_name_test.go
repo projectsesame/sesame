@@ -20,8 +20,7 @@ import (
 	"context"
 	"strings"
 
-	. "github.com/onsi/ginkgo"
-	Sesamev1 "github.com/projectsesame/sesame/apis/projectsesame/v1"
+	sesamev1 "github.com/projectsesame/sesame/apis/projectsesame/v1"
 	"github.com/projectsesame/sesame/test/e2e"
 	"github.com/stretchr/testify/require"
 	corev1 "k8s.io/api/core/v1"
@@ -52,25 +51,25 @@ func testExternalNameServiceInsecure(namespace string) {
 		}
 		require.NoError(t, f.Client.Create(context.TODO(), externalNameService))
 
-		p := &Sesamev1.HTTPProxy{
+		p := &sesamev1.HTTPProxy{
 			ObjectMeta: metav1.ObjectMeta{
 				Namespace: namespace,
 				Name:      "external-name-proxy",
 			},
-			Spec: Sesamev1.HTTPProxySpec{
-				VirtualHost: &Sesamev1.VirtualHost{
+			Spec: sesamev1.HTTPProxySpec{
+				VirtualHost: &sesamev1.VirtualHost{
 					Fqdn: "externalnameservice.projectsesame.io",
 				},
-				Routes: []Sesamev1.Route{
+				Routes: []sesamev1.Route{
 					{
-						Services: []Sesamev1.Service{
+						Services: []sesamev1.Service{
 							{
 								Name: externalNameService.Name,
 								Port: 80,
 							},
 						},
-						RequestHeadersPolicy: &Sesamev1.HeadersPolicy{
-							Set: []Sesamev1.HeaderValue{
+						RequestHeadersPolicy: &sesamev1.HeadersPolicy{
+							Set: []sesamev1.HeaderValue{
 								{
 									Name:  "Host",
 									Value: externalNameService.Spec.ExternalName,
@@ -122,26 +121,26 @@ func testExternalNameServiceTLS(namespace string) {
 		}
 		require.NoError(t, f.Client.Create(context.TODO(), externalNameService))
 
-		p := &Sesamev1.HTTPProxy{
+		p := &sesamev1.HTTPProxy{
 			ObjectMeta: metav1.ObjectMeta{
 				Namespace: namespace,
 				Name:      "external-name-proxy-tls",
 			},
-			Spec: Sesamev1.HTTPProxySpec{
-				VirtualHost: &Sesamev1.VirtualHost{
+			Spec: sesamev1.HTTPProxySpec{
+				VirtualHost: &sesamev1.VirtualHost{
 					Fqdn: "tls.externalnameservice.projectsesame.io",
 				},
-				Routes: []Sesamev1.Route{
+				Routes: []sesamev1.Route{
 					{
-						Services: []Sesamev1.Service{
+						Services: []sesamev1.Service{
 							{
 								Name:     externalNameService.Name,
 								Port:     443,
 								Protocol: stringPtr("tls"),
 							},
 						},
-						RequestHeadersPolicy: &Sesamev1.HeadersPolicy{
-							Set: []Sesamev1.HeaderValue{
+						RequestHeadersPolicy: &sesamev1.HeadersPolicy{
+							Set: []sesamev1.HeaderValue{
 								{
 									Name:  "Host",
 									Value: externalNameService.Spec.ExternalName,
@@ -196,25 +195,25 @@ func testExternalNameServiceLocalhostInvalid(namespace string) {
 		}
 		require.NoError(t, f.Client.Create(context.TODO(), externalNameService))
 
-		p := &Sesamev1.HTTPProxy{
+		p := &sesamev1.HTTPProxy{
 			ObjectMeta: metav1.ObjectMeta{
 				Namespace: namespace,
 				Name:      "external-name-proxy",
 			},
-			Spec: Sesamev1.HTTPProxySpec{
-				VirtualHost: &Sesamev1.VirtualHost{
+			Spec: sesamev1.HTTPProxySpec{
+				VirtualHost: &sesamev1.VirtualHost{
 					Fqdn: "externalnameservice.projectsesame.io",
 				},
-				Routes: []Sesamev1.Route{
+				Routes: []sesamev1.Route{
 					{
-						Services: []Sesamev1.Service{
+						Services: []sesamev1.Service{
 							{
 								Name: externalNameService.Name,
 								Port: 80,
 							},
 						},
-						RequestHeadersPolicy: &Sesamev1.HeadersPolicy{
-							Set: []Sesamev1.HeaderValue{
+						RequestHeadersPolicy: &sesamev1.HeadersPolicy{
+							Set: []sesamev1.HeaderValue{
 								{
 									Name:  "Host",
 									Value: externalNameService.Spec.ExternalName,
@@ -228,8 +227,8 @@ func testExternalNameServiceLocalhostInvalid(namespace string) {
 
 		// The HTTPProxy should be marked invalid due to the service
 		// using localhost.localdomain.
-		_, invalid := f.CreateHTTPProxyAndWaitFor(p, func(proxy *Sesamev1.HTTPProxy) bool {
-			validCond := proxy.Status.GetConditionFor(Sesamev1.ValidConditionType)
+		_, invalid := f.CreateHTTPProxyAndWaitFor(p, func(proxy *sesamev1.HTTPProxy) bool {
+			validCond := proxy.Status.GetConditionFor(sesamev1.ValidConditionType)
 			if validCond == nil {
 				return false
 			}
@@ -238,7 +237,7 @@ func testExternalNameServiceLocalhostInvalid(namespace string) {
 			}
 
 			for _, err := range validCond.Errors {
-				if err.Type == Sesamev1.ConditionTypeServiceError &&
+				if err.Type == sesamev1.ConditionTypeServiceError &&
 					err.Reason == "ServiceUnresolvedReference" &&
 					strings.Contains(err.Message, "is an ExternalName service that points to localhost") {
 					return true

@@ -19,7 +19,7 @@ package e2e
 import (
 	"context"
 
-	Sesame_api_v1alpha1 "github.com/projectsesame/sesame/apis/projectsesame/v1alpha1"
+	sesame_api_v1alpha1 "github.com/projectsesame/sesame/apis/projectsesame/v1alpha1"
 
 	"github.com/onsi/ginkgo"
 	"github.com/stretchr/testify/require"
@@ -327,34 +327,34 @@ func (e *EchoSecure) Deploy(ns, name string) func() {
 }
 
 // DefaultSesameConfiguration returns a default SesameConfiguration object.
-func DefaultSesameConfiguration() *Sesame_api_v1alpha1.SesameConfiguration {
-	return &Sesame_api_v1alpha1.SesameConfiguration{
+func DefaultSesameConfiguration() *sesame_api_v1alpha1.SesameConfiguration {
+	return &sesame_api_v1alpha1.SesameConfiguration{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "ingress",
 			Namespace: "projectsesame",
 		},
-		Spec: Sesame_api_v1alpha1.SesameConfigurationSpec{
-			Debug: Sesame_api_v1alpha1.DebugConfig{
+		Spec: sesame_api_v1alpha1.SesameConfigurationSpec{
+			Debug: sesame_api_v1alpha1.DebugConfig{
 				Address:                 "127.0.0.1",
 				Port:                    6060,
-				DebugLogLevel:           Sesame_api_v1alpha1.InfoLog,
+				DebugLogLevel:           sesame_api_v1alpha1.InfoLog,
 				KubernetesDebugLogLevel: 0,
 			},
-			Health: Sesame_api_v1alpha1.HealthConfig{
+			Health: sesame_api_v1alpha1.HealthConfig{
 				Address: "0.0.0.0",
 				Port:    8000,
 			},
-			Envoy: Sesame_api_v1alpha1.EnvoyConfig{
-				DefaultHTTPVersions: []Sesame_api_v1alpha1.HTTPVersionType{
+			Envoy: sesame_api_v1alpha1.EnvoyConfig{
+				DefaultHTTPVersions: []sesame_api_v1alpha1.HTTPVersionType{
 					"HTTP/1.1", "HTTP/2",
 				},
-				Listener: Sesame_api_v1alpha1.EnvoyListenerConfig{
+				Listener: sesame_api_v1alpha1.EnvoyListenerConfig{
 					UseProxyProto:             false,
 					DisableAllowChunkedLength: false,
 					ConnectionBalancer:        "",
-					TLS: Sesame_api_v1alpha1.EnvoyTLS{
+					TLS: sesame_api_v1alpha1.EnvoyTLS{
 						MinimumProtocolVersion: "1.2",
-						CipherSuites: []Sesame_api_v1alpha1.TLSCipherType{
+						CipherSuites: []sesame_api_v1alpha1.TLSCipherType{
 							"[ECDHE-ECDSA-AES128-GCM-SHA256|ECDHE-ECDSA-CHACHA20-POLY1305]",
 							"[ECDHE-RSA-AES128-GCM-SHA256|ECDHE-RSA-CHACHA20-POLY1305]",
 							"ECDHE-ECDSA-AES256-GCM-SHA384",
@@ -362,43 +362,43 @@ func DefaultSesameConfiguration() *Sesame_api_v1alpha1.SesameConfiguration {
 						},
 					},
 				},
-				Service: Sesame_api_v1alpha1.NamespacedName{
+				Service: sesame_api_v1alpha1.NamespacedName{
 					Name:      "envoy",
 					Namespace: "projectsesame",
 				},
-				HTTPListener: Sesame_api_v1alpha1.EnvoyListener{
+				HTTPListener: sesame_api_v1alpha1.EnvoyListener{
 					Address:   "0.0.0.0",
 					Port:      8080,
 					AccessLog: "/dev/stdout",
 				},
-				HTTPSListener: Sesame_api_v1alpha1.EnvoyListener{
+				HTTPSListener: sesame_api_v1alpha1.EnvoyListener{
 					Address:   "0.0.0.0",
 					Port:      8443,
 					AccessLog: "/dev/stdout",
 				},
-				Health: Sesame_api_v1alpha1.HealthConfig{
+				Health: sesame_api_v1alpha1.HealthConfig{
 					Address: "0.0.0.0",
 					Port:    8002,
 				},
-				Metrics: Sesame_api_v1alpha1.MetricsConfig{
+				Metrics: sesame_api_v1alpha1.MetricsConfig{
 					Address: "0.0.0.0",
 					Port:    8002,
 				},
-				Logging: Sesame_api_v1alpha1.EnvoyLogging{
-					AccessLogFormat: Sesame_api_v1alpha1.EnvoyAccessLog,
+				Logging: sesame_api_v1alpha1.EnvoyLogging{
+					AccessLogFormat: sesame_api_v1alpha1.EnvoyAccessLog,
 				},
-				Cluster: Sesame_api_v1alpha1.ClusterParameters{
-					DNSLookupFamily: Sesame_api_v1alpha1.AutoClusterDNSFamily,
+				Cluster: sesame_api_v1alpha1.ClusterParameters{
+					DNSLookupFamily: sesame_api_v1alpha1.AutoClusterDNSFamily,
 				},
-				Network: Sesame_api_v1alpha1.NetworkParameters{
+				Network: sesame_api_v1alpha1.NetworkParameters{
 					EnvoyAdminPort: 9001,
 				},
 			},
-			HTTPProxy: Sesame_api_v1alpha1.HTTPProxyConfig{
+			HTTPProxy: sesame_api_v1alpha1.HTTPProxyConfig{
 				DisablePermitInsecure: false,
 			},
 			EnableExternalNameService: false,
-			Metrics: Sesame_api_v1alpha1.MetricsConfig{
+			Metrics: sesame_api_v1alpha1.MetricsConfig{
 				Address: "0.0.0.0",
 				Port:    8000,
 			},
