@@ -24,10 +24,8 @@ import (
 
 	certmanagerv1 "github.com/jetstack/cert-manager/pkg/apis/certmanager/v1"
 	certmanagermetav1 "github.com/jetstack/cert-manager/pkg/apis/meta/v1"
-	. "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
 	"github.com/onsi/gomega/gexec"
-	Sesame_api_v1alpha1 "github.com/projectsesame/sesame/apis/projectsesame/v1alpha1"
+	sesame_api_v1alpha1 "github.com/projectsesame/sesame/apis/projectsesame/v1alpha1"
 	"github.com/projectsesame/sesame/pkg/config"
 	"github.com/projectsesame/sesame/test/e2e"
 	"github.com/stretchr/testify/require"
@@ -68,7 +66,7 @@ var _ = Describe("HTTPProxy", func() {
 	var (
 		SesameCmd            *gexec.Session
 		SesameConfig         *config.Parameters
-		SesameConfiguration  *Sesame_api_v1alpha1.SesameConfiguration
+		SesameConfiguration  *sesame_api_v1alpha1.SesameConfiguration
 		SesameConfigFile     string
 		additionalSesameArgs []string
 	)
@@ -138,7 +136,7 @@ var _ = Describe("HTTPProxy", func() {
 						Namespace: namespace,
 					},
 				}
-				SesameConfiguration.Spec.HTTPProxy.FallbackCertificate = &Sesame_api_v1alpha1.NamespacedName{
+				SesameConfiguration.Spec.HTTPProxy.FallbackCertificate = &sesame_api_v1alpha1.NamespacedName{
 					Name:      "fallback-cert",
 					Namespace: namespace,
 				}
@@ -230,7 +228,7 @@ var _ = Describe("HTTPProxy", func() {
 					},
 				}
 
-				SesameConfiguration.Spec.Envoy.ClientCertificate = &Sesame_api_v1alpha1.NamespacedName{
+				SesameConfiguration.Spec.Envoy.ClientCertificate = &sesame_api_v1alpha1.NamespacedName{
 					Name:      "backend-client-cert",
 					Namespace: namespace,
 				}
@@ -291,8 +289,8 @@ var _ = Describe("HTTPProxy", func() {
 							Domain:           "sesame",
 							FailOpen:         false,
 						}
-						SesameConfiguration.Spec.RateLimitService = &Sesame_api_v1alpha1.RateLimitServiceConfig{
-							ExtensionService: Sesame_api_v1alpha1.NamespacedName{
+						SesameConfiguration.Spec.RateLimitService = &sesame_api_v1alpha1.RateLimitServiceConfig{
+							ExtensionService: sesame_api_v1alpha1.NamespacedName{
 								Name:      f.Deployment.RateLimitExtensionService.Name,
 								Namespace: namespace,
 							},
@@ -356,8 +354,8 @@ descriptors:
 						},
 					},
 				}
-				SesameConfiguration.Spec.Policy = &Sesame_api_v1alpha1.PolicyConfig{
-					ResponseHeadersPolicy: &Sesame_api_v1alpha1.HeadersPolicy{
+				SesameConfiguration.Spec.Policy = &sesame_api_v1alpha1.PolicyConfig{
+					ResponseHeadersPolicy: &sesame_api_v1alpha1.HeadersPolicy{
 						Set: map[string]string{
 							"Set-Cookie": "global=foo",
 						},

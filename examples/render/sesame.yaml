@@ -4848,7 +4848,7 @@ spec:
         - --incluster
         - --overwrite
         - --secrets-format=compact
-        - --namespace=$(Sesame_NAMESPACE)
+        - --namespace=$(SESAME_NAMESPACE)
         env:
         - name: SESAME_NAMESPACE
           valueFrom:
@@ -5083,7 +5083,7 @@ spec:
       - args:
         - -c
         - /config/envoy.json
-        - --service-cluster $(Sesame_NAMESPACE)
+        - --service-cluster $(SESAME_NAMESPACE)
         - --service-node $(ENVOY_POD_NAME)
         - --log-level info
         command:

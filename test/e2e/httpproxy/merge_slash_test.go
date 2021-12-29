@@ -17,8 +17,7 @@
 package httpproxy
 
 import (
-	. "github.com/onsi/ginkgo"
-	Sesamev1 "github.com/projectsesame/sesame/apis/projectsesame/v1"
+	sesamev1 "github.com/projectsesame/sesame/apis/projectsesame/v1"
 	"github.com/projectsesame/sesame/test/e2e"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -31,24 +30,24 @@ func testMergeSlash(namespace string) {
 
 		f.Fixtures.Echo.Deploy(namespace, "ingress-conformance-echo")
 
-		p := &Sesamev1.HTTPProxy{
+		p := &sesamev1.HTTPProxy{
 			ObjectMeta: metav1.ObjectMeta{
 				Namespace: namespace,
 				Name:      "echo",
 			},
-			Spec: Sesamev1.HTTPProxySpec{
-				VirtualHost: &Sesamev1.VirtualHost{
+			Spec: sesamev1.HTTPProxySpec{
+				VirtualHost: &sesamev1.VirtualHost{
 					Fqdn: "mergeslash.projectsesame.io",
 				},
-				Routes: []Sesamev1.Route{
+				Routes: []sesamev1.Route{
 					{
-						Services: []Sesamev1.Service{
+						Services: []sesamev1.Service{
 							{
 								Name: "ingress-conformance-echo",
 								Port: 80,
 							},
 						},
-						Conditions: []Sesamev1.MatchCondition{
+						Conditions: []sesamev1.MatchCondition{
 							{
 								Prefix: "/",
 							},

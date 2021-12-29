@@ -19,9 +19,8 @@ package httpproxy
 import (
 	"context"
 
-	. "github.com/onsi/ginkgo"
-	Sesamev1 "github.com/projectsesame/sesame/apis/projectsesame/v1"
-	Sesamev1alpha1 "github.com/projectsesame/sesame/apis/projectsesame/v1alpha1"
+	sesamev1 "github.com/projectsesame/sesame/apis/projectsesame/v1"
+	sesamev1alpha1 "github.com/projectsesame/sesame/apis/projectsesame/v1alpha1"
 	"github.com/projectsesame/sesame/test/e2e"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -130,13 +129,13 @@ func testExternalAuth(namespace string) {
 		}
 		require.NoError(t, f.Client.Create(context.TODO(), svc))
 
-		extSvc := &Sesamev1alpha1.ExtensionService{
+		extSvc := &sesamev1alpha1.ExtensionService{
 			ObjectMeta: metav1.ObjectMeta{
 				Name:      "testserver",
 				Namespace: namespace,
 			},
-			Spec: Sesamev1alpha1.ExtensionServiceSpec{
-				Services: []Sesamev1alpha1.ExtensionServiceTarget{
+			Spec: sesamev1alpha1.ExtensionServiceSpec{
+				Services: []sesamev1alpha1.ExtensionServiceTarget{
 					{
 						Name: "testserver",
 						Port: 9443,
@@ -146,43 +145,43 @@ func testExternalAuth(namespace string) {
 		}
 		require.NoError(t, f.Client.Create(context.TODO(), extSvc))
 
-		p := &Sesamev1.HTTPProxy{
+		p := &sesamev1.HTTPProxy{
 			ObjectMeta: metav1.ObjectMeta{
 				Namespace: namespace,
 				Name:      "external-auth",
 			},
-			Spec: Sesamev1.HTTPProxySpec{
-				VirtualHost: &Sesamev1.VirtualHost{
+			Spec: sesamev1.HTTPProxySpec{
+				VirtualHost: &sesamev1.VirtualHost{
 					Fqdn: "externalauth.projectsesame.io",
-					TLS: &Sesamev1.TLS{
+					TLS: &sesamev1.TLS{
 						SecretName: "echo",
 					},
-					Authorization: &Sesamev1.AuthorizationServer{
+					Authorization: &sesamev1.AuthorizationServer{
 						ResponseTimeout: "500ms",
-						ExtensionServiceRef: Sesamev1.ExtensionServiceReference{
+						ExtensionServiceRef: sesamev1.ExtensionServiceReference{
 							Name:      extSvc.Name,
 							Namespace: extSvc.Namespace,
 						},
-						AuthPolicy: &Sesamev1.AuthorizationPolicy{
+						AuthPolicy: &sesamev1.AuthorizationPolicy{
 							Context: map[string]string{
 								"hostname": "externalauth.projectsesame.io",
 							},
 						},
 					},
 				},
-				Routes: []Sesamev1.Route{
+				Routes: []sesamev1.Route{
 					{
-						Conditions: []Sesamev1.MatchCondition{
+						Conditions: []sesamev1.MatchCondition{
 							{
 								Prefix: "/first",
 							},
 						},
-						AuthPolicy: &Sesamev1.AuthorizationPolicy{
+						AuthPolicy: &sesamev1.AuthorizationPolicy{
 							Context: map[string]string{
 								"target": "first",
 							},
 						},
-						Services: []Sesamev1.Service{
+						Services: []sesamev1.Service{
 							{
 								Name: "echo",
 								Port: 80,
@@ -191,15 +190,15 @@ func testExternalAuth(namespace string) {
 					},
 
 					{
-						Conditions: []Sesamev1.MatchCondition{
+						Conditions: []sesamev1.MatchCondition{
 							{
 								Prefix: "/second",
 							},
 						},
-						AuthPolicy: &Sesamev1.AuthorizationPolicy{
+						AuthPolicy: &sesamev1.AuthorizationPolicy{
 							Disabled: true,
 						},
-						Services: []Sesamev1.Service{
+						Services: []sesamev1.Service{
 							{
 								Name: "echo",
 								Port: 80,
@@ -208,12 +207,12 @@ func testExternalAuth(namespace string) {
 					},
 
 					{
-						AuthPolicy: &Sesamev1.AuthorizationPolicy{
+						AuthPolicy: &sesamev1.AuthorizationPolicy{
 							Context: map[string]string{
 								"target": "default",
 							},
 						},
-						Services: []Sesamev1.Service{
+						Services: []sesamev1.Service{
 							{
 								Name: "echo",
 								Port: 80,

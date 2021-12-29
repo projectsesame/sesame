@@ -19,7 +19,7 @@ set -o errexit
 set -o nounset
 
 readonly KIND=${KIND:-kind}
-readonly CLUSTERNAME=${CLUSTERNAME:-Sesame-e2e}
+readonly CLUSTERNAME=${CLUSTERNAME:-sesame-e2e}
 
 kind::cluster::delete() {
     ${KIND} delete cluster --name "${CLUSTERNAME}"

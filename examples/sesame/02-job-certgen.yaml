@@ -56,7 +56,7 @@ spec:
         - --incluster
         - --overwrite
         - --secrets-format=compact
-        - --namespace=$(Sesame_NAMESPACE)
+        - --namespace=$(SESAME_NAMESPACE)
         env:
         - name: SESAME_NAMESPACE
           valueFrom:

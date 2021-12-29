@@ -96,7 +96,7 @@ spec:
       - args:
         - -c
         - /config/envoy.json
-        - --service-cluster $(Sesame_NAMESPACE)
+        - --service-cluster $(SESAME_NAMESPACE)
         - --service-node $(ENVOY_POD_NAME)
         - --log-level info
         command:

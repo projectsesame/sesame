@@ -1,5 +1,5 @@
 ORG = projectsesame
-PROJECT = Sesame
+PROJECT = sesame
 MODULE = github.com/$(ORG)/$(PROJECT)
 REGISTRY ?= ghcr.io/projectsesame
 IMAGE := $(REGISTRY)/$(PROJECT)
@@ -15,10 +15,10 @@ GATEWAY_API_VERSION = $(shell grep "sigs.k8s.io/gateway-api" go.mod | awk '{prin
 LOCALIP ?= $(shell ifconfig | grep inet | grep -v '::' | grep -v 127.0.0.1 | head -n1 | awk '{print $$2}')
 
 # Variables needed for running e2e tests.
-Sesame_E2E_LOCAL_HOST ?= $(LOCALIP)
+SESAME_E2E_LOCAL_HOST ?= $(LOCALIP)
 # Variables needed for running e2e and upgrade tests.
-Sesame_UPGRADE_FROM_VERSION ?= $(shell ./test/scripts/get-Sesame-upgrade-from-version.sh)
-Sesame_E2E_IMAGE ?= ghcr.io/projectsesame/Sesame:main
+SESAME_UPGRADE_FROM_VERSION ?= $(shell ./test/scripts/get-sesame-upgrade-from-version.sh)
+SESAME_E2E_IMAGE ?= ghcr.io/projectsesame/sesame:main
 
 TAG_LATEST ?= false
 
@@ -31,7 +31,7 @@ else
 		--tag $(IMAGE):$(VERSION)
 endif
 
-IMAGE_RESULT_FLAG = --output=type=oci,dest=$(shell pwd)/image/Sesame-$(VERSION).tar
+IMAGE_RESULT_FLAG = --output=type=oci,dest=$(shell pwd)/image/sesame-$(VERSION).tar
 ifeq ($(PUSH_IMAGE), true)
 	IMAGE_RESULT_FLAG = --push
 endif
@@ -46,7 +46,7 @@ BUILD_BASE_IMAGE ?= golang:1.17.5
 BUILD_CGO_ENABLED ?= 0
 
 # Go module mirror to use.
-BUILD_GOPROXY ?= https://proxy.golang.org
+BUILD_GOPROXY ?= https://goproxy.cn
 
 # Sets GIT_REF to a tag if it's present, otherwise the short git sha will be used.
 GIT_REF = $(shell git describe --tags --exact-match 2>/dev/null || git rev-parse --short=8 --verify HEAD)
@@ -101,13 +101,13 @@ check: install check-test check-test-race ## Install and run tests
 checkall: check lint check-generate
 
 build: ## Build the sesame binary
-	go build -mod=readonly -v -ldflags="$(GO_LDFLAGS)" $(GO_TAGS) $(MODULE)/cmd/Sesame
+	go build -mod=readonly -v -ldflags="$(GO_LDFLAGS)" $(GO_TAGS) $(MODULE)/cmd/sesame
 
 install: ## Build and install the sesame binary
-	go install -mod=readonly -v -ldflags="$(GO_LDFLAGS)" $(GO_TAGS) $(MODULE)/cmd/Sesame
+	go install -mod=readonly -v -ldflags="$(GO_LDFLAGS)" $(GO_TAGS) $(MODULE)/cmd/sesame
 
 race:
-	go install -mod=readonly -v -race $(GO_TAGS) $(MODULE)/cmd/Sesame
+	go install -mod=readonly -v -race $(GO_TAGS) $(MODULE)/cmd/sesame
 
 download: ## Download Go modules
 	go mod download
@@ -194,11 +194,11 @@ lint-yamllint:
 # the first rule.
 .PHONY: check-flags
 lint-flags:
-	@if git --no-pager grep --extended-regexp '[.]Flag\("[^"]+", "([^A-Zxg][^"]+|[^"]+[^.])"' cmd/Sesame; then \
+	@if git --no-pager grep --extended-regexp '[.]Flag\("[^"]+", "([^A-Zxg][^"]+|[^"]+[^.])"' cmd/sesame; then \
 		echo "ERROR: CLI flag help strings must start with a capital and end with a period."; \
 		exit 2; \
 	fi
-	@if git --no-pager grep --extended-regexp '[.]Command\("[^"]+", "([^A-Z][^"]+|[^"]+[^.])"' cmd/Sesame; then \
+	@if git --no-pager grep --extended-regexp '[.]Command\("[^"]+", "([^A-Z][^"]+|[^"]+[^.])"' cmd/sesame; then \
 		echo "ERROR: CLI flag help strings must start with a capital and end with a period."; \
 		exit 2; \
 	fi
@@ -277,21 +277,21 @@ site-check: ## Test the site's links
 setup-kind-cluster: ## Make a kind cluster for testing
 	./test/scripts/make-kind-cluster.sh
 
-.PHONY: install-Sesame-working
-install-Sesame-working: | setup-kind-cluster ## Install the local working directory version of Sesame into a kind cluster
-	./test/scripts/install-Sesame-working.sh
+.PHONY: install-sesame-working
+install-sesame-working: | setup-kind-cluster ## Install the local working directory version of Sesame into a kind cluster
+	./test/scripts/install-sesame-working.sh
 
-.PHONY: install-Sesame-release
-install-Sesame-release: | setup-kind-cluster ## Install the release version of Sesame in Sesame_UPGRADE_FROM_VERSION, defaults to latest
-	./test/scripts/install-Sesame-release.sh $(Sesame_UPGRADE_FROM_VERSION)
+.PHONY: install-sesame-release
+install-sesame-release: | setup-kind-cluster ## Install the release version of Sesame in SESAME_UPGRADE_FROM_VERSION, defaults to latest
+	./test/scripts/install-sesame-release.sh $(SESAME_UPGRADE_FROM_VERSION)
 
 .PHONY: e2e
-e2e: | setup-kind-cluster load-Sesame-image-kind run-e2e cleanup-kind ## Run E2E tests against a real k8s cluster
+e2e: | setup-kind-cluster load-sesame-image-kind run-e2e cleanup-kind ## Run E2E tests against a real k8s cluster
 
 .PHONY: run-e2e
 run-e2e:
-	Sesame_E2E_LOCAL_HOST=$(Sesame_E2E_LOCAL_HOST) \
-		Sesame_E2E_IMAGE=$(Sesame_E2E_IMAGE) \
+	SESAME_E2E_LOCAL_HOST=$(SESAME_E2E_LOCAL_HOST) \
+		SESAME_E2E_IMAGE=$(SESAME_E2E_IMAGE) \
 		ginkgo -tags=e2e -mod=readonly -skip-package=upgrade -keep-going -randomize-suites -randomize-all -slow-spec-threshold=120s -r ./test/e2e
 
 .PHONY: cleanup-kind
@@ -305,21 +305,21 @@ cleanup-kind:
 ## the multiarch-build target to have been run which puts the Sesame docker
 ## image at <repo>/image/sesame-version.tar.gz. This second option is chosen
 ## in CI to speed up builds.
-.PHONY: load-Sesame-image-kind
-load-Sesame-image-kind: ## Load Sesame image from building working source or pre-built image into Kind.
-	./test/scripts/kind-load-Sesame-image.sh
+.PHONY: load-sesame-image-kind
+load-sesame-image-kind: ## Load sesame image from building working source or pre-built image into Kind.
+	./test/scripts/kind-load-sesame-image.sh
 
 .PHONY: upgrade
-upgrade: | install-Sesame-release load-Sesame-image-kind run-upgrade cleanup-kind ## Run upgrade tests against a real k8s cluster
+upgrade: | install-sesame-release load-sesame-image-kind run-upgrade cleanup-kind ## Run upgrade tests against a real k8s cluster
 
 .PHONY: run-upgrade
 run-upgrade:
-	Sesame_UPGRADE_FROM_VERSION=$(Sesame_UPGRADE_FROM_VERSION) \
-		Sesame_E2E_IMAGE=$(Sesame_E2E_IMAGE) \
+	SESAME_UPGRADE_FROM_VERSION=$(SESAME_UPGRADE_FROM_VERSION) \
+		SESAME_E2E_IMAGE=$(SESAME_E2E_IMAGE) \
 		ginkgo -tags=e2e -mod=readonly -randomize-all -slow-spec-threshold=300s -v ./test/e2e/upgrade
 
 .PHONY: check-ingress-conformance
-check-ingress-conformance: | install-Sesame-working run-ingress-conformance cleanup-kind ## Run Ingress controller conformance
+check-ingress-conformance: | install-sesame-working run-ingress-conformance cleanup-kind ## Run Ingress controller conformance
 
 .PHONY: run-ingress-conformance
 run-ingress-conformance:

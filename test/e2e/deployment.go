@@ -32,7 +32,7 @@ import (
 	"time"
 
 	"github.com/onsi/gomega/gexec"
-	Sesame_api_v1alpha1 "github.com/projectsesame/sesame/apis/projectsesame/v1alpha1"
+	sesame_api_v1alpha1 "github.com/projectsesame/sesame/apis/projectsesame/v1alpha1"
 	"github.com/projectsesame/sesame/pkg/config"
 	"gopkg.in/yaml.v2"
 	apps_v1 "k8s.io/api/apps/v1"
@@ -95,7 +95,7 @@ type Deployment struct {
 	// Ratelimit deployment.
 	RateLimitDeployment       *apps_v1.Deployment
 	RateLimitService          *v1.Service
-	RateLimitExtensionService *Sesame_api_v1alpha1.ExtensionService
+	RateLimitExtensionService *sesame_api_v1alpha1.ExtensionService
 }
 
 // UnmarshalResources unmarshals resources from rendered Sesame manifest in
@@ -191,7 +191,7 @@ func (d *Deployment) UnmarshalResources() error {
 	}
 	defer rLESFile.Close()
 	decoder = apimachinery_util_yaml.NewYAMLToJSONDecoder(rLESFile)
-	d.RateLimitExtensionService = new(Sesame_api_v1alpha1.ExtensionService)
+	d.RateLimitExtensionService = new(sesame_api_v1alpha1.ExtensionService)
 
 	return decoder.Decode(d.RateLimitExtensionService)
 }
@@ -407,7 +407,7 @@ func (d *Deployment) EnsureRateLimitResources(namespace string, configContents s
 
 	extSvc := d.RateLimitExtensionService.DeepCopy()
 	extSvc.Namespace = setNamespace
-	return d.ensureResource(extSvc, new(Sesame_api_v1alpha1.ExtensionService))
+	return d.ensureResource(extSvc, new(sesame_api_v1alpha1.ExtensionService))
 }
 
 // Convenience method for deploying the pieces of the deployment needed for
@@ -559,7 +559,7 @@ func (d *Deployment) DeleteResourcesForLocalSesame() error {
 // Starts local sesame, applying arguments and marshaling config into config
 // file. Returns running Sesame command and config file so we can clean them
 // up.
-func (d *Deployment) StartLocalSesame(config *config.Parameters, SesameConfiguration *Sesame_api_v1alpha1.SesameConfiguration, additionalArgs ...string) (*gexec.Session, string, error) {
+func (d *Deployment) StartLocalSesame(config *config.Parameters, SesameConfiguration *sesame_api_v1alpha1.SesameConfiguration, additionalArgs ...string) (*gexec.Session, string, error) {
 
 	var content []byte
 	var configReferenceName string
@@ -574,11 +574,11 @@ func (d *Deployment) StartLocalSesame(config *config.Parameters, SesameConfigura
 		SesameConfiguration.Name = randomString(14)
 
 		// Set the xds server to the defined testing port as well as enable insecure communication.
-		SesameConfiguration.Spec.XDSServer = Sesame_api_v1alpha1.XDSServerConfig{
-			Type:    Sesame_api_v1alpha1.SesameServerType,
+		SesameConfiguration.Spec.XDSServer = sesame_api_v1alpha1.XDSServerConfig{
+			Type:    sesame_api_v1alpha1.SesameServerType,
 			Address: "0.0.0.0",
 			Port:    port,
-			TLS: &Sesame_api_v1alpha1.TLS{
+			TLS: &sesame_api_v1alpha1.TLS{
 				Insecure: true,
 			},
 		}
@@ -636,7 +636,7 @@ func (d *Deployment) StopLocalSesame(SesameCmd *gexec.Session, configFile string
 	// Look for the ENV variable to tell if this test run should use
 	// the SesameConfiguration file or the SesameConfiguration CRD.
 	if useSesameConfiguration, variableFound := os.LookupEnv("USE_Sesame_CONFIGURATION_CRD"); variableFound && useSesameConfiguration == "true" {
-		cc := &Sesame_api_v1alpha1.SesameConfiguration{
+		cc := &sesame_api_v1alpha1.SesameConfiguration{
 			ObjectMeta: metav1.ObjectMeta{
 				Name:      configFile,
 				Namespace: "projectsesame",
